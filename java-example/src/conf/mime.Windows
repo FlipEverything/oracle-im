@@ -13,7 +13,7 @@ audio/wav	mplayer2 wav
 audio/x-ms-wma	realplay wma
 image/bmp	kodakimg bmp
 image/gif	kodakimg gif
-image/jpeg	kodakimg jpg
+image/jpeg	FSViewer jpg
 image/jpg	kodakimg jpg
 image/tiff	kodakimg tiff
 video/mpeg	realplay mpg
