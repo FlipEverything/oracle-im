@@ -33,7 +33,6 @@ import oracle.xml.parser.v2.XMLParseException;
 
 import org.xml.sax.SAXException;
 
-import bean.XMLTreeView;
 
 import oracle.ord.im.OrdImage;
 

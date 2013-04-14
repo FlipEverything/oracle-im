@@ -1,5 +1,4 @@
-package bean;
-/* Copyright (c) 2004, 2008, Oracle. All rights reserved.  */
+
 
 
 import javax.swing.JPanel;

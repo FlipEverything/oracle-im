@@ -64,6 +64,7 @@ public class IMFrame extends JFrame implements IMConstants
 
   Container m_jContentPane = null;
   private JLabel status;
+  private User m_userActive = null;
 
   public IMFrame()
   {
@@ -104,7 +105,8 @@ public class IMFrame extends JFrame implements IMConstants
     m_jQueryResultPanel.setPreferredSize(new Dimension(846, 340));
     m_jQueryResultPanel.setBorder(BorderFactory.createEtchedBorder());
     m_jQueryResultPanel.setAutoscrolls(true);
-    m_jQueryResultPanel.setEnabled(false);
+    m_jQueryResultPanel.setEnabled(true);
+    m_jQueryResultPanel.getVerticalScrollBar().setUnitIncrement(16);
 
     // Puts the label in the middle horizontally.
     Box hbox = Box.createHorizontalBox();
@@ -203,6 +205,7 @@ public class IMFrame extends JFrame implements IMConstants
       IMRunnableMain.closeDBConnection();
       m_labelTable.setText(IMMessage.getString("CHOOSE_SERVER"));
       setStatusBar(IMMessage.getString("CHOOSE_SERVER"));
+      m_userActive = null;
     }
     catch (Exception e)
     {
@@ -210,39 +213,6 @@ public class IMFrame extends JFrame implements IMConstants
     }
   }
 
-  /**
-   * Displays the retrieved table from the database.
-   */
-  /*void showDefaultTable()
-  {
-    IMQuery imQuery = new IMQuery();
-
-    m_jResultSetTable = imQuery.execQuery();
-
-    if (m_jResultSetTable != null)
-    {
-      m_jQueryResultPanel.setViewportView(m_jResultSetTable);
-      m_jResultSetTable.requestFocus();
-      // select the first row
-      m_jResultSetTable.changeSelection(0, 0, false, false);
-    }
-    else
-    {
-      new IMMessage(IMConstants.ERROR, "NO_TABLE");
-    }
-  }*/
-  
-  void showLoginPanel(){
-	  JPanelLogin panel = new JPanelLogin(this);
-	  panel.init();
-	  m_jQueryResultPanel.setViewportView(panel);
-  }
-  
-  void showSignupPanel(){
-	  JPanelSignup panel = new JPanelSignup(this);
-	  panel.init();
-	  m_jQueryResultPanel.setViewportView(panel);
-  }
   
   /**
    * Initiates the frame.
@@ -348,14 +318,14 @@ public class IMFrame extends JFrame implements IMConstants
     
     m_menuUserProfile = createJMenuItem(m_menuUserProfile, "MAIN_MENU_PROFILE", 'P', false, "profile", "MAIN_MENU_PROFILE_DESC", new Callable<Void>() {
 		   public Void call() {
-
+			     showProfilePanel(m_userActive);
 				return null;
 		   }
 		});
     
     m_menuUserSettings = createJMenuItem(m_menuUserSettings, "MAIN_MENU_SETTINGS", 'B', false, "settings", "MAIN_MENU_SETTINGS_DESC", new Callable<Void>() {
 		   public Void call() {
-
+			   	showSettingsPanel();
 				return null;
 		   }
 		});
@@ -410,20 +380,48 @@ public class IMFrame extends JFrame implements IMConstants
   }
 
   public void userLogout() {  
-	setAllMenu(m_menuUser, false);
+	m_userActive = null;
 	
+	setAllMenu(m_menuUser, false);
 	m_menuUserRegister.setEnabled(true);
 	m_menuUserLogin.setEnabled(true);
 	m_menuUserLostpassword.setEnabled(true);
 	
+	showLoginPanel();
   }
   
-  public void userLogin() {
+  public void userLogin(User user) {
 	  setAllMenu(m_menuUser, true);
-		
 	  m_menuUserRegister.setEnabled(false);
 	  m_menuUserLogin.setEnabled(false);
 	  m_menuUserLostpassword.setEnabled(false);
+	  
+	  m_userActive = user;
+	  showProfilePanel(m_userActive);
+  }
+  
+  void showLoginPanel(){
+	  JPanelLogin panel = new JPanelLogin(this);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+  }
+  
+  void showSignupPanel(){
+	  JPanelSignup panel = new JPanelSignup(this);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+  }
+  
+  public void showProfilePanel(User user){
+	  JPanelProfile panel = new JPanelProfile(this, user);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+  }
+  
+  public void showSettingsPanel(){
+	  JPanelSettings panel = new JPanelSettings(this);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
   }
   
   public void setAllMenu(JMenu menu, boolean state){
@@ -434,6 +432,7 @@ public class IMFrame extends JFrame implements IMConstants
 		  }
 	  }
   }
+  
   
   public static JLabel createJLabel(JLabel label, Rectangle r, String text, int mnemonic, Component component){
 	  label.setBounds(r);

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import bean.DatabaseCreditental;
 
 
 @SuppressWarnings("serial")

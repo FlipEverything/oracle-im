@@ -14,6 +14,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 
+
 @SuppressWarnings("serial")
 public class JPanelLogin extends JPanel implements IMConstants{
 	
@@ -140,6 +141,16 @@ public class JPanelLogin extends JPanel implements IMConstants{
 			 ){
 			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
 		  } else {
+			  User user = new User(m_jLoginField.getText(), new String(m_jPasswordField.getPassword()));
+			  IMQuery q = new IMQuery();
+			  user = q.checkLogin(user);
+			  
+			  if ((user!=null) && (user.getUserId()!=0)){
+				  new IMMessage(IMConstants.WARNING, "LOGIN_SUCCESS");
+				  m_jFrameOwner.userLogin(user);
+			  } else {
+				  new IMMessage(IMConstants.ERROR, "NO_SUCH_USER", new Exception());
+			  }
 			  
 	      }
 	  }
@@ -160,6 +171,7 @@ public class JPanelLogin extends JPanel implements IMConstants{
 	  {
 		m_jFrameOwner.setLabel(m_szTitle);
 	    this.setSize(new Dimension(m_nWidth, m_nHeight));
+	    this.setPreferredSize(new Dimension(m_nWidth, m_nHeight));
 	    this.getAccessibleContext().setAccessibleDescription(
 	        IMMessage.getString("LOGINDIAG_DESC"));
 	    this.setLayout(new BorderLayout());

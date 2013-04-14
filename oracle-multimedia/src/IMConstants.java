@@ -46,4 +46,5 @@ public interface IMConstants
    * If set to true, stack trace is printed out to standard error.
    */
   final static boolean ENABLE_STACK_TRACE = true;
+  final static boolean ENABLE_STACK_GUI = true;
 }

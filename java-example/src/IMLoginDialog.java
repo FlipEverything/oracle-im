@@ -33,10 +33,10 @@ import java.sql.SQLException;
 public class IMLoginDialog extends JDialog implements IMConstants
 {
 	
-  private String defaultUserName = "intermedia";
-  private String defaultHostName = "localhost";
-  private String defaultSID = "laci";
-  private String defaultPort = "1521";
+  private String defaultUserName = "laci";
+  private String defaultHostName = "192.168.1.10";
+  private String defaultSID = "orcl";
+  private String defaultPort = "1522";
   
   IMExampleFrame m_jFrameOwner = null;
 

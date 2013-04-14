@@ -62,6 +62,33 @@ public class JPanelSignup extends JPanelLogin {
 	} 
 	
 	@Override
+	public void confirm(){
+		if (
+				m_jLoginField.getText().equals("") ||
+				m_jPasswordField.getPassword().equals("") ||
+				m_jEmailField.getText().equals("") ||
+				m_jLastnameField.getText().equals("") ||
+				m_jFirstnameField.getText().equals("")
+				 ){
+				  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
+			  } else {
+				  User user = new User(0, m_jFirstnameField.getText(), m_jLastnameField.getText(), new String(m_jPasswordField.getPassword()), 
+						  m_jEmailField.getText(), null, 0, null, m_jLoginField.getText(), 0);
+				  IMQuery q = new IMQuery();
+				  user = q.userSignup(user);
+				  
+				  
+				  if ((user!=null) && (user.getUserId()!=0)){
+					  new IMMessage(IMConstants.WARNING, "SIGNUP_SUCCESS");
+					  m_jFrameOwner.showLoginPanel();
+				  } else {
+					  new IMMessage(IMConstants.ERROR, "SIGNUP_ERROR", new Exception());
+				  }
+				  
+		      }
+	}
+	
+	@Override
 	public void cancel(){
 		m_jFrameOwner.showLoginPanel();
 	}

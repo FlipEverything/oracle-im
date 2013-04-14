@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import bean.DatabaseCreditental;
 
 import java.awt.BorderLayout;
 import java.awt.Rectangle;

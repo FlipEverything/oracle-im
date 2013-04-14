@@ -4,6 +4,10 @@ public class IMMessageResource extends java.util.ListResourceBundle
 {
   static final Object[][] contents = 
   {
+	{"NO_SUCH_USER", " Hibás felhasználónév / jelszó / nincs ilyen felhasználó."},
+	{"LOGIN_SUCCESS", " Sikeres bejelentkezés."},
+	{"SIGNUP_SUCCESS", " Sikeres regisztráció."},
+	{"SIGNUP_ERROR", " Sikertelen regisztráció."},
 	{"ALREADY_RUNNING", " A program már egy példányban fut. Kilépés..."},
     {"CANNOT_CONNECT", " Az adatbáziskapcsolat létrehozása sikertelen"},
     {"CHOOSE_SERVER", " Nincs kapcsolat! Válasszon szervert!"},

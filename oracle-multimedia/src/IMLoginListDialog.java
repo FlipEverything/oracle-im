@@ -12,7 +12,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 
-import bean.DatabaseCreditental;
 
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
@@ -89,6 +88,7 @@ public class IMLoginListDialog extends JDialog implements IMConstants
 		
 		new IMMessage(IMConstants.ERROR, "APP_ERR", e);
 	}
+	//m_aCreditentals.add(new DatabaseCreditental("192.168.1.10", 1522, "orcl", "laci", "dorka1025", "LACI-PC"));
 	
 	m_jTableCreditentals = new JTable(new IMLoginListTableModel(m_aCreditentals, this));
 	m_jTableCreditentals.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
