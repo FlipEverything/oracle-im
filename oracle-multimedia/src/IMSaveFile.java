@@ -11,6 +11,8 @@ import java.awt.Component;
 
 import javax.swing.JFileChooser;
 
+import bean.IMFileChooser;
+
 /** 
  * The IMSaveFile class saves an input media stream
  * to a target file.

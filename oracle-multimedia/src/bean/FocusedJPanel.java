@@ -1,3 +1,4 @@
+package bean;
 
 
 import javax.swing.JPanel;

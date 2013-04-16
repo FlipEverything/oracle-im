@@ -3,6 +3,7 @@
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -16,10 +17,16 @@ import javax.swing.Box;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import bean.City;
+import bean.Country;
+import bean.Region;
+import bean.User;
+
 
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Container;
@@ -29,6 +36,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 
@@ -38,10 +46,14 @@ import java.util.concurrent.Callable;
 @SuppressWarnings("serial")
 public class IMFrame extends JFrame implements IMConstants
 {
+  private int m_nWidth = 946;
+  private int m_nHeight = 601;
+	
   JMenuBar m_menuBar = new JMenuBar();
   JMenu m_menuConnection = new JMenu();
   JMenu m_menuUser = new JMenu();
   JMenu m_menuGallery = new JMenu();
+  JMenu m_menuSystem = new JMenu();
 
   JMenuItem m_menuConnectionOpen = new JMenuItem();
   JMenuItem m_menuConnectionClose = new JMenuItem();
@@ -56,7 +68,18 @@ public class IMFrame extends JFrame implements IMConstants
   JMenuItem m_menuUserProfile = new JMenuItem();
   JMenuItem m_menuUserSettings = new JMenuItem();
   JMenuItem m_menuUserAlbums = new JMenuItem();
+  JMenuItem m_menuUserPictures = new JMenuItem();
   JMenuItem m_menuUserUpload = new JMenuItem();
+  JMenuItem m_menuUserAlbumNew = new JMenuItem();
+  
+  JMenuItem m_menuGalleryHome = new JMenuItem();
+  JMenuItem m_menuGalleryUsers = new JMenuItem();
+  JMenuItem m_menuGallerySearch = new JMenuItem();
+  JMenuItem m_menuGalleryNear = new JMenuItem();
+  
+  JMenuItem m_menuSystemSettings = new JMenuItem();
+  JMenuItem m_menuSystemHelp = new JMenuItem();
+  JMenuItem m_menuSystemAbout = new JMenuItem();
   
   JScrollPane m_jQueryResultPanel = new JScrollPane();
   JTable m_jResultSetTable = null;
@@ -64,7 +87,11 @@ public class IMFrame extends JFrame implements IMConstants
 
   Container m_jContentPane = null;
   private JLabel status;
+  
   private User m_userActive = null;
+  private ArrayList<Country> m_countryAll = null;
+  private ArrayList<Region> m_regionAll = null;
+  private ArrayList<City> m_cityAll = null;
 
   public IMFrame()
   {
@@ -77,6 +104,7 @@ public class IMFrame extends JFrame implements IMConstants
       setupContentPane();
 
       setVisible(true);
+      setResizable(false);
 
       clickConnect();
     }
@@ -98,6 +126,7 @@ public class IMFrame extends JFrame implements IMConstants
     contentPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
 
     // Sets the label for the table.
+    m_labelTable.setFont(new Font("SansSerif", Font.BOLD, 15));
     m_labelTable.setEnabled(false);
     m_labelTable.setLabelFor(m_jQueryResultPanel);
 
@@ -153,7 +182,7 @@ public class IMFrame extends JFrame implements IMConstants
   }
 
   /**
-   * Shows the login dialog.
+   * Shows the login dialog (server list)
    */
   void connectActionPerformed() 
   {
@@ -180,6 +209,8 @@ public class IMFrame extends JFrame implements IMConstants
     m_menuUserRegister.setEnabled(true);
     m_menuUserLostpassword.setEnabled(true);
     
+	downloadAll();
+    
   }
 
   /**
@@ -202,7 +233,7 @@ public class IMFrame extends JFrame implements IMConstants
       m_jQueryResultPanel.setEnabled(false);
       m_labelTable.setEnabled(false);
 
-      IMRunnableMain.closeDBConnection();
+      IMMain.closeDBConnection();
       m_labelTable.setText(IMMessage.getString("CHOOSE_SERVER"));
       setStatusBar(IMMessage.getString("CHOOSE_SERVER"));
       m_userActive = null;
@@ -220,7 +251,7 @@ public class IMFrame extends JFrame implements IMConstants
   private void setupDisplay()
   {
     m_jContentPane.setLayout(new BorderLayout());
-    setSize(new Dimension(946, 601));
+    setSize(new Dimension(m_nWidth, m_nHeight));
     setTitle(IMMessage.getString("MAIN_TITLE"));
     getAccessibleContext().setAccessibleDescription
       (IMMessage.getString("MAIN_DESC"));
@@ -331,9 +362,16 @@ public class IMFrame extends JFrame implements IMConstants
 		});
 
     
-    m_menuUserAlbums = createJMenuItem(m_menuUserAlbums, "MAIN_MENU_ALBUMS", 'A', false, "gallery", "MAIN_MENU_ALBUMS_DESC", new Callable<Void>() {
+    m_menuUserAlbums = createJMenuItem(m_menuUserAlbums, "MAIN_MENU_ALBUMS", 'A', false, "album", "MAIN_MENU_ALBUMS_DESC", new Callable<Void>() {
 		   public Void call() {
-
+			   	showAlbumPanel(m_userActive);
+				return null;
+		   }
+		});
+    
+    m_menuUserPictures = createJMenuItem(m_menuUserPictures, "MAIN_MENU_PICTURES", 'K', false, null, "MAIN_MENU_PICTURES_DESC", new Callable<Void>() {
+		   public Void call() {
+			   	
 				return null;
 		   }
 		});
@@ -344,6 +382,63 @@ public class IMFrame extends JFrame implements IMConstants
 					return null;
 			   }
 			});
+    
+    m_menuUserAlbumNew = createJMenuItem(m_menuUserAlbumNew, "MAIN_MENU_ALBUM_NEW", 'L', false, "album_new", "MAIN_MENU_ALBUM_NEW_DESC", new Callable<Void>() {
+		   public Void call() {
+			   	showNewAlbumDialog();
+				return null;
+		   }
+		});
+    
+    m_menuGalleryHome = createJMenuItem(m_menuGalleryHome, "MAIN_MENU_HOME", 'K', false, null, "MAIN_MENU_HOME_DESC", new Callable<Void>() {
+		   public Void call() {
+
+				return null;
+		   }
+		});
+    
+    m_menuGalleryUsers = createJMenuItem(m_menuGalleryUsers, "MAIN_MENU_USERS", 'F', false, null, "MAIN_MENU_USERS_DESC", new Callable<Void>() {
+		   public Void call() {
+
+				return null;
+		   }
+		});
+    
+    m_menuGalleryNear = createJMenuItem(m_menuGalleryNear, "MAIN_MENU_NEAR", 'Ö', false, null, "MAIN_MENU_NEAR_DESC", new Callable<Void>() {
+		   public Void call() {
+
+				return null;
+		   }
+		});
+    
+    m_menuGallerySearch = createJMenuItem(m_menuGallerySearch, "MAIN_MENU_SEARCH", 'S', false, null, "MAIN_MENU_SEARCH_DESC", new Callable<Void>() {
+		   public Void call() {
+
+				return null;
+		   }
+		});
+    
+    m_menuSystemSettings = createJMenuItem(m_menuSystemSettings, "MAIN_MENU_SETTINGS", 'S', false, null, "MAIN_MENU_SETTINGS_DESC", new Callable<Void>() {
+		   public Void call() {
+
+				return null;
+		   }
+		});
+    
+    m_menuSystemAbout = createJMenuItem(m_menuSystemAbout, "MAIN_MENU_ABOUT", 'N', false, null, "MAIN_MENU_ABOUT_DESC", new Callable<Void>() {
+		   public Void call() {
+
+				return null;
+		   }
+		});
+    
+    m_menuSystemHelp = createJMenuItem(m_menuSystemHelp, "MAIN_MENU_HELP", 'G', false, null, "MAIN_MENU_HELP_DESC", new Callable<Void>() {
+		   public Void call() {
+
+				return null;
+		   }
+		});
+
 
     m_menuConnection.setText(IMMessage.getString("MAIN_MENU_FILE"));
     m_menuConnection.setMnemonic('K');
@@ -365,20 +460,59 @@ public class IMFrame extends JFrame implements IMConstants
     m_menuUser.add(m_menuUserProfile);
     m_menuUser.add(m_menuUserSettings);
     m_menuUser.add(m_menuUserAlbums);
+    m_menuUser.add(m_menuUserPictures);
     m_menuUser.addSeparator();
     m_menuUser.add(m_menuUserUpload);
+    m_menuUser.add(m_menuUserAlbumNew);
     
     
     m_menuGallery.setText(IMMessage.getString("MAIN_MENU_GALLERY"));
     m_menuGallery.setMnemonic('G');
+    m_menuGallery.add(m_menuGalleryHome);
+    m_menuGallery.add(m_menuGalleryUsers);
+    m_menuGallery.add(m_menuGallerySearch);
+    m_menuGallery.add(m_menuGalleryNear);
+    
+    m_menuSystem.setText(IMMessage.getString("MAIN_MENU_SYSTEM"));
+    m_menuSystem.setMnemonic('G');
+    m_menuSystem.add(m_menuSystemSettings);
+    m_menuSystem.add(m_menuSystemHelp);
+    m_menuSystem.add(m_menuSystemAbout);
     
     m_menuBar.add(m_menuConnection);
     m_menuBar.add(m_menuUser);
     m_menuBar.add(m_menuGallery);
+    m_menuBar.add(m_menuSystem);
 
     this.setJMenuBar(m_menuBar);
   }
+  
 
+
+public void downloadAll(){
+	  downloadCities();
+	  downloadCountries();
+	  downloadRegions();
+  }
+
+  public void downloadCountries(){
+	  IMQuery q = new IMQuery();
+	  m_countryAll = q.selectAllCountries();
+  }
+  
+  public void downloadCities() {
+	  IMQuery q = new IMQuery();
+	  m_cityAll = q.selectAllCities();
+  }
+  
+  public void downloadRegions(){
+	  IMQuery q = new IMQuery();
+	  m_regionAll = q.selectAllRegion();
+  }
+  
+  /**
+   * Wipe the user session, disable menuitems and then show the login panel
+   * */
   public void userLogout() {  
 	m_userActive = null;
 	
@@ -390,6 +524,10 @@ public class IMFrame extends JFrame implements IMConstants
 	showLoginPanel();
   }
   
+  /**
+   * Create a user session, enable menuitems, initiate the variables and then show the profile panel
+   * @param user User object, contains the user data
+   */
   public void userLogin(User user) {
 	  setAllMenu(m_menuUser, true);
 	  m_menuUserRegister.setEnabled(false);
@@ -400,30 +538,62 @@ public class IMFrame extends JFrame implements IMConstants
 	  showProfilePanel(m_userActive);
   }
   
+  /**
+   * Show the login panel
+   */
   void showLoginPanel(){
 	  JPanelLogin panel = new JPanelLogin(this);
 	  panel.init();
 	  m_jQueryResultPanel.setViewportView(panel);
   }
   
+  /**
+   * Show the signup panel
+   */
   void showSignupPanel(){
 	  JPanelSignup panel = new JPanelSignup(this);
 	  panel.init();
 	  m_jQueryResultPanel.setViewportView(panel);
   }
   
+  /**
+   * Show the profile panel
+   * @param user Object of the user will be displayed
+   */
   public void showProfilePanel(User user){
 	  JPanelProfile panel = new JPanelProfile(this, user);
 	  panel.init();
 	  m_jQueryResultPanel.setViewportView(panel);
   }
   
-  public void showSettingsPanel(){
-	  JPanelSettings panel = new JPanelSettings(this);
+  /**
+   * Show the album panel
+   * @param user Object of the user will be displayed
+   */
+  public void showAlbumPanel(User user){
+	  JPanelAlbums panel = new JPanelAlbums(this, user);
 	  panel.init();
 	  m_jQueryResultPanel.setViewportView(panel);
   }
   
+  /**
+   * Show the settings panel
+   */
+  public void showSettingsPanel(){
+	  JPanelSettings panel = new JPanelSettings(this, m_userActive);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+  }
+  
+  protected void showNewAlbumDialog() {
+	  new JDialogNewAlbum(this);
+  }
+  
+  /**
+   * Set all menuitem in a specific menu to state (false or true)
+   * @param menu The menu object
+   * @param state The preferred state (true/false)
+   */
   public void setAllMenu(JMenu menu, boolean state){
 	  Component[] comp = menu.getMenuComponents();
 	  for (int i=0; i<comp.length; i++){
@@ -434,6 +604,15 @@ public class IMFrame extends JFrame implements IMConstants
   }
   
   
+  /**
+   * Modify the JLabel object passed in the first parameter, and than return with it 
+   * @param label The JLabel object
+   * @param r Position of the JLabel
+   * @param text Labeltext of the JLabel
+   * @param mnemonic Mnemonic of the JLabel
+   * @param component Set the component this is labelling
+   * @return The modified JLabel object
+   */
   public static JLabel createJLabel(JLabel label, Rectangle r, String text, int mnemonic, Component component){
 	  label.setBounds(r);
 	  label.setText(IMMessage.getString(text));
@@ -444,6 +623,57 @@ public class IMFrame extends JFrame implements IMConstants
 	  return label;
   }
   
+  /**
+   * 
+   * @param box
+   * @param r
+   * @param array
+   * @param func
+   * @return
+   */
+  public static JComboBox createComboBox(JComboBox box, boolean enabled, int selected, Rectangle r, ArrayList<?> array, final Callable<Void> func){
+	  box.setBounds(r);
+	  box.setEnabled(enabled);
+	  box = setComboboxItems(box, array, selected);
+	  	  
+	  box.addActionListener(new ActionListener()
+      {
+	        public void actionPerformed(ActionEvent e)
+	        {
+	        	try {
+	        		func.call();
+				} catch (Exception e1) {
+					new IMMessage(IMConstants.ERROR, "APP_ERR", e1);
+				}
+	        }
+	      });
+	  
+	  return box;
+  }
+  
+  public static JComboBox setComboboxItems(JComboBox box, ArrayList<?> array, int selected){
+	  box.removeAllItems();
+	  Iterator<?> it = array.iterator();
+	  box.addItem(IMMessage.getString("SELECT"));
+	  while (it.hasNext()){
+		  Object o = it.next();
+		  box.addItem(o);
+	  }
+	  box.setSelectedIndex(selected);
+	  return box;
+  }
+  
+  /**
+   * 
+   * @param menuItem
+   * @param text
+   * @param mnemonik
+   * @param enabled
+   * @param iconName
+   * @param description
+   * @param func
+   * @return
+   */
   public static JMenuItem createJMenuItem(JMenuItem menuItem, String text, int mnemonik, boolean enabled, String iconName, String description, final Callable<Void> func){
 	  menuItem.setText(IMMessage.getString(text));
 	  menuItem.setMnemonic(mnemonik);
@@ -458,8 +688,7 @@ public class IMFrame extends JFrame implements IMConstants
 	        	try {
 	        		func.call();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					new IMMessage(IMConstants.ERROR, "APP_ERR", e1);
 				}
 	        }
 	      });
@@ -467,6 +696,17 @@ public class IMFrame extends JFrame implements IMConstants
     return menuItem;
   }
   
+  /**
+   * 
+   * @param button
+   * @param text
+   * @param mnemonic
+   * @param iconName
+   * @param description
+   * @param r
+   * @param func
+   * @return
+   */
   public static JButton createButton(JButton button, String text, int mnemonic, String iconName, String description, Rectangle r, final Callable<Void> func){
 	  button.setBounds(r);
 	  button.setText(IMMessage.getString(text));
@@ -481,8 +721,7 @@ public class IMFrame extends JFrame implements IMConstants
 				try {
 					func.call();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					new IMMessage(IMConstants.ERROR, "APP_ERR", e1);
 				}
 	        }
 	      });
@@ -493,8 +732,7 @@ public class IMFrame extends JFrame implements IMConstants
 	        	try {
 	        		func.call();
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					new IMMessage(IMConstants.ERROR, "APP_ERR", e1);
 				}
 	        }
 	      });
@@ -505,8 +743,59 @@ public class IMFrame extends JFrame implements IMConstants
   
   
 
+  	public ArrayList<Country> getcountryAll() {
+  		return m_countryAll;
+	}
+	
+	public void setcountryAll(ArrayList<Country> m_countryAll) {
+		this.m_countryAll = m_countryAll;
+	}
+	
+	public ArrayList<Region> getregionAll() {
+		return m_regionAll;
+	}
+	
+	public void setregionAll(ArrayList<Region> m_regionAll) {
+		this.m_regionAll = m_regionAll;
+	}
+	
+	public ArrayList<City> getcityAll() {
+		return m_cityAll;
+	}
+	
+	public void setcityAll(ArrayList<City> m_cityAll) {
+		this.m_cityAll = m_cityAll;
+	}
+	
+
+	public User getUserActive() {
+		return m_userActive;
+	}
+
+	public void setUserActive(User m_userActive) {
+		this.m_userActive = m_userActive;
+	}
+	
+	
+
+  public int getWidth() {
+		return m_nWidth;
+	}
+
+	public void setWidth(int m_nWidth) {
+		this.m_nWidth = m_nWidth;
+	}
+
+	public int getHeight() {
+		return m_nHeight;
+	}
+
+	public void setHeight(int m_nHeight) {
+		this.m_nHeight = m_nHeight;
+	}
+
 /**
-   * Exits the demo.
+   * Exits the application
    */
   void exitActionPerformed()
   {

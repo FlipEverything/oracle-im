@@ -25,6 +25,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 
+import bean.FocusedJLabel;
+import bean.IMFileChooser;
+
 import java.sql.SQLException;
 
 import java.io.IOException;

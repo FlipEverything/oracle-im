@@ -1,4 +1,4 @@
-
+package bean;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +16,7 @@ public class User {
 	private Date m_dRegistered;
 	private int m_nPictureSum;
 	private OrdImage m_imProfilePicture;
+	private OrdImage m_imProfilePictureThumb;
 	private String m_szUsername;
 	private int m_nCityId;
 	
@@ -29,13 +30,14 @@ public class User {
 		this.m_dRegistered = null;
 		this.m_nPictureSum = 0;
 		this.m_imProfilePicture = null;
+		this.m_imProfilePictureThumb = null;
 		this.m_szUsername = null;
 		this.m_nCityId = 0;
 	}
 	
 	public User(int m_nUserId, String m_szFirstName, String m_szLastname,
 			String m_szPassword, String m_szEmail, Date m_dRegistered,
-			int m_nPictureSum, OrdImage m_imProfilePicture,
+			int m_nPictureSum, OrdImage m_imProfilePicture, OrdImage m_imProfilePictureThumb,
 			String m_szUsername, int m_nCityId) {
 		super();
 		this.m_nUserId = m_nUserId;
@@ -46,6 +48,7 @@ public class User {
 		this.m_dRegistered = m_dRegistered;
 		this.m_nPictureSum = m_nPictureSum;
 		this.m_imProfilePicture = m_imProfilePicture;
+		this.m_imProfilePictureThumb = m_imProfilePictureThumb;
 		this.m_szUsername = m_szUsername;
 		this.m_nCityId = m_nCityId;
 	}
@@ -73,7 +76,7 @@ public class User {
 	    	}
 	    	password = hexString.toString();
 		} catch (NoSuchAlgorithmException e) {
-			new IMMessage(IMConstants.ERROR, "APP_ERR", e);
+			
 		}
 		
 		return password;
@@ -143,6 +146,14 @@ public class User {
 
 	public void setProfilePicture(OrdImage m_imProfilePicture) {
 		this.m_imProfilePicture = m_imProfilePicture;
+	}
+	
+	public OrdImage getProfilePictureThumb() {
+		return m_imProfilePictureThumb;
+	}
+
+	public void setProfilePictureThumb(OrdImage m_imProfilePictureThumb) {
+		this.m_imProfilePictureThumb = m_imProfilePictureThumb;
 	}
 
 	public String getUsername() {

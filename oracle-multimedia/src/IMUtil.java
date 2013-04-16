@@ -28,72 +28,7 @@ import java.io.FileOutputStream;
 class IMUtil implements IMConstants
 {
   static int counter = 0;
-  /**
-   * Generates and updates the thumbnail image.
-   * @param iProdId the product id
-   * @param img     the media object pointer for photo. Should not be null.
-   * @param imgThumb the media object pointer for the thumbnail image. 
-   *                 Can be null.
-   * @return imgThumb the updated media object pointer for the thumbnail image
-   */
-  static OrdImage generateThumbnail(int iProdId, OrdImage img, OrdImage imgThumb) 
-    throws SQLException
-  {
-    String sQuery = null;
-    OracleConnection conn = null;
-    OracleResultSet rs = null;
-    OraclePreparedStatement pstmt = null;
 
-    try
-    {
-      conn = IMRunnableMain.getDBConnection();
-
-      if (imgThumb == null)
-      {
-        // The thumbnail media pointer is not initialized.
-        // Initializes it first.
-        sQuery = new String(
-            "update pm.online_media set product_thumbnail = " + 
-            "ORDSYS.ORDImage.init() where product_id = ?");
-        pstmt = (OraclePreparedStatement) conn.prepareCall(sQuery);
-        pstmt.setInt(1, iProdId);
-        pstmt.execute();
-        pstmt.close();
-
-        // Acquires the new pointer and the permission to update.
-        sQuery = new String("select product_thumbnail from pm.online_media " +
-            "where product_id = ? for update");
-        pstmt = (OraclePreparedStatement) conn.prepareStatement(sQuery);
-        pstmt.setInt(1, iProdId);
-        rs = (OracleResultSet)pstmt.executeQuery();
-        if (rs.next() == false)
-          throw new SQLException();
-        else
-          imgThumb = (OrdImage)rs.getORAData(1, OrdImage.getORADataFactory());
-
-        rs.close();
-        pstmt.close();
-      }
-
-      // Generates the thumbnail image.
-      img.processCopy("maxScale=64 64, fileFormat=GIFF", imgThumb);
-
-      // Updates the thumbnail image in the database.
-      sQuery = new String(
-          "update pm.online_media set product_thumbnail = ? where product_id = ?");
-      pstmt = (OraclePreparedStatement) conn.prepareCall(sQuery);
-      pstmt.setORAData(1, imgThumb);
-      pstmt.setInt(2, iProdId);
-      pstmt.execute();
-      pstmt.close();
-
-      return imgThumb;
-    }
-    finally
-    {
-      IMUtil.cleanup(rs, pstmt);
-    }
-  }
 
   /**
    * This method is a wrapper for OrdImage.setProperties.

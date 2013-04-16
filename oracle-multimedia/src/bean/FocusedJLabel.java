@@ -1,3 +1,4 @@
+package bean;
 
 
 import javax.swing.JLabel;
@@ -14,12 +15,12 @@ import java.awt.event.FocusEvent;
  * it be able to gain focus.
  */
 @SuppressWarnings("serial")
-class FocusedJLabel extends JLabel
+public class FocusedJLabel extends JLabel
 {
   /**
    * Constructs the JLabel and adds focus listener.
    */
-  FocusedJLabel(String sLabel)
+  public FocusedJLabel(String sLabel)
   {
     super(sLabel);
     addFocusListener(new FocusListener()

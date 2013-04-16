@@ -1,4 +1,5 @@
 
+
 /* Copyright (c) 2003, 2008, Oracle. All rights reserved.  */
 public class IMMessageResource extends java.util.ListResourceBundle 
 {
@@ -8,7 +9,7 @@ public class IMMessageResource extends java.util.ListResourceBundle
 	{"LOGIN_SUCCESS", " Sikeres bejelentkezés."},
 	{"SIGNUP_SUCCESS", " Sikeres regisztráció."},
 	{"SIGNUP_ERROR", " Sikertelen regisztráció."},
-	{"ALREADY_RUNNING", " A program már egy példányban fut. Kilépés..."},
+	{"ALREADY_RUNNING", " A program már egy példányban fut"},
     {"CANNOT_CONNECT", " Az adatbáziskapcsolat létrehozása sikertelen"},
     {"CHOOSE_SERVER", " Nincs kapcsolat! Válasszon szervert!"},
     {"CONNECTED_TO", " A kapcsolat sikeresen létrehozva: "},
@@ -59,10 +60,28 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"MAIN_MENU_SETTINGS_DESC", ""},
     {"MAIN_MENU_ALBUMS", "Albumok"},
     {"MAIN_MENU_ALBUMS_DESC", ""},
-    {"MAIN_MENU_UPLOAD", "Kép feltöltése"},
+    {"MAIN_MENU_UPLOAD", "Új kép feltöltése"},
     {"MAIN_MENU_UPLOAD_DESC", ""},
+    {"MAIN_MENU_ALBUM_NEW", "Új album létrehozása"},
+    {"MAIN_MENU_ALBUM_NEW_DESC", ""},
     {"MAIN_MENU_GALLERY", "Galéria"},
     {"MAIN_MENU_GALLERY_DESC", ""},
+    {"MAIN_MENU_PICTURES", "Képek"},
+    {"MAIN_MENU_PICTURES_DESC", ""},
+    {"MAIN_MENU_HOME", "Kezdőoldal"},
+    {"MAIN_MENU_HOME_DESC", ""},
+    {"MAIN_MENU_USERS", "Felhasználók"},
+    {"MAIN_MENU_USERS_DESC", ""},
+    {"MAIN_MENU_SEARCH", "Keresés"},
+    {"MAIN_MENU_SEARCH_DESC", ""},
+    {"MAIN_MENU_NEAR", "Közelben készült"},
+    {"MAIN_MENU_NEAR_DESC", ""},
+    {"MAIN_MENU_SYSTEM", "Rendszer"},
+    {"MAIN_MENU_SYSTEM_DESC", ""},
+    {"MAIN_MENU_ABOUT", "Névjegy"},
+    {"MAIN_MENU_ABOUT_DESC", ""},
+    {"MAIN_MENU_HELP", "Súgó"},
+    {"MAIN_MENU_HELP_DESC", ""},
     {"MAIN_MENU_IMPORT", "Import"},
     {"MAIN_MENU_IMPORT_DESC", ""},
     {"MAIN_MENU_EXPORT", "Export"},
@@ -113,6 +132,24 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"LOGINDIAG_PORT_FIELD_DESC", ""},
     {"LOGINDIAG_SID_FIELD_DESC", ""},
     {"LOGINDIAG_DESCRIPTION_FIELD_DESC", ""},
+    
+    
+    {"NEWALBUMDIAG_NAME", "Album neve:"},
+    {"NEWALBUMDIAG_IS_PUBLIC", "Publikus-e?"},
+    
+    
+    {"COUNTRY", "Ország"},
+    {"REGION", "Megye"},
+    {"CITY", "Város"},
+    {"SELECT", "Válasszon!"},
+    {"MODIFY_SUCCESS", "Sikeres módosítás!"},
+    {"SAVE", "Mentés"},
+    {"CREATE_SUCCESS", "Sikeres létrehozás!"},
+    {"UPLOAD_PROFILE_PIC", "Új profilkép"},
+    {"PICTURE_ORIGINAL", "Kép megtekintése eredeti méretben"},
+    {"IMAGE_AND_THUMB_UPLOAD_SUCCESS", "Sikeres képfeltöltés! Sikeres bélyegkép generálás!"},
+    
+    
     {"CHECK_MEDIA_NAME", ""},
     {"CHECK_MEDIA_DESC", "Click mouse or tap SPACE to check media information for product"},
     {"TBL_ID_DESC", "This product ID is "},

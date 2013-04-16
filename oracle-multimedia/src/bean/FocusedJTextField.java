@@ -1,3 +1,4 @@
+package bean;
 
 
 import java.awt.event.FocusListener;
@@ -12,7 +13,7 @@ import javax.swing.UIManager;
  * focus when it is set to be uneditable. 
  */
 @SuppressWarnings("serial")
-class FocusedJTextField extends JTextField
+public class FocusedJTextField extends JTextField
 {
   /**
    * Constructs the JTextField with the focusListener

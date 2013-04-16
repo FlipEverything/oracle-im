@@ -1,3 +1,4 @@
+package bean;
 
 
 import javax.swing.JTable;
@@ -8,9 +9,10 @@ import javax.swing.table.TableModel;
  * isManagingFocus to avoid letting the table
  * absorb TAB.
  */
-class IMTable extends JTable
+@SuppressWarnings("serial")
+public class IMTable extends JTable
 {
-  IMTable(TableModel dm)
+  public IMTable(TableModel dm)
   {
     super(dm);
   }

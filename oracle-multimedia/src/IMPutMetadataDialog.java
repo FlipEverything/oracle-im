@@ -105,7 +105,7 @@ public class IMPutMetadataDialog extends JDialog implements IMConstants
 
       sb.append("</rdf:Description></rdf:RDF></xmpMetadata>");
 
-      XMLType xmp = XMLType.createXML(IMRunnableMain.getDBConnection(), sb.toString(),
+      XMLType xmp = XMLType.createXML(IMMain.getDBConnection(), sb.toString(),
                 "http://xmlns.oracle.com/ord/meta/xmp", true, true);
 
       //

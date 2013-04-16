@@ -1,3 +1,4 @@
+package bean;
 
 
 import java.awt.event.FocusListener;
@@ -13,7 +14,7 @@ import javax.swing.UIManager;
  * isManagingFocus to force it to not handle TAB. 
  */
 @SuppressWarnings("serial")
-class FocusedJTextArea extends JTextArea
+public class FocusedJTextArea extends JTextArea
 {
   /**
    * Constructs the JTextArea with specified

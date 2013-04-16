@@ -1,3 +1,4 @@
+package bean;
 
 
 import javax.swing.table.DefaultTableModel;
@@ -9,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
  * to make the cells uneditable.
  */
 @SuppressWarnings("serial")
-class IMAttrTableModel extends DefaultTableModel 
+public class IMAttrTableModel extends DefaultTableModel 
 {
   public IMAttrTableModel(Object[][] data, Object[] columnNames)
   {

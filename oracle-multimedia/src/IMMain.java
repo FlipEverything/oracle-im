@@ -12,35 +12,30 @@ import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+import bean.User;
+
 import oracle.jdbc.OracleConnection;
 
 /**
  * The IMExample class creates the demo frame and maintains
  * the only connection to the database.
  */
-public class IMRunnableMain implements IMConstants
+public class IMMain implements IMConstants
 {
   private static OracleConnection s_dbConn = null;
-  private ServerSocket SERVER_SOCKET;
+  private static ServerSocket SERVER_SOCKET;
   
   /**
    * Constructs the main demo frame.
    */
-  public IMRunnableMain()
+  public IMMain()
   {
     try
     {
-      UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-   	  System.setProperty("apple.laf.useScreenMenuBar", "true");
-      System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
       
-      SERVER_SOCKET = new ServerSocket(1339);
+
       IMFrame frame = new IMFrame();
-    } catch (IOException e1) {
-  	  new IMMessage(IMConstants.ERROR, "ALREADY_RUNNING", e1);
-  	  System.exit(0);
-    }
-    catch (Exception e)
+    } catch (Exception e)
     {
       new IMMessage(IMConstants.ERROR, "APP_ERR", e);
     }
@@ -60,6 +55,7 @@ public class IMRunnableMain implements IMConstants
       if (conn == null)
         throw new SQLException();
       s_dbConn = conn;
+      s_dbConn.setAutoCommit(true);
     }
     else
     {
@@ -145,6 +141,17 @@ public class IMRunnableMain implements IMConstants
 
   public static void main(String[] args)
   {
-    new IMRunnableMain();
+	try {
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	   	  System.setProperty("apple.laf.useScreenMenuBar", "true");
+	      System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
+		SERVER_SOCKET = new ServerSocket(1339);
+	} catch (IOException e1) {
+	  	  new IMMessage(IMConstants.ERROR, "ALREADY_RUNNING", e1);
+	  	  System.exit(0);
+	} catch (Exception e2){
+		new IMMessage(IMConstants.ERROR, "APP_ERR", e2);
+	}
+    new IMMain();
   }
 }

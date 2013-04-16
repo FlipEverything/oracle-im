@@ -34,6 +34,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JPanel;
 import javax.swing.JComponent;
 
+import bean.FocusedJTextArea;
+import bean.FocusedJTextField;
+
 import java.sql.SQLException;
 import java.sql.ResultSet;
 
@@ -351,7 +354,7 @@ public class IMProductDialog extends JDialog implements IMConstants
 
     try
     {
-      conn = IMRunnableMain.getDBConnection();
+      conn = IMMain.getDBConnection();
 
       pstmt = (OraclePreparedStatement)conn.prepareStatement(sQuery);
       pstmt.setInt(1, m_iProdId);
@@ -418,7 +421,7 @@ public class IMProductDialog extends JDialog implements IMConstants
             (((KeyEvent)ae).getKeyCode() == KeyEvent.VK_ENTER)) 
           || (ae instanceof ActionEvent))
       {
-        IMRunnableMain.commit();
+        IMMain.commit();
 
         m_resultSetTableModel.unsetCheckMedia(m_iRowNumber);
         this.setVisible(false);
@@ -444,7 +447,7 @@ public class IMProductDialog extends JDialog implements IMConstants
             (((KeyEvent)ae).getKeyCode() == KeyEvent.VK_ENTER)) 
           || (ae instanceof ActionEvent))
       {
-        IMRunnableMain.rollback();
+        IMMain.rollback();
 
         m_resultSetTableModel.unsetCheckMedia(m_iRowNumber);
         this.setVisible(false);

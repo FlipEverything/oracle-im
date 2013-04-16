@@ -1,3 +1,4 @@
+package bean;
 
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,7 +20,6 @@ import org.w3c.dom.ProcessingInstruction;
 class XMLTreeNode extends DefaultMutableTreeNode
 {
 
-  private boolean firstTime;
   private int position;
 
   /**
@@ -106,7 +106,7 @@ class XMLTreeNode extends DefaultMutableTreeNode
     }
     
     NodeList nodelist = node.getChildNodes();
-    Object obj = null;
+    
     int k = nodelist.getLength();
     if(nodelist != null)
     {

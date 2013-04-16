@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import bean.User;
+
 
 
 @SuppressWarnings("serial")
@@ -75,7 +77,7 @@ public class JPanelLogin extends JPanel implements IMConstants{
 	 /**
 	   * Draws buttons.
 	   */
-	  private void setupButton()
+	  protected void setupButton()
 	  {
 	    IMFrame.createButton(m_jButtonLogin, m_szButtonConfirmTitle, 'L', "confirm", "LOGINDIAG_LOGIN_BUTTON_DESC", 
 	    		new Rectangle(m_nLastButtonStart, m_nHeight-m_nButtonHeight-30, m_nButtonWidth  , m_nButtonHeight), new Callable<Void>() {
@@ -141,7 +143,8 @@ public class JPanelLogin extends JPanel implements IMConstants{
 			 ){
 			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
 		  } else {
-			  User user = new User(m_jLoginField.getText(), new String(m_jPasswordField.getPassword()));
+			  User user = new User(new String(m_jPasswordField.getPassword()), m_jLoginField.getText());
+			  
 			  IMQuery q = new IMQuery();
 			  user = q.checkLogin(user);
 			  

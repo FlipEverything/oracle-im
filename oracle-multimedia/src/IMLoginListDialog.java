@@ -282,13 +282,13 @@ public class IMLoginListDialog extends JDialog implements IMConstants
         m_aCreditentals.get(row).getPort() + "))(connect_data=(sid=" +
         m_aCreditentals.get(row).getSid() + ")))";
 
-      IMRunnableMain.setDBConnection(
+      IMMain.setDBConnection(
           (OracleConnection) DriverManager.getConnection(connectString, 
         		  m_aCreditentals.get(row).getUsername(), 
         		  m_aCreditentals.get(row).getPassword())
           );
 
-      IMRunnableMain.setAutoCommit(false);
+      IMMain.setAutoCommit(false);
       m_jFrameOwner.enableDisplay();
 
       this.setVisible(false);

@@ -15,6 +15,9 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.Box;
 
+import bean.IMAttrTableModel;
+import bean.IMTable;
+
 import java.io.IOException;
 
 import java.sql.SQLException;
@@ -455,7 +458,7 @@ class IMImagePanel extends IMMediaPanel implements IMConstants
             "update pm.online_media set product_photo = ORDSYS.ORDImage.init(), " + 
             "product_thumbnail = ORDSYS.ORDImage.init() where product_id = ?");
 
-        conn = IMRunnableMain.getDBConnection();
+        conn = IMMain.getDBConnection();
         pstmt = (OraclePreparedStatement) conn.prepareCall(sQuery);
         pstmt.setInt(1, m_iProdId);
         pstmt.execute();

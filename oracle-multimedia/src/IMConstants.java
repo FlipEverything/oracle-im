@@ -47,4 +47,7 @@ public interface IMConstants
    */
   final static boolean ENABLE_STACK_TRACE = true;
   final static boolean ENABLE_STACK_GUI = true;
+  
+  final static int THUMB_WIDTH = 150;
+  final static int THUMB_HEIGHT = 150;
 }
