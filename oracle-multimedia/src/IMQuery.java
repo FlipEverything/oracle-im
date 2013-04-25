@@ -88,10 +88,11 @@ class IMQuery implements IMConstants
 			String str;
 			StringBuffer sb = new StringBuffer();
 				while ((str = in.readLine()) != null) {
-						sb.append(str + "\n ");
+						sb.append(str + "\n");
 				}
 				in.close();
-				Statement stmt = (OraclePreparedStatement) m_dbConn.createStatement();
+				System.out.println(sb.toString());
+				Statement stmt = m_dbConn.createStatement();
 				stmt.executeUpdate(sb.toString());
 				isScriptExecuted = true;
 		} catch (Exception e) {

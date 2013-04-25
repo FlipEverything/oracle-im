@@ -2,6 +2,7 @@
 
 
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 import javax.swing.JTable;
 import javax.swing.JLabel;
 import javax.swing.JCheckBox;
@@ -18,13 +19,13 @@ import java.awt.Component;
 class BooleanRenderer extends JCheckBox 
   implements TableCellRenderer, IMConstants
 {
-  protected IMResultSetTableModel m_tableModel = null;
+  protected TableModel m_tableModel = null;
 
   /** 
    * Constructs the renderer from the table model.
    * @param tm  the <code>IMResultSetTableModel</code>
    */
-  public BooleanRenderer(IMResultSetTableModel tm)
+  public BooleanRenderer(TableModel tm)
   {
     super();
     m_tableModel = tm;
@@ -46,26 +47,11 @@ class BooleanRenderer extends JCheckBox
   public Component getTableCellRendererComponent(JTable table, Object value, 
       boolean isSelected, boolean hasFocus, int row, int column)
   {
-    if (isSelected) 
-    {
-      setForeground(table.getSelectionForeground());
-      super.setBackground(table.getSelectionBackground());
-    }
-    else 
-    {
-      setForeground(table.getForeground());
-      setBackground(table.getBackground());
-    }
 
-    if (hasFocus)
-    {
-      setBackground(UIManager.getColor("Label.foreground"));
-      setBorder(UIManager.getBorder("Table.focusCellHighlightBorder"));
-    }
 
     setSelected((value != null && ((Boolean)value).booleanValue()));
     getAccessibleContext().setAccessibleName(IMMessage.getString("CHECK_MEDIA_NAME"));
-    setToolTipText(IMMessage.getString("CHECK_MEDIA_DESC") + m_tableModel.getID(row));
+
 
     return this;
   }

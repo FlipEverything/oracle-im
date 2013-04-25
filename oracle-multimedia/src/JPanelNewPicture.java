@@ -50,6 +50,7 @@ public class JPanelNewPicture extends JPanelLogin {
 	
 	private Picture m_pictureNew = new Picture();
 	private IMLoadFile load = null;
+	private JDialogTable m_dialogKeyword;
 	
 
 	
@@ -182,6 +183,16 @@ public class JPanelNewPicture extends JPanelLogin {
 		
 		contentPanel.add(m_jButtonCancel, null);
 		contentPanel.add(m_jButtonLogin, null);
+		
+		
+		
+		//ArrayList<Keyword> keywords = q.getKeywords();
+		ArrayList<Keyword> keywords = new ArrayList<Keyword>();
+		keywords.add(new Keyword(1, "vmi"));
+		keywords.add(new Keyword(1, "vmidsfs"));
+		keywords.add(new Keyword(1, "naabab"));
+		
+		m_dialogKeyword = new JDialogTable(m_jFrameOwner, new IMTableModel(keywords, this));		
 
 	} 
 	
@@ -192,10 +203,7 @@ public class JPanelNewPicture extends JPanelLogin {
 
 
 	protected void showKeywordDialog() {
-		IMQuery q = new IMQuery();
-		ArrayList<Keyword> keywords = q.getKeywords();
-		JDialogTable dialog = new JDialogTable(m_jFrameOwner, new IMKeywordTableModel(keywords, this));
-		
+		m_dialogKeyword.setVisible(true);
 	}
 
 

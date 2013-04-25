@@ -141,7 +141,7 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"UPLOADDIAG_CHOOSE_CATEGORIES", "Válasszon kategóriákat"},
     {"UPLOADDIAG_CHOOSE_KEYWORDS", "Válasszon kulcsszavakat"},
     
-    {"NO_ORACLE_HOME", "Nem találom a kapcsolat létrehozásához szükséges drivereket! \nAmennyiben a szerver a helyi gépen fut állítsa be az ORACLE_HOME környezeti változót! \n Amennyiben távoli erőforráson fut úgy a megfelelő instant client ORACLE_HOME-ba másolásával használhatja a programot!"},
+    {"CHOSEN", "Választott"},
     
     {"NEWALBUMDIAG_NAME", "Album neve:"},
     {"NEWALBUMDIAG_IS_PUBLIC", "Publikus-e?"},
