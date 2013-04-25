@@ -29,6 +29,7 @@ public class IMLoadFile implements IMConstants
   Component m_parent = null;
   IMFileChooser m_jFileChooser = null;
   private Object m_objUpdated;
+  private int returnVal;
 
   /**
    * Constructs IMLoadFile to load product photo.
@@ -62,31 +63,34 @@ public class IMLoadFile implements IMConstants
     m_jFileChooser.getAccessibleContext().setAccessibleDescription(
         IMMessage.getString("LOAD_DIAG_DESC"));
     m_parent = parent;
-
-    int returnVal = m_jFileChooser.showDialog(parent, "OK");
-    if (returnVal == JFileChooser.APPROVE_OPTION)
-    {
-      try
-      {
-        loadNewMedia();
-      }
-      catch (FileNotFoundException e)
-      {
-        new IMMessage(IMConstants.ERROR, "FILE_NOTFOUND", e);
-      }
-      catch (SecurityException e)
-      {
-        new IMMessage(IMConstants.ERROR, "FILE_NORIGHT", e);
-      }
-      catch (IOException e)
-      {
-        new IMMessage(IMConstants.ERROR, "IO_FAILED", e);
-      }
-      catch (SQLException e)
-      {
-        new IMMessage(IMConstants.ERROR, "UPDATE_FAILED", e);
-      }
-    }
+    returnVal = m_jFileChooser.showDialog(m_parent, "OK");
+  }
+  
+  public int getReturnVal(){
+	  return returnVal;
+  }
+  
+  public void startUpload(){
+	      try
+	      {
+	        loadNewMedia();
+	      }
+	      catch (FileNotFoundException e)
+	      {
+	        new IMMessage(IMConstants.ERROR, "FILE_NOTFOUND", e);
+	      }
+	      catch (SecurityException e)
+	      {
+	        new IMMessage(IMConstants.ERROR, "FILE_NORIGHT", e);
+	      }
+	      catch (IOException e)
+	      {
+	        new IMMessage(IMConstants.ERROR, "IO_FAILED", e);
+	      }
+	      catch (SQLException e)
+	      {
+	        new IMMessage(IMConstants.ERROR, "UPDATE_FAILED", e);
+	      }
   }
 
   /**
@@ -136,15 +140,13 @@ public class IMLoadFile implements IMConstants
     if (m_objUpdated instanceof User){
     	((User)m_objUpdated).setProfilePicture(m_img);
     } else if (m_objUpdated instanceof Picture){
-    	//TODO
-    	//FIXME
+    	((Picture)m_objUpdated).setPicture(m_img);
     }
     
     if (m_objUpdated instanceof User){
       	((User)m_objUpdated).setProfilePictureThumb(m_imgThumb);
       } else if (m_objUpdated instanceof Picture){
-      	//TODO
-      	//FIXME
+    	((Picture)m_objUpdated).setPictureThumbnail(m_imgThumb);
       }
 
     //((IMImagePanel)m_parent).setMedia(m_img, m_imgThumb);

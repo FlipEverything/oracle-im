@@ -277,7 +277,7 @@ public class IMLoginListDialog extends JDialog implements IMConstants
       String connectString;
       DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
       connectString = 
-        "jdbc:oracle:oci:@(description=(address=(host=" +
+        "jdbc:oracle:thin:@(description=(address=(host=" +
         m_aCreditentals.get(row).getHostname() + ")(protocol=tcp)(port=" +
         m_aCreditentals.get(row).getPort() + "))(connect_data=(sid=" +
         m_aCreditentals.get(row).getSid() + ")))";
@@ -288,7 +288,8 @@ public class IMLoginListDialog extends JDialog implements IMConstants
         		  m_aCreditentals.get(row).getPassword())
           );
 
-      IMMain.setAutoCommit(false);
+      
+      IMMain.setAutoCommit(true);
       m_jFrameOwner.enableDisplay();
 
       this.setVisible(false);
@@ -298,7 +299,18 @@ public class IMLoginListDialog extends JDialog implements IMConstants
       m_nActiveServerID = row;
       DatabaseCreditental db = m_aCreditentals.get(m_nActiveServerID);
       m_jFrameOwner.setStatusBar(IMMessage.getString("CONNECTED_TO")+" "+db.getUsername()+"@//"+db.getHostname()+":"+db.getPort()+"/"+db.getSid());
+      
+      /*IMQuery q = new IMQuery();
+      IMMessage question = new IMMessage(IMConstants.SUGGEST, "CREATE_TABLES");
+      if (question.m_isConfirmed){
+    	  if (q.executeDBScripts()){
+    		  new IMMessage(IMConstants.ERROR, "SUCCESS_CREATE_TABLES");
+    	  }
+      }*/
     }
+    catch (UnsatisfiedLinkError e){
+    	new IMMessage(IMConstants.ERROR, "NO_ORACLE_HOME", e);
+    } 
     catch (SQLException e)
     {
       new IMMessage(IMConstants.ERROR, "CANNOT_CONNECT", e);

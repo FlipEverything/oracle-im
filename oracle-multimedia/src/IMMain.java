@@ -55,7 +55,6 @@ public class IMMain implements IMConstants
       if (conn == null)
         throw new SQLException();
       s_dbConn = conn;
-      s_dbConn.setAutoCommit(true);
     }
     else
     {
@@ -132,7 +131,7 @@ public class IMMain implements IMConstants
   {
     if (s_dbConn != null)
     {
-      s_dbConn.rollback();
+      s_dbConn.commit();
       s_dbConn.close();
     }
 

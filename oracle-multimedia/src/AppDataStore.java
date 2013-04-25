@@ -49,7 +49,7 @@ public class AppDataStore {
     	
     	PreparedStatement stmt = c.prepareStatement(SELECT);
     	ResultSet rs = stmt.executeQuery();
-    	if(rs.next()){
+    	while(rs.next()){
     		array.add(
     				new DatabaseCreditental(
     						rs.getInt("id"), 

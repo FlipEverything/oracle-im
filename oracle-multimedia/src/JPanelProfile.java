@@ -77,23 +77,8 @@ public class JPanelProfile extends JPanel implements IMConstants{
 	   */
 	  protected void setupContentPane() 
 	  {
-		Icon profilePicture = null;
-		
-		if (m_userDisplayed.getProfilePictureThumb()==null){
-			profilePicture = new ImageIcon(IMFrame.class.getResource("icons/no_profile_picture.png"));
-		} else {
-			try {
-				byte[] thumbnail = IMImagePanel.getDataInByteArray(m_userDisplayed.getProfilePictureThumb());
-				profilePicture = new ImageIcon(thumbnail);
-			} catch (SQLException e) {
-				new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
-			} catch (IOException e) {
-				new IMMessage(IMConstants.ERROR, "APP_ERR", e);
-			}
-		}
-		
-		JLabel userPictureLabel = new JLabel(null, profilePicture, JLabel.CENTER);
-		userPictureLabel.setBounds(new Rectangle(m_nOffset, 0, THUMB_WIDTH, m_nHeight));
+		  
+		JLabel userPictureLabel = IMImage.showPicture(m_userDisplayed.getProfilePictureThumb(), new Rectangle(m_nOffset, 0, THUMB_WIDTH, m_nHeight), m_userDisplayed.getUsername());
 		userPictureLabel.addMouseListener(new MouseListener() {			
 			@Override
 			public void mouseReleased(MouseEvent e) {

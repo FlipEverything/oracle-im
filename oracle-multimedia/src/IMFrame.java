@@ -64,11 +64,9 @@ public class IMFrame extends JFrame implements IMConstants
   JMenuItem m_menuUserLogin = new JMenuItem();
   JMenuItem m_menuUserLogout = new JMenuItem();
   JMenuItem m_menuUserRegister = new JMenuItem();
-  JMenuItem m_menuUserLostpassword = new JMenuItem();
   JMenuItem m_menuUserProfile = new JMenuItem();
   JMenuItem m_menuUserSettings = new JMenuItem();
   JMenuItem m_menuUserAlbums = new JMenuItem();
-  JMenuItem m_menuUserPictures = new JMenuItem();
   JMenuItem m_menuUserUpload = new JMenuItem();
   JMenuItem m_menuUserAlbumNew = new JMenuItem();
   
@@ -92,9 +90,15 @@ public class IMFrame extends JFrame implements IMConstants
   private ArrayList<Country> m_countryAll = null;
   private ArrayList<Region> m_regionAll = null;
   private ArrayList<City> m_cityAll = null;
+  
+  double m_nScreenWidth = 0;
+  double m_nScreenHeight = 0;
 
   public IMFrame()
   {
+	  Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	  m_nScreenWidth = screenSize.getWidth();
+	  m_nScreenHeight = screenSize.getHeight();
     try
     { 
       m_jContentPane = getContentPane();
@@ -207,7 +211,6 @@ public class IMFrame extends JFrame implements IMConstants
     setAllMenu(m_menuUser, false);
     m_menuUserLogin.setEnabled(true);
     m_menuUserRegister.setEnabled(true);
-    m_menuUserLostpassword.setEnabled(true);
     
 	downloadAll();
     
@@ -273,7 +276,7 @@ public class IMFrame extends JFrame implements IMConstants
         {
           public void windowClosing(WindowEvent e)
           {
-          System.exit(0);
+          exitActionPerformed();
           }
         });
   }
@@ -340,12 +343,6 @@ public class IMFrame extends JFrame implements IMConstants
 		   }
 		});
     
-    m_menuUserLostpassword = createJMenuItem(m_menuUserLostpassword, "MAIN_MENU_LOSTPASS", 'E', false, "profile", "MAIN_MENU_LOSTPASS_DESC", new Callable<Void>() {
-		   public Void call() {
-
-				return null;
-		   }
-		});
     
     m_menuUserProfile = createJMenuItem(m_menuUserProfile, "MAIN_MENU_PROFILE", 'P', false, "profile", "MAIN_MENU_PROFILE_DESC", new Callable<Void>() {
 		   public Void call() {
@@ -369,16 +366,10 @@ public class IMFrame extends JFrame implements IMConstants
 		   }
 		});
     
-    m_menuUserPictures = createJMenuItem(m_menuUserPictures, "MAIN_MENU_PICTURES", 'K', false, null, "MAIN_MENU_PICTURES_DESC", new Callable<Void>() {
-		   public Void call() {
-			   	
-				return null;
-		   }
-		});
     
     m_menuUserUpload = createJMenuItem(m_menuUserUpload, "MAIN_MENU_UPLOAD", 'F', false, "upload", "MAIN_MENU_UPLOAD_DESC", new Callable<Void>() {
 			   public Void call() {
-
+				   showNewPicturePanel(m_userActive);
 					return null;
 			   }
 			});
@@ -455,12 +446,10 @@ public class IMFrame extends JFrame implements IMConstants
     m_menuUser.add(m_menuUserLogin);
     m_menuUser.add(m_menuUserLogout);
     m_menuUser.add(m_menuUserRegister);
-    m_menuUser.add(m_menuUserLostpassword);
     m_menuUser.addSeparator();
     m_menuUser.add(m_menuUserProfile);
     m_menuUser.add(m_menuUserSettings);
     m_menuUser.add(m_menuUserAlbums);
-    m_menuUser.add(m_menuUserPictures);
     m_menuUser.addSeparator();
     m_menuUser.add(m_menuUserUpload);
     m_menuUser.add(m_menuUserAlbumNew);
@@ -519,7 +508,6 @@ public void downloadAll(){
 	setAllMenu(m_menuUser, false);
 	m_menuUserRegister.setEnabled(true);
 	m_menuUserLogin.setEnabled(true);
-	m_menuUserLostpassword.setEnabled(true);
 	
 	showLoginPanel();
   }
@@ -532,7 +520,6 @@ public void downloadAll(){
 	  setAllMenu(m_menuUser, true);
 	  m_menuUserRegister.setEnabled(false);
 	  m_menuUserLogin.setEnabled(false);
-	  m_menuUserLostpassword.setEnabled(false);
 	  
 	  m_userActive = user;
 	  showProfilePanel(m_userActive);
@@ -587,6 +574,12 @@ public void downloadAll(){
   
   protected void showNewAlbumDialog() {
 	  new JDialogNewAlbum(this);
+  }
+  
+  protected void showNewPicturePanel(User user) {
+	  JPanelNewPicture panel = new JPanelNewPicture(this, user);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
   }
   
   /**
@@ -711,7 +704,10 @@ public void downloadAll(){
 	  button.setBounds(r);
 	  button.setText(IMMessage.getString(text));
 	  button.setMnemonic(mnemonic);
-	  button.setIcon(new ImageIcon(IMFrame.class.getResource("icons/"+iconName+".png")));
+	  
+	  if (iconName!=null)
+		  button.setIcon(new ImageIcon(IMFrame.class.getResource("icons/"+iconName+".png")));
+	  
 	  button.setToolTipText(IMMessage.getString(description));
 	  button.addKeyListener(new java.awt.event.KeyAdapter()
 	      {
@@ -792,6 +788,24 @@ public void downloadAll(){
 
 	public void setHeight(int m_nHeight) {
 		this.m_nHeight = m_nHeight;
+	}
+	
+	
+
+	public double getScreenWidth() {
+		return m_nScreenWidth;
+	}
+
+	public void setScreenWidth(double m_nScreenWidth) {
+		this.m_nScreenWidth = m_nScreenWidth;
+	}
+
+	public double getScreenHeight() {
+		return m_nScreenHeight;
+	}
+
+	public void setScreenHeight(double m_nScreenHeight) {
+		this.m_nScreenHeight = m_nScreenHeight;
 	}
 
 /**

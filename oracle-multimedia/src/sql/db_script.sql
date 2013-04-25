@@ -1,0 +1,855 @@
+SET SERVEROUTPUT ON;
+
+--------------------------------------------------------
+--  DROP TABLES
+--------------------------------------------------------
+BEGIN
+    EXECUTE IMMEDIATE 'DROP TABLE PICTURE_TO_CATEGORY';
+	EXECUTE IMMEDIATE 'DROP TABLE PICTURE_TO_KEYWORD';
+	EXECUTE IMMEDIATE 'DROP TABLE KEYWORDS';
+	EXECUTE IMMEDIATE 'DROP TABLE CATEGORIES';
+	EXECUTE IMMEDIATE 'DROP TABLE TAGS';
+	EXECUTE IMMEDIATE 'DROP TABLE COMMENTS';
+	EXECUTE IMMEDIATE 'DROP TABLE RATINGS';
+	EXECUTE IMMEDIATE 'DROP TABLE PICTURES';
+	EXECUTE IMMEDIATE 'DROP TABLE ALBUMS';
+	EXECUTE IMMEDIATE 'DROP TABLE USERS';
+	EXECUTE IMMEDIATE 'DROP TABLE CITIES';
+	EXECUTE IMMEDIATE 'DROP TABLE REGIONS';
+	EXECUTE IMMEDIATE 'DROP TABLE COUNTRIES';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -942 THEN
+         RAISE;
+      END IF;
+END;
+/
+
+--------------------------------------------------------
+--  DROP SEQUENCES
+--------------------------------------------------------
+BEGIN
+     EXECUTE IMMEDIATE 'DROP SEQUENCE  USERS_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  PICTURES_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  ALBUMS_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  COMMENTS_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  CITIES_INC';  
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  REGIONS_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  COUNTRIES_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  CATEGORIES_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  KEYWORDS_INC';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -2289 THEN
+         RAISE;
+      END IF;
+END;
+/
+
+
+--------------------------------------------------------
+--  DDL for Sequence USERS_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "USERS_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+   
+--------------------------------------------------------
+--  DDL for Sequence PICTURES_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "PICTURES_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+   
+--------------------------------------------------------
+--  DDL for Sequence ALBUMS_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "ALBUMS_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+
+--------------------------------------------------------
+--  DDL for Sequence COMMENTS_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "COMMENTS_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+   
+--------------------------------------------------------
+--  DDL for Sequence CITIES_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "CITIES_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;  
+
+--------------------------------------------------------
+--  DDL for Sequence REGIONS_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "REGIONS_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+
+--------------------------------------------------------
+--  DDL for Sequence COUNTRIES_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "COUNTRIES_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+
+--------------------------------------------------------
+--  DDL for Sequence CATEGORIES_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "CATEGORIES_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+
+--------------------------------------------------------
+--  DDL for Sequence KEYWORDS_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "KEYWORDS_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+   
+   
+   
+--------------------------------------------------------
+--  DDL for Table USERS
+--------------------------------------------------------
+     
+  CREATE TABLE "USERS" 
+   (	
+    "USER_ID" NUMBER(4,0), 
+	"FIRST_NAME" VARCHAR2(20 BYTE), 
+	"LAST_NAME" VARCHAR2(20 BYTE), 
+	"PASSWORD" VARCHAR2(50 BYTE), 
+	"EMAIL" VARCHAR2(30 BYTE), 
+	"REGISTERED" DATE, 
+	"PICTURE_SUM" NUMBER DEFAULT 0, 
+	"PROFILE_PICTURE" ORDIMAGE,
+	"PROFILE_PICTURE_THUMB" ORDIMAGE,
+	"USERNAME" VARCHAR2(20 BYTE),
+	"CITY_ID" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table PICTURES
+--------------------------------------------------------
+  
+  CREATE TABLE "PICTURES" 
+   (	
+    "PICTURE_ID" NUMBER, 
+	"PICTURE_NAME" VARCHAR2(20 BYTE), 
+	"UPLOAD_TIME" DATE, 
+	"PICTURE" ORDIMAGE,
+	"PICTURE_THUMBNAIL" ORDIMAGE,
+	"CITY_ID" NUMBER, 
+	"ALBUM_ID" NUMBER 
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+
+--------------------------------------------------------
+--  DDL for Table ALBUMS
+--------------------------------------------------------  
+  
+  CREATE TABLE "ALBUMS" 
+   (	
+    "ALBUM_ID" NUMBER, 
+	"USER_ID" NUMBER, 
+	"NAME" VARCHAR2(20 BYTE), 
+	"IS_PUBLIC" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+
+--------------------------------------------------------
+--  DDL for Table COMMENTS
+--------------------------------------------------------
+
+  CREATE TABLE "COMMENTS" 
+   (	
+    "COMMENT_ID" NUMBER, 
+	"COMMENT_TEXT" VARCHAR2(200 BYTE), 
+	"COMMENT_TIME" DATE, 
+	"USER_ID" NUMBER,
+	"PICTURE_ID" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table CITIES
+--------------------------------------------------------  
+
+  CREATE TABLE "CITIES" 
+   (	
+    "CITY_ID" NUMBER, 
+	"NAME" VARCHAR2(30 BYTE),
+	"REGION_ID" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table REGIONS
+--------------------------------------------------------  
+  
+  CREATE TABLE "REGIONS" 
+   (	
+    "REGION_ID" NUMBER, 
+	"NAME" VARCHAR2(30 BYTE),
+	"COUNTRY_ID" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table COUNTRIES
+--------------------------------------------------------
+
+  CREATE TABLE "COUNTRIES" 
+   (	
+    "COUNTRY_ID" NUMBER, 
+	"NAME" VARCHAR2(30 BYTE)
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table CATEGORIES
+--------------------------------------------------------
+  
+  CREATE TABLE "CATEGORIES" 
+   (	
+    "CATEGORY_ID" NUMBER, 
+	"NAME" VARCHAR2(30 BYTE)
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table KEYWORDS
+--------------------------------------------------------
+  
+  CREATE TABLE "KEYWORDS" 
+   (	
+    "KEYWORD_ID" NUMBER, 
+	"NAME" VARCHAR2(20 BYTE)
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+   
+--------------------------------------------------------
+--  DDL for Table TAGS
+--------------------------------------------------------
+  
+  CREATE TABLE "TAGS" 
+   (	
+	"PICTURE_ID" NUMBER, 
+	"USER_ID" NUMBER, 
+	"PIXEL_X" NUMBER(4,26), 
+	"PIXEL_Y" NUMBER(4,26)
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table RATINGS
+--------------------------------------------------------  
+  
+  CREATE TABLE "RATINGS" 
+   (	
+	"PICTURE_ID" NUMBER, 
+	"USER_ID" NUMBER,
+	"VALUE" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+   
+--------------------------------------------------------
+--  DDL for Table PICTURE_TO_CATEGORY
+--------------------------------------------------------
+
+  CREATE TABLE "PICTURE_TO_CATEGORY" 
+   (	
+    "PICTURE_ID" NUMBER, 
+	"CATEGORY_ID" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+--------------------------------------------------------
+--  DDL for Table PICTURE_TO_KEYWORD
+--------------------------------------------------------
+
+  CREATE TABLE "PICTURE_TO_KEYWORD" 
+   (	
+    "PICTURE_ID" NUMBER, 
+	"KEYWORD_ID" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+   
+--------------------------------------------------------
+-- CREATE LOG TABLES ??????
+--------------------------------------------------------
+
+/* ***************************
+    KELL LOGOLNI?
+   ***************************
+
+  CREATE TABLE "LOG_KEPEK" 
+   (	
+    "FELTOLTO" NUMBER, 
+	"KEP" NUMBER, 
+	"DATUM" DATE, 
+	"MUVELET" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+
+
+  CREATE TABLE "LOG_LOGIN" 
+   (	
+    "FELH" NUMBER, 
+	"DATUM" DATE, 
+	"LOGIN" NUMBER
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+
+
+  CREATE TABLE "LOG_MEGJEGYZES" 
+   (	
+    "MEGJ_ID" NUMBER, 
+	"USER_ID" NUMBER, 
+	"DATUM" DATE
+   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+
+*/
+
+
+
+--------------------------------------------------------
+--  Constraints for Table USERS
+--------------------------------------------------------
+
+  ALTER TABLE "USERS" ADD CONSTRAINT "USER_ID_PK" PRIMARY KEY ("USER_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+
+--------------------------------------------------------
+--  Constraints for Table PICTURES
+--------------------------------------------------------
+
+  ALTER TABLE "PICTURES" ADD CONSTRAINT "PICTURE_ID_PK" PRIMARY KEY ("PICTURE_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+
+--------------------------------------------------------
+--  Constraints for Table ALBUMS
+--------------------------------------------------------
+
+  ALTER TABLE "ALBUMS" ADD CONSTRAINT "ALBUM_ID_PK" PRIMARY KEY ("ALBUM_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+
+--------------------------------------------------------
+--  Constraints for Table COMMENTS
+--------------------------------------------------------
+
+  ALTER TABLE "COMMENTS" ADD CONSTRAINT "COMMENT_ID_PK" PRIMARY KEY ("COMMENT_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+
+--------------------------------------------------------
+--  Constraints for Table CITIES
+--------------------------------------------------------
+
+  ALTER TABLE "CITIES" ADD CONSTRAINT "CITY_ID_PK" PRIMARY KEY ("CITY_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+  
+--------------------------------------------------------
+--  Constraints for Table REGIONS
+--------------------------------------------------------
+
+  ALTER TABLE "REGIONS" ADD CONSTRAINT "REGION_ID_PK" PRIMARY KEY ("REGION_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+
+
+--------------------------------------------------------
+--  Constraints for Table COUNTRIES
+--------------------------------------------------------
+
+  ALTER TABLE "COUNTRIES" ADD CONSTRAINT "COUNTRY_ID_PK" PRIMARY KEY ("COUNTRY_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE; 
+ 
+--------------------------------------------------------
+--  Constraints for Table CATEGORIES
+--------------------------------------------------------
+
+  ALTER TABLE "CATEGORIES" ADD CONSTRAINT "CATEGORY_ID_PK" PRIMARY KEY ("CATEGORY_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE; 
+  
+--------------------------------------------------------
+--  Constraints for Table KEYWORDS
+--------------------------------------------------------
+
+  ALTER TABLE "KEYWORDS" ADD CONSTRAINT "KEYWORD_ID_PK" PRIMARY KEY ("KEYWORD_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+  
+  
+
+--------------------------------------------------------
+--  DDL for Index USERS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "USERS_USERNAME" ON "USERS" ("USERNAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+  
+  CREATE UNIQUE INDEX "USERS_EMAIL" ON "USERS" ("EMAIL") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+
+  CREATE UNIQUE INDEX "USERS_FULLNAME" ON "USERS" ("FIRST_NAME", "LAST_NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
+
+--------------------------------------------------------
+--  DDL for Index PICTURES
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "PICTURES_NAME" ON "PICTURES" ("PICTURE_NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);  
+  
+--------------------------------------------------------
+--  DDL for Index CITIES
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "CITIES_NAME" ON "CITIES" ("NAME", "REGION_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);    
+
+--------------------------------------------------------
+--  DDL for Index REGIONS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "REGIONS_NAME" ON "REGIONS" ("NAME", "COUNTRY_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);    
+
+--------------------------------------------------------
+--  DDL for Index REGIONS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "COUNTRIES_NAME" ON "COUNTRIES" ("NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);    
+  
+--------------------------------------------------------
+--  DDL for Index CATEGORIES
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "CATEGORIES_NAME" ON "CATEGORIES" ("NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);    
+
+--------------------------------------------------------
+--  DDL for Index KEYWORDS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "KEYWORDS_NAME" ON "KEYWORDS" ("NAME") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);   
+  
+--------------------------------------------------------
+--  DDL for Index TAGS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "TAGS_USER_ID" ON "TAGS" ("PICTURE_ID", "USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);   
+
+--------------------------------------------------------
+--  DDL for Index RATINGS
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "RATINGS_USER_ID" ON "RATINGS" ("PICTURE_ID", "USER_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);   
+  
+--------------------------------------------------------
+--  DDL for Index PICTURE_TO_CATEGORY
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "PICTURE_TO_CATEGORY" ON "PICTURE_TO_CATEGORY" ("PICTURE_ID", "CATEGORY_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);   
+  
+--------------------------------------------------------
+--  DDL for Index PICTURE_TO_KEYWORD
+--------------------------------------------------------
+
+  CREATE UNIQUE INDEX "PICTURE_TO_KEYWORD" ON "PICTURE_TO_KEYWORD" ("PICTURE_ID", "KEYWORD_ID") 
+  PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);   
+  
+  
+--------------------------------------------------------
+--  Ref Constraints for Table USERS
+--------------------------------------------------------
+ 
+  ALTER TABLE "USERS" ADD CONSTRAINT "USERS_CITY_ID_FK" FOREIGN KEY ("CITY_ID")
+	  REFERENCES "CITIES" ("CITY_ID") ENABLE;
+ 
+--------------------------------------------------------
+--  Ref Constraints for Table PICTURES
+--------------------------------------------------------
+
+  ALTER TABLE "PICTURES" ADD CONSTRAINT "PICTURES_CITY_ID_FK" FOREIGN KEY ("CITY_ID")
+	  REFERENCES "CITIES" ("CITY_ID") ENABLE;
+ 
+  ALTER TABLE "PICTURES" ADD CONSTRAINT "PICTURES_ALBUM_ID_FK" FOREIGN KEY ("ALBUM_ID")
+	  REFERENCES "ALBUMS" ("ALBUM_ID") ENABLE;
+ 
+--------------------------------------------------------
+--  Ref Constraints for Table ALBUMS
+--------------------------------------------------------
+
+  ALTER TABLE "ALBUMS" ADD CONSTRAINT "ALBUMS_USER_ID_FK" FOREIGN KEY ("USER_ID")
+	  REFERENCES "USERS" ("USER_ID") ENABLE;
+ 
+--------------------------------------------------------
+--  Ref Constraints for Table COMMENTS
+--------------------------------------------------------
+
+  ALTER TABLE "COMMENTS" ADD CONSTRAINT "COMMENTS_USER_ID_FK" FOREIGN KEY ("USER_ID")
+	  REFERENCES "USERS" ("USER_ID") ENABLE; 
+	  
+  ALTER TABLE "COMMENTS" ADD CONSTRAINT "COMMENTS_PICTURE_ID_FK" FOREIGN KEY ("PICTURE_ID")
+	  REFERENCES "PICTURES" ("PICTURE_ID") ENABLE;
+ 
+--------------------------------------------------------
+--  Ref Constraints for Table CITIES
+--------------------------------------------------------
+
+  ALTER TABLE "CITIES" ADD CONSTRAINT "CITIES_REGION_ID_FK" FOREIGN KEY ("REGION_ID")
+	  REFERENCES "REGIONS" ("REGION_ID") ENABLE;
+ 
+--------------------------------------------------------
+--  Ref Constraints for Table REGIONS
+--------------------------------------------------------
+
+  ALTER TABLE "REGIONS" ADD CONSTRAINT "REGIONS_COUNTRY_ID_FK" FOREIGN KEY ("COUNTRY_ID")
+	  REFERENCES "COUNTRIES" ("COUNTRY_ID") ENABLE;
+	  
+--------------------------------------------------------
+--  Ref Constraints for Table TAGS
+--------------------------------------------------------
+
+  ALTER TABLE "TAGS" ADD CONSTRAINT "TAGS_PICTURE_ID_FK" FOREIGN KEY ("PICTURE_ID")
+	  REFERENCES "PICTURES" ("PICTURE_ID") ENABLE;
+
+  ALTER TABLE "TAGS" ADD CONSTRAINT "TAGS_USER_ID_FK" FOREIGN KEY ("USER_ID")
+	  REFERENCES "USERS" ("USER_ID") ENABLE; 
+	  	  
+--------------------------------------------------------
+--  Ref Constraints for Table RATINGS
+--------------------------------------------------------
+
+  ALTER TABLE "RATINGS" ADD CONSTRAINT "RATINGS_PICTURE_ID_FK" FOREIGN KEY ("PICTURE_ID")
+	  REFERENCES "PICTURES" ("PICTURE_ID") ENABLE;
+ 
+  ALTER TABLE "RATINGS" ADD CONSTRAINT "RATINGS_USER_ID_FK" FOREIGN KEY ("USER_ID")
+	  REFERENCES "USERS" ("USER_ID") ENABLE; 
+ 
+--------------------------------------------------------
+--  Ref Constraints for Table PICTURE_TO_CATEGORY 
+--------------------------------------------------------
+
+  ALTER TABLE "PICTURE_TO_CATEGORY" ADD CONSTRAINT "PTC_PICTURE_ID_FK" FOREIGN KEY ("PICTURE_ID")
+	  REFERENCES "PICTURES" ("PICTURE_ID") ENABLE;
+	  
+  ALTER TABLE "PICTURE_TO_CATEGORY" ADD CONSTRAINT "PTC_CATEGORY_ID_FK" FOREIGN KEY ("CATEGORY_ID")
+	  REFERENCES "CATEGORIES" ("CATEGORY_ID") ENABLE;
+	 
+--------------------------------------------------------
+--  Ref Constraints for Table PICTURE_TO_KEYWORD
+--------------------------------------------------------
+
+  ALTER TABLE "PICTURE_TO_KEYWORD" ADD CONSTRAINT "PTK_PICTURE_ID_FK" FOREIGN KEY ("PICTURE_ID")
+	  REFERENCES "PICTURES" ("PICTURE_ID") ENABLE;
+	  
+  ALTER TABLE "PICTURE_TO_KEYWORD" ADD CONSTRAINT "PTK_KEYWORD_ID_FK" FOREIGN KEY ("KEYWORD_ID")
+	  REFERENCES "KEYWORDS" ("KEYWORD_ID") ENABLE;
+	  
+ 
+
+ 
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_USERS
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_USERS" 
+	BEFORE INSERT ON USERS
+	FOR EACH ROW
+		BEGIN
+			SELECT USERS_INC.NEXTVAL into :NEW.USER_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_USERS" ENABLE;
+ 
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_PICTURES
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_PICTURES" 
+	BEFORE INSERT ON PICTURES
+	FOR EACH ROW
+		BEGIN
+			SELECT PICTURES_INC.NEXTVAL into :NEW.PICTURE_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_PICTURES" ENABLE;
+
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_ALBUMS
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_ALBUMS" 
+	BEFORE INSERT ON ALBUMS
+	FOR EACH ROW
+		BEGIN
+			SELECT ALBUMS_INC.NEXTVAL into :NEW.ALBUM_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_ALBUMS" ENABLE;
+ 
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_COMMENTS
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_COMMENTS" 
+	BEFORE INSERT ON COMMENTS
+	FOR EACH ROW
+		BEGIN
+			SELECT COMMENTS_INC.NEXTVAL into :NEW.COMMENT_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_COMMENTS" ENABLE;
+  
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_CITIES
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_CITIES" 
+	BEFORE INSERT ON CITIES
+	FOR EACH ROW
+		BEGIN
+			SELECT CITIES_INC.NEXTVAL into :NEW.CITY_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_CITIES" ENABLE;
+
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_REGIONS
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_REGIONS" 
+	BEFORE INSERT ON REGIONS
+	FOR EACH ROW
+		BEGIN
+			SELECT REGIONS_INC.NEXTVAL into :NEW.REGION_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_REGIONS" ENABLE;
+
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_COUNTRIES
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_COUNTRIES" 
+	BEFORE INSERT ON COUNTRIES
+	FOR EACH ROW
+		BEGIN
+			SELECT COUNTRIES_INC.NEXTVAL into :NEW.COUNTRY_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_COUNTRIES" ENABLE;  
+
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_CATEGORIES
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_CATEGORIES" 
+	BEFORE INSERT ON CATEGORIES
+	FOR EACH ROW
+		BEGIN
+			SELECT CATEGORIES_INC.NEXTVAL into :NEW.CATEGORY_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_CATEGORIES" ENABLE;  
+
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_KEYWORDS
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "AUTOINC_KEYWORDS" 
+	BEFORE INSERT ON KEYWORDS
+	FOR EACH ROW
+		BEGIN
+			SELECT KEYWORDS_INC.NEXTVAL into :NEW.KEYWORD_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_KEYWORDS" ENABLE;  
+ 
+
+--------------------------------------------------------
+--  DDL for Trigger INC_USER_PICTURE_SUM
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "INC_USER_PICTURE_SUM" 
+	AFTER INSERT ON PICTURES
+	FOR EACH ROW
+		DECLARE CURRENT_USER_ID USERS.USER_ID%TYPE;
+		BEGIN
+			SELECT USER_ID INTO CURRENT_USER_ID FROM ALBUMS WHERE ALBUM_ID = :NEW.ALBUM_ID;
+			UPDATE USERS SET PICTURE_SUM = PICTURE_SUM + 1 WHERE USER_ID = CURRENT_USER_ID;
+		END;
+  /
+  ALTER TRIGGER "INC_USER_PICTURE_SUM" ENABLE;
+
+--------------------------------------------------------
+--  DDL for Trigger DEC_USER_PICTURE_SUM
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "DEC_USER_PICTURE_SUM" 
+	AFTER DELETE ON PICTURES
+	FOR EACH ROW
+		DECLARE CURRENT_USER_ID USERS.USER_ID%TYPE;
+		BEGIN
+			SELECT USER_ID INTO CURRENT_USER_ID FROM ALBUMS WHERE ALBUM_ID = :NEW.ALBUM_ID;
+			UPDATE USERS SET PICTURE_SUM = PICTURE_SUM - 1 WHERE USER_ID = CURRENT_USER_ID;
+		END;
+  /
+  ALTER TRIGGER "DEC_USER_PICTURE_SUM" ENABLE;
+
+ 
+
+
+/*
+----------------------------------------------------------- 
+           KELL E LOGOLNI????
+		   *--------*
+
+--------------------------------------------------------
+--  DDL for Trigger KEPEKLOG
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "KEPEKLOG" 
+AFTER INSERT OR DELETE ON KEPEK
+FOR EACH ROW
+DECLARE
+ muvelet NUMBER; -- 1: ha beszúr, 2: töröl
+ f_id NUMBER;  -- feltolto azonosítója
+ k_id NUMBER;  -- kép azonosítója
+BEGIN
+ IF INSERTING THEN
+   muvelet := 1;
+   k_id := :NEW.KID;
+   f_id := :NEW.FELTOLTO_ID;
+ ELSIF DELETING THEN
+   muvelet := 2;
+   k_id := :OLD.KID;
+   f_id := :OLD.FELTOLTO_ID;
+ END IF;
+ INSERT INTO log_kepek VALUES(f_id, k_id, SYSDATE, muvelet);
+END;
+/
+ALTER TRIGGER "KEPEKLOG" ENABLE;
+
+
+--------------------------------------------------------
+--  DDL for Trigger LOGIN
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "LOGIN" 
+AFTER LOGON ON DATABASE
+DECLARE
+ f_id NUMBER; -- user id
+BEGIN
+ SELECT fid INTO f_id FROM felh WHERE upper("USERNAME") = USER;
+ INSERT INTO log_login VALUES (f_id, SYSDATE, 1);
+END;
+/
+ALTER TRIGGER "LOGIN" ENABLE;
+--------------------------------------------------------
+--  DDL for Trigger LOGOUT
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "LOGOUT" 
+BEFORE LOGOFF ON DATABASE
+DECLARE
+ f_id NUMBER;  -- user id
+BEGIN
+ SELECT FID INTO f_id FROM felh WHERE upper("USERNAME") = USER;
+ INSERT INTO log_login VALUES (f_id, SYSDATE, 0);
+END;
+/
+ALTER TRIGGER "LOGOUT" ENABLE;
+--------------------------------------------------------
+--  DDL for Trigger MEGJEGYZESLOG
+--------------------------------------------------------
+
+  CREATE OR REPLACE TRIGGER "MEGJEGYZESLOG" 
+AFTER INSERT ON MEGJEGYZES
+FOR EACH ROW
+DECLARE
+ f_id NUMBER; -- user id
+BEGIN
+ INSERT INTO log_megjegyzes VALUES(:NEW.MEGJEGYZES_ID, :NEW.KIIRTA, SYSDATE);
+END;
+/
+ALTER TRIGGER "MEGJEGYZESLOG" ENABLE;
+
+--------------------------------------------------------
+--  DDL for Function KEP_ERTEK
+--------------------------------------------------------
+
+  CREATE OR REPLACE FUNCTION "KEP_ERTEK" 
+(
+ KEP_ID IN NUMBER  
+) RETURN VARCHAR2 AS
+tmp_ertek NUMBER;
+BEGIN
+ select avg(ertek) INTO tmp_ertek FROM ertekeles where K_ID=KEP_ID;
+ if tmp_ertek IS NULL then tmp_ertek := 0;
+ end if;
+ RETURN tmp_ertek;
+END KEP_ERTEK;
+/
+*/

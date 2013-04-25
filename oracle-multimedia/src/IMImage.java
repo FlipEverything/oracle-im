@@ -6,6 +6,7 @@ import javax.swing.JComboBox;
 import javax.swing.BorderFactory;
 import javax.swing.border.TitledBorder;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JDialog;
 import javax.swing.ImageIcon;
@@ -45,7 +46,7 @@ import oracle.sql.BFILE;
 /**
  * The IMImagePanel class displays the product photo and its attributes.
  */
-class IMImagePanel extends IMMediaPanel implements IMConstants
+class IMImage extends IMMediaPanel implements IMConstants
 {
   OrdImage m_img = null;
   OrdImage m_imgThumb = null;
@@ -67,7 +68,7 @@ class IMImagePanel extends IMMediaPanel implements IMConstants
    * @param iProdId      the product id
    * @param colorFieldBg the background color for text fields
    */
-  IMImagePanel(Container container, OrdImage img, OrdImage imgThumb, 
+  IMImage(Container container, OrdImage img, OrdImage imgThumb, 
       int iProdId, Color colorFieldBg)
   {
     super(container, iProdId, colorFieldBg, PHOTO);
@@ -76,114 +77,7 @@ class IMImagePanel extends IMMediaPanel implements IMConstants
     m_loadContainer = this;
   }
 
-  /**
-   * Displays the image panel.
-   */
-  void display() throws IOException, SQLException
-  {
-    try
-    {
-      addControlPane();
 
-      if (notExist(m_img))
-      {
-        // Image does not exist.
-        m_hasMedia = false; 
-        layoutEmpty(s_sNotExist);
-      }
-      else
-      {
-        m_hasMedia = true; 
-        // If image exists, try to show the attributes.
-        if (insertProperty())
-        {
-          // Shows the thumbnail image.
-          // If the thumbnail image does not exist, it is generated.
-          if (m_imgThumb != null)
-          {
-            String sFormat = m_imgThumb.getFormat();
-
-            if (notExist(m_imgThumb) || 
-                ( !("JFIF".equalsIgnoreCase(sFormat)) &&
-                  !("GIFF".equalsIgnoreCase(sFormat))
-                ))
-            {
-              m_imgThumb = IMUtil.generateThumbnail(m_iProdId, m_img, m_imgThumb);
-            }
-
-            byte[] thumbnail = getDataInByteArray(m_imgThumb);
-            addThumbnail(thumbnail);
-          }
-          else
-          {
-            m_imgThumb = IMUtil.generateThumbnail(m_iProdId, m_img, m_imgThumb);
-            byte[] thumbnail = getDataInByteArray(m_imgThumb);
-            addThumbnail(thumbnail);
-          }
-        }
-      }
-    }
-    catch (IOException e)
-    {
-      new IMMessage(IMConstants.ERROR, "RETRIEVAL_FAILED", e);
-    }
-    catch (SQLException e)
-    {
-      new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
-    }
-  }
-
-  /**
-   * Lays out the control panel for load, save, delete and play.
-   */
-  void addControlPane()
-  {
-    initControlPane();
-
-    m_jCheckBoxPlay.setFont(new Font("Default", 0, 11));
-    m_jControlPane.add(m_jCheckBoxPlay);
-
-    setControlPaneBorder("Photo");
-
-    m_jCheckBoxLoad.addActionListener(new ActionListener()
-        {
-        public void actionPerformed(ActionEvent e)
-        {
-          if (m_jCheckBoxLoad.isSelected())
-          {
-            new IMLoadFile(m_loadContainer, "Load from:", 
-              m_img, m_imgThumb, m_iProdId, PHOTO);
-          }
-        }
-        });
-
-    m_jCheckBoxLoad.setToolTipText(IMMessage.getString("IMG_LOAD_DESC"));
-    m_jCheckBoxDelete.setToolTipText(IMMessage.getString("IMG_DELETE_DESC"));
-    m_jCheckBoxPlay.setToolTipText(IMMessage.getString("IMG_PLAY_DESC"));
-    m_jCheckBoxSave.setToolTipText(IMMessage.getString("IMG_Save_DESC"));
-
-    m_jCheckBoxLoad.getAccessibleContext().setAccessibleName(
-        IMMessage.getString("IMG_LOAD_NAME"));
-    m_jCheckBoxDelete.getAccessibleContext().setAccessibleName(
-        IMMessage.getString("IMG_DELETE_NAME"));
-    m_jCheckBoxPlay.getAccessibleContext().setAccessibleName(
-        IMMessage.getString("IMG_PLAY_NAME"));
-    m_jCheckBoxSave.getAccessibleContext().setAccessibleName(
-        IMMessage.getString("IMG_Save_NAME"));
-  }
-
-  /**
-   * Lays out the icon and attribute panel when image does not exist.
-   */
-  void layoutEmpty(String sInfo)
-  {
-    m_jIcon = new JLabel();
-    m_jIcon.setLabelFor(m_jAttrPane);
-
-    m_jIconPane.add(m_jIcon, BorderLayout.CENTER);
-
-    super.layoutEmptyAttrPane(sInfo);
-  }
 
   /**
    * Shows the attribute table using Oracle Multimedia accessor methods 
@@ -201,7 +95,7 @@ class IMImagePanel extends IMMediaPanel implements IMConstants
 
     if (!isFormatSupported)
     {
-      layoutEmpty(s_sNotSupported);
+      
     }
     else
     {
@@ -501,44 +395,6 @@ class IMImagePanel extends IMMediaPanel implements IMConstants
     }
   }
 
-  /**
-   * Shows full image using a media player.
-   */
-  void play()
-  {
-    if (!m_hasMedia)
-    {
-      new IMMessage(IMConstants.WARNING, "NO_MEDIA");
-    }
-    else 
-    {
-      try
-      {
-        // Gets media into a byte array and retrieves mime type
-        // so we can play the media.
-        byte[] data = getDataInByteArray(m_img);
-        String sMIMEType = m_img.getMimeType();
-
-        if (data == null)
-        {
-          new IMMessage(IMConstants.WARNING, "NO_MEDIA");
-        }
-        else 
-        {
-          // Actually playing 
-          play(data, sMIMEType);
-        }
-      }
-      catch (SQLException e)
-      {
-        new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
-      }
-      catch (IOException e)
-      {
-        new IMMessage(IMConstants.ERROR, "RETRIEVAL_FAILED", e);
-      }
-    }
-  }
 
   /**
    * Sets the photo and thumbnail object.
@@ -610,92 +466,28 @@ class IMImagePanel extends IMMediaPanel implements IMConstants
     }
   }
 
-  /**
-   * Refreshes the display when updating photo image.
-   */
-  void refreshPanel(boolean isFormatSupported) throws SQLException, IOException
-  {
-    m_hasMedia = true;
-    if (isFormatSupported)
-    {
-      if (m_jAttrTbl == null)
-      {
-        m_jAttrPane.remove(m_jEmpty);
-        m_jIconPane.remove(m_jIcon);
 
-        byte[] thumbnail = getDataInByteArray(m_imgThumb);
-        addThumbnail(thumbnail);
-
-        insertProperty();
-      }
-      else
-      {
-        byte[] thumbnail = getDataInByteArray(m_imgThumb);
-        changThumbnail(thumbnail);
-
-        m_jAttrTbl.setValueAt(m_img.getMimeType(), 0, 1);
-        m_jAttrTbl.setValueAt(new Integer(m_img.getHeight()).toString(), 1, 1);
-        m_jAttrTbl.setValueAt(new Integer(m_img.getWidth()).toString(), 2, 1);
-        m_jAttrTbl.setValueAt(new Integer(m_img.getContentLength()).toString(), 3, 1);
-      }
-    }
-    else
-    {
-      if (m_jAttrTbl == null)
-      {
-        m_jEmpty.setText(s_sNotSupported);
-      }
-      else
-      {
-        m_jAttrTbl = null;
-        m_jAttrPane.remove(m_jAttrPaneBox);
-        m_jAttrPane.setLayout(new BorderLayout());
-        m_jIconPane.remove(m_jIcon);
-        layoutEmpty(s_sNotSupported);
-      }
-    }
-
-    m_jCheckBoxLoad.setSelected(false);
-    m_jCheckBoxSave.setSelected(false);
-    m_jCheckBoxDelete.setSelected(false);
-    m_jCheckBoxPlay.setSelected(false);
-
-    m_jAttrPane.validate();
-    m_jIconPane.validate();
-    m_jControlPane.validate();
-    validate();
-  }
-
-  /**
-   * Clears the icon and attribute panel.
-   */
-  void emptyPanel(String emptyString)
-  {
-    if (m_jAttrTbl != null)
-    {
-      m_jAttrTbl = null;
-      m_jAttrPane.remove(m_jAttrPaneBox);
-      m_jAttrPane.setLayout(new BorderLayout());
-
-      m_jIconPane.remove(m_jIcon);
-
-      layoutEmpty(emptyString);
-    }
-    else
-    {
-      m_jEmpty.setText(emptyString);
-    }
-
-    m_jCheckBoxLoad.setSelected(false);
-    m_jCheckBoxSave.setSelected(false);
-    m_jCheckBoxDelete.setSelected(false);
-    m_jCheckBoxPlay.setSelected(false);
-
-    m_jAttrPane.validate();
-    m_jIconPane.validate();
-    m_jControlPane.validate();
-
-    validate();
+  public static JLabel showPicture(OrdImage image, Rectangle r, String text){
+	  Icon profilePicture = null;
+		
+		if (image==null){
+			profilePicture = new ImageIcon(IMFrame.class.getResource("icons/no_profile_picture.png"));
+		} else {
+			try {
+				byte[] thumbnail = IMImage.getDataInByteArray(image);
+				profilePicture = new ImageIcon(thumbnail);
+			} catch (SQLException e) {
+				new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			} catch (IOException e) {
+				new IMMessage(IMConstants.ERROR, "APP_ERR", e);
+			}
+		}
+		
+		JLabel userPictureLabel = new JLabel(null, profilePicture, JLabel.CENTER);
+		userPictureLabel.setBounds(r);
+		userPictureLabel.setToolTipText(text);
+		
+		return userPictureLabel;
   }
 
 }

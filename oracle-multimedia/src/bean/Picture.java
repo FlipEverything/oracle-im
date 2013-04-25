@@ -8,10 +8,8 @@ import oracle.ord.im.OrdImage;
 
 public class Picture {
 	private int m_nPictureId;
-	private int m_szPictureName;
+	private String m_szPictureName;
 	private Date m_dateUploadTime;
-	private float m_fpCoordX;
-	private float m_fpCoordY;
 	private OrdImage m_imagePicture;
 	private OrdImage m_imagePictureThumbnail;
 	private int m_nCityId;
@@ -22,8 +20,8 @@ public class Picture {
 	private ArrayList<Tag> m_arrayTags;
 	private int m_nRating;
 	
-	public Picture(int m_nPictureId, int m_szPictureName,
-			Date m_dateUploadTime, float m_fpCoordX, float m_fpCoordY,
+	public Picture(int m_nPictureId, String m_szPictureName,
+			Date m_dateUploadTime,
 			OrdImage m_imagePicture, OrdImage m_imagePictureThumbnail,
 			int m_nCityId, int m_nAlbumId,
 			ArrayList<Category> m_arrayCategories,
@@ -34,8 +32,6 @@ public class Picture {
 		this.m_nPictureId = m_nPictureId;
 		this.m_szPictureName = m_szPictureName;
 		this.m_dateUploadTime = m_dateUploadTime;
-		this.m_fpCoordX = m_fpCoordX;
-		this.m_fpCoordY = m_fpCoordY;
 		this.m_imagePicture = m_imagePicture;
 		this.m_imagePictureThumbnail = m_imagePictureThumbnail;
 		this.m_nCityId = m_nCityId;
@@ -60,36 +56,20 @@ public class Picture {
 		this.m_nPictureId = m_nPictureId;
 	}
 
-	public int getM_szPictureName() {
+	public String getPictureName() {
 		return m_szPictureName;
 	}
 
-	public void setM_szPictureName(int m_szPictureName) {
+	public void setPictureName(String m_szPictureName) {
 		this.m_szPictureName = m_szPictureName;
 	}
 
-	public Date getM_dateUploadTime() {
+	public Date getUploadTime() {
 		return m_dateUploadTime;
 	}
 
-	public void setM_dateUploadTime(Date m_dateUploadTime) {
+	public void setUploadTime(Date m_dateUploadTime) {
 		this.m_dateUploadTime = m_dateUploadTime;
-	}
-
-	public float getCoordX() {
-		return m_fpCoordX;
-	}
-
-	public void setCoordX(float m_fpCoordX) {
-		this.m_fpCoordX = m_fpCoordX;
-	}
-
-	public float getCoordY() {
-		return m_fpCoordY;
-	}
-
-	public void setCoordY(float m_fpCoordY) {
-		this.m_fpCoordY = m_fpCoordY;
 	}
 
 	public OrdImage getPicture() {
@@ -168,7 +148,6 @@ public class Picture {
 	public String toString() {
 		return "Picture [m_nPictureId=" + m_nPictureId + ", m_szPictureName="
 				+ m_szPictureName + ", m_dateUploadTime=" + m_dateUploadTime
-				+ ", m_fpCoordX=" + m_fpCoordX + ", m_fpCoordY=" + m_fpCoordY
 				+ ", m_imagePicture=" + m_imagePicture
 				+ ", m_imagePictureThumbnail=" + m_imagePictureThumbnail
 				+ ", m_nCityId=" + m_nCityId + ", m_nAlbumId=" + m_nAlbumId

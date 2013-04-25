@@ -54,7 +54,8 @@ public class JPanelSettings extends JPanelSignup implements IMConstants{
 	
 	
 	protected void uploadProfilePic() {
-		new IMLoadFile(m_jFrameOwner, IMMessage.getString("UPLOAD_PROFILE_PIC"), m_userDisplayed.getProfilePicture(), m_userDisplayed.getProfilePictureThumb(), m_userDisplayed);
+		IMLoadFile load = new IMLoadFile(m_jFrameOwner, IMMessage.getString("UPLOAD_PROFILE_PIC"), m_userDisplayed.getProfilePicture(), m_userDisplayed.getProfilePictureThumb(), m_userDisplayed);
+		load.startUpload();
 	}
 
 	public void setFields(){

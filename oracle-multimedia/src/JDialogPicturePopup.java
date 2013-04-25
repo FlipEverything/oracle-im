@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import oracle.ord.im.OrdImage;
@@ -39,7 +40,7 @@ public class JDialogPicturePopup extends JDialog implements IMConstants
   protected int m_nWidth;
   protected int m_nHeight;
 
-  private JPanel contentPanel;
+  private JScrollPane contentPanel;
   private IMFrame m_jFrameOwner;
   private OrdImage m_img;
   private ImageIcon picture;
@@ -55,7 +56,7 @@ public class JDialogPicturePopup extends JDialog implements IMConstants
     {
     	picture = null;
 		try {
-			byte[] thumbnail = IMImagePanel.getDataInByteArray(m_img);
+			byte[] thumbnail = IMImage.getDataInByteArray(m_img);
 			picture = new ImageIcon(thumbnail);
 			m_nWidth = m_img.getWidth();
 			m_nHeight = m_img.getHeight();
@@ -68,9 +69,30 @@ public class JDialogPicturePopup extends JDialog implements IMConstants
       setupDisplay();
       setupButton();
       setupContentPane();
+      
+      boolean needSet = false;
+      if (m_nWidth>m_jFrameOwner.getScreenWidth()){
+    	  m_nWidth = (int) (m_jFrameOwner.getScreenWidth() - 50);
+    	  needSet = true;
+      } 
+      
+      if (m_nHeight>m_jFrameOwner.getScreenHeight()){
+    	  m_nHeight = (int) (m_jFrameOwner.getScreenHeight() - 50);
+    	  m_nWidth += 40;
+    	  needSet = true;
+       } 
+      if (needSet){
+    	  this.setSize(new Dimension(m_nWidth, m_nHeight));
+    	  this.setPreferredSize(new Dimension(m_nWidth, m_nHeight));
+      }
+      
       this.getContentPane().add(contentPanel, BorderLayout.CENTER);
 
       setVisible(true);
+    }
+    catch (NullPointerException e1)
+    {
+    	new IMMessage(IMConstants.ERROR, "FILE_NOTFOUND", e1);
     }
     catch (Exception e)
     {
@@ -95,9 +117,26 @@ public class JDialogPicturePopup extends JDialog implements IMConstants
 		l.setPreferredSize(new Dimension(m_nWidth, m_nHeight));
 		l.setSize(new Dimension(m_nWidth, m_nHeight));
 		
-	    contentPanel = new JPanel();
-	    contentPanel.setLayout(null);
-	    contentPanel.add(l, null);
+	    contentPanel = new JScrollPane(l);
+	    contentPanel.addMouseListener(new MouseListener() {
+	    	@Override
+			public void mouseReleased(MouseEvent e) {
+			}		
+			@Override
+			public void mousePressed(MouseEvent e) {
+			}		
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}		
+			@Override
+			public void mouseEntered(MouseEvent e) {	
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				dispose();
+				setVisible(false);
+			}
+		});
   }
 
 
@@ -107,30 +146,12 @@ public class JDialogPicturePopup extends JDialog implements IMConstants
   private void setupDisplay()
   {
     this.setTitle(IMMessage.getString(m_szTitle));
-    this.setSize(new Dimension(m_nWidth, m_nHeight));
+    this.setSize(new Dimension(m_nWidth+10, m_nHeight+30));
     this.getAccessibleContext().setAccessibleDescription(
         IMMessage.getString("LOGINDIAG_DESC"));
     this.getContentPane().setLayout(new BorderLayout());
     this.setResizable(false);
-    this.addMouseListener(new MouseListener() {
-    	@Override
-		public void mouseReleased(MouseEvent e) {
-		}		
-		@Override
-		public void mousePressed(MouseEvent e) {
-		}		
-		@Override
-		public void mouseExited(MouseEvent e) {
-		}		
-		@Override
-		public void mouseEntered(MouseEvent e) {	
-		}
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			dispose();
-			setVisible(false);
-		}
-	});
+    
 
     IMUIUtil.initJDialogHelper(this);
   }

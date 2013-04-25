@@ -1,10 +1,16 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.lang.reflect.Array;
+import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import bean.Album;
 import bean.City;
 import bean.Country;
+import bean.Keyword;
 import bean.Picture;
 import bean.Region;
 import bean.User;
@@ -27,6 +33,7 @@ class IMQuery implements IMConstants
   private OraclePreparedStatement stmt = null;
   private OracleResultSet rs = null;
   
+  private static final URL DB_SCRIPT_FILE = IMFrame.class.getResource("sql/db_script.sql");
   
   private static final String USER_LOGIN = "SELECT * FROM USERS WHERE username = ? AND password = ?";
   private static final String USER_SIGNUP = "INSERT INTO USERS (username, password, email, first_name, last_name, registered, city_id) VALUES (?,?,?,?,?,?,?)";
@@ -48,6 +55,19 @@ class IMQuery implements IMConstants
   private static final String SELECT_USER_PROFILE_PIC_THUMB = "select profile_picture_thumb from users where user_id = ? for update";
   private static final String UPDATE_USER_PROFILE_PIC_THUMB = "update users set profile_picture_thumb = ? where user_id = ?";
   
+  private static final String INIT_PIC = "update pictures set picture = ORDSYS.ORDImage.init() where picture_id = ?";
+  private static final String SELECT_PIC = "select picture from pictures where picture_id = ? for update";
+  private static final String UPDATE_PIC = "update pictures set picture = ? where picture_id = ?";
+  
+  private static final String INIT_PIC_THUMB = "update pictures set picture_thumbnail = ORDSYS.ORDImage.init() where picture_id = ?";
+  private static final String SELECT_PIC_THUMB = "select picture_thumbnail from pictures where picture_id = ? for update";
+  private static final String UPDATE_PIC_THUMB = "update pictures set picture_thumbnail = ? where picture_id = ?";
+  
+  private static final String INSERT_PICTURE = "insert into pictures (picture_name, upload_time, city_id, album_id) VALUES (?,?,?,?)";
+  private static final String INSERT_PICTURE_GET_PICTURE_ID = "select pictures_inc.currval from dual";
+  
+  private static final String SELECT_PICTURES_FROM_ALBUM = "select * from pictures where album_id = ?";
+  
   /**
    * Get the OracleConnection object (create connection)
    */
@@ -56,6 +76,29 @@ class IMQuery implements IMConstants
 		  m_dbConn = IMMain.getDBConnection();    
 	}
   }
+  
+
+  public boolean executeDBScripts() {
+	  connect();
+
+		boolean isScriptExecuted = false;
+		try {
+			
+			BufferedReader in = new BufferedReader(new FileReader(DB_SCRIPT_FILE.toURI().toString().replace("file:/", "")));
+			String str;
+			StringBuffer sb = new StringBuffer();
+				while ((str = in.readLine()) != null) {
+						sb.append(str + "\n ");
+				}
+				in.close();
+				Statement stmt = (OraclePreparedStatement) m_dbConn.createStatement();
+				stmt.executeUpdate(sb.toString());
+				isScriptExecuted = true;
+		} catch (Exception e) {
+			new IMMessage(IMConstants.ERROR, "APP_ERR", e);
+		} 
+	return isScriptExecuted;
+	}
 
   /**
    * Check the login parameters, and if the user exist return the user object. If not return null
@@ -136,6 +179,43 @@ class IMQuery implements IMConstants
   }
   
   /**
+   * 
+   */
+  public Picture insertPicture(Picture pic){
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_PICTURE);
+		int index = 1;
+		stmt.setString(index++, pic.getPictureName());
+		stmt.setDate(index++, (Date) new Date(System.currentTimeMillis()));
+		stmt.setInt(index++, pic.getCityId());
+		stmt.setInt(index++, pic.getAlbumId());
+		
+		OracleResultSet rs = (OracleResultSet) stmt.executeQuery();
+		
+		if (rs!=null){
+			IMUtil.cleanup(rs, stmt);
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_PICTURE_GET_PICTURE_ID);
+			rs =  (OracleResultSet) stmt.executeQuery();
+			if (rs.next()){
+				pic.setPictureId(rs.getInt(1));
+			} else {
+				return null;
+			}
+			
+		} else {
+			return null;
+		}
+		
+		IMUtil.cleanup(rs, stmt);
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+	} 
+	  
+	  return pic;
+  }
+  
+  /**
    * Insert a user to the database
    * @param user The user data collected from the signup panel
    * @return Return the user data if the operation was successfal, return null if not
@@ -164,6 +244,33 @@ class IMQuery implements IMConstants
 	} 
 	  
 	  return success;
+  }
+  
+  public ArrayList<Picture> selectPicturesFromAlbum(Album a){
+	  ArrayList<Picture> array = new ArrayList<Picture>();
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURES_FROM_ALBUM);
+			int index = 1;
+			stmt.setInt(index++, a.getAlbumId());
+			
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Picture p = new Picture(rs.getInt("picture_id"), rs.getString("picture_name"), rs.getDate("upload_time"), 
+						(OrdImage)rs.getORAData("picture", OrdImage.getORADataFactory()), (OrdImage)rs.getORAData("picture_thumbnail", OrdImage.getORADataFactory()), 
+						rs.getInt("city_id"), rs.getInt("album_id"), null, null, null, null, 0);
+				array.add(p);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		}
+	  
+	  return array;
+	  
   }
   
   /**
@@ -306,8 +413,9 @@ class IMQuery implements IMConstants
 			int index=1;
 			stmt.setInt(index++, ((User)o).getUserId());
 		} else if (o instanceof Picture){
-			//TODO
-			//FIXME
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(thumb?INIT_PIC_THUMB:INIT_PIC);
+			int index=1;
+			stmt.setInt(index++, ((Picture)o).getPictureId());
 			
 		}
 		stmt.execute();
@@ -330,8 +438,9 @@ class IMQuery implements IMConstants
 				int index=1;
 				stmt.setInt(index++, ((User)o).getUserId());
 			} else if (o instanceof Picture){
-				//TODO
-				//FIXME
+				stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(thumb?SELECT_PIC_THUMB:SELECT_PIC);
+				int index=1;
+				stmt.setInt(index++, ((Picture)o).getPictureId());
 				
 			}
 			
@@ -359,9 +468,10 @@ class IMQuery implements IMConstants
 				stmt.setORAData(index++, m_img);
 				stmt.setInt(index++, ((User)o).getUserId());
 			} else if (o instanceof Picture){
-				//TODO
-				//FIXME
-				
+				stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(thumb?UPDATE_PIC_THUMB:UPDATE_PIC);
+				int index=1;
+				stmt.setORAData(index++, m_img);
+				stmt.setInt(index++, ((Picture)o).getPictureId());
 			}
 			
 			stmt.execute();
@@ -374,5 +484,11 @@ class IMQuery implements IMConstants
 	return true;
 	  
   }
+
+
+public ArrayList<Keyword> getKeywords() {
+	// TODO Auto-generated method stub
+	return null;
+}
   
 }

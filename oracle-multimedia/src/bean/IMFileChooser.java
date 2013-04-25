@@ -2,6 +2,8 @@ package bean;
 
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * The IMFileChooser class inherits from JFileChooser in order
@@ -18,6 +20,14 @@ public class IMFileChooser extends JFileChooser
     super();
     setApproveButtonMnemonic('K');
     getAccessibleContext().setAccessibleDescription("File Chooser");
+    FileFilter filter = new FileNameExtensionFilter("Képfájlok (*.jpg, *.png, *.jpeg, *.bmp)", "jpg", "jpeg", "png", "bmp");
+
+    FileFilter ff[] = this.getChoosableFileFilters();
+    for (int i=0; i<ff.length; i++){
+    	removeChoosableFileFilter(ff[i]);
+    }
+    
+    addChoosableFileFilter(filter);
   }
 
   /**
@@ -28,4 +38,6 @@ public class IMFileChooser extends JFileChooser
   {
     return getSelectedFile().toString();
   }
+  
+  
 }

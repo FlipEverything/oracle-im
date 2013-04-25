@@ -132,15 +132,28 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"LOGINDIAG_PORT_FIELD_DESC", ""},
     {"LOGINDIAG_SID_FIELD_DESC", ""},
     {"LOGINDIAG_DESCRIPTION_FIELD_DESC", ""},
+
+    {"NO_PICTURE", "A választott albumban nincs kép."},
+    {"UPLOADDIAG_NAME", "Kép neve:"},
+    {"UPLOADDIAG_BROWSE", "Tallózás"},
+    {"UPLOADDIAG_SELECTED", "Tallózás (kép kiválasztva)"},
+    {"UPLOADDIAG_SEND", "Feltöltés"},
+    {"UPLOADDIAG_CHOOSE_CATEGORIES", "Válasszon kategóriákat"},
+    {"UPLOADDIAG_CHOOSE_KEYWORDS", "Válasszon kulcsszavakat"},
     
+    {"NO_ORACLE_HOME", "Nem találom a kapcsolat létrehozásához szükséges drivereket! \nAmennyiben a szerver a helyi gépen fut állítsa be az ORACLE_HOME környezeti változót! \n Amennyiben távoli erőforráson fut úgy a megfelelő instant client ORACLE_HOME-ba másolásával használhatja a programot!"},
     
     {"NEWALBUMDIAG_NAME", "Album neve:"},
     {"NEWALBUMDIAG_IS_PUBLIC", "Publikus-e?"},
     
+    {"CREATE_TABLES", "Futtatja az adatbázist létrehozó fájlt?"},
+    {"SUCCESS_CREATE_TABLES", "Sikeres futtatás"},
     
     {"COUNTRY", "Ország"},
     {"REGION", "Megye"},
     {"CITY", "Város"},
+    {"CATEGORIES", "Kategóriák"},
+    {"KEYWORDS", "Kulcsszavak"},
     {"SELECT", "Válasszon!"},
     {"MODIFY_SUCCESS", "Sikeres módosítás!"},
     {"SAVE", "Mentés"},
