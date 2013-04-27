@@ -105,12 +105,11 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 	  }
 	  
 	  void display(ArrayList<Picture> array){
+		  contentPanel.removeAll();
+		  contentPanel.add(m_jComboBoxAlbum, null);
+		  
 		  if (array.size()==0){
 			  new IMMessage(IMConstants.ERROR, "NO_PICTURE");
-			  contentPanel.removeAll();
-			  contentPanel.add(m_jComboBoxAlbum, null);
-			  contentPanel.revalidate();
-			  SwingUtilities.updateComponentTreeUI(this);
 		  } else {
 			  m_iX = m_iStartX;
 			  m_iY = m_iStartY;
@@ -142,8 +141,11 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 			  }
 			  contentPanel.setSize(new Dimension(m_nWidth, m_iFieldHeight*2+(array.size()/(m_nWidth/(THUMB_WIDTH+m_iOffset)))*(THUMB_HEIGHT+m_iOffset)));
 			  contentPanel.setPreferredSize(new Dimension(m_nWidth, m_iFieldHeight*2+(array.size()/(m_nWidth/(THUMB_WIDTH+m_iOffset)))*(THUMB_HEIGHT+m_iOffset)));
-			  contentPanel.revalidate();
+
 		  }
+		  
+		  contentPanel.revalidate();
+		  SwingUtilities.updateComponentTreeUI(this);
 	  }
 
 	/**

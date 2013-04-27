@@ -14,6 +14,12 @@ public class Category {
 		this.m_szName = m_szName;
 		this.m_bSelected = false;
 	}
+	public Category(String m_szName) {
+		super();
+		this.m_nCategoryId = 0;
+		this.m_szName = m_szName;
+		this.m_bSelected = false;
+	}
 	public int getCategoryId() {
 		return m_nCategoryId;
 	}

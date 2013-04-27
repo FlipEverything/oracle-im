@@ -162,6 +162,12 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"PICTURE_ORIGINAL", "Kép megtekintése eredeti méretben"},
     {"IMAGE_AND_THUMB_UPLOAD_SUCCESS", "Sikeres képfeltöltés! Sikeres bélyegkép generálás!"},
     
+    {"SEARCH_AND_INSERT", "Keresés és felvitel"},
+    {"INSERT_SUCCESS", "Sikeres felvitel"},
+    
+    {"SELECT_AND_INSERT_CATEGORY", "Kategóriák választása és felvitele"},
+    {"SELECT_AND_INSERT_KEYWORD", "Kulcsszavak választása és felvitele"},
+    
     
     {"CHECK_MEDIA_NAME", ""},
     {"CHECK_MEDIA_DESC", "Click mouse or tap SPACE to check media information for product"},

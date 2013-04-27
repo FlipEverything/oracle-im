@@ -17,8 +17,10 @@ import javax.swing.Box;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import bean.Category;
 import bean.City;
 import bean.Country;
+import bean.Keyword;
 import bean.Region;
 import bean.User;
 
@@ -90,6 +92,8 @@ public class IMFrame extends JFrame implements IMConstants
   private ArrayList<Country> m_countryAll = null;
   private ArrayList<Region> m_regionAll = null;
   private ArrayList<City> m_cityAll = null;
+  private ArrayList<Category> m_categoryAll = null;
+  private ArrayList<Keyword> m_keywordAll = null;
   
   double m_nScreenWidth = 0;
   double m_nScreenHeight = 0;
@@ -127,7 +131,7 @@ public class IMFrame extends JFrame implements IMConstants
     JPanel contentPanel = new JPanel();
     contentPanel.setLayout(new BorderLayout(10,10));
     contentPanel.setBackground(UIManager.getColor("Panel.background"));
-    contentPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
+    contentPanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
     // Sets the label for the table.
     m_labelTable.setFont(new Font("SansSerif", Font.BOLD, 15));
@@ -482,6 +486,8 @@ public void downloadAll(){
 	  downloadCities();
 	  downloadCountries();
 	  downloadRegions();
+	  downloadCategories();
+	  downloadKeywords();
   }
 
   public void downloadCountries(){
@@ -498,6 +504,17 @@ public void downloadAll(){
 	  IMQuery q = new IMQuery();
 	  m_regionAll = q.selectAllRegion();
   }
+  
+  public void downloadKeywords(){
+	  IMQuery q = new IMQuery();
+	  m_keywordAll = q.selectAllKeywords();
+  }
+  
+  public void downloadCategories(){
+	  IMQuery q = new IMQuery();
+	  m_categoryAll = q.selectAllCategories();
+  }
+  
   
   /**
    * Wipe the user session, disable menuitems and then show the login panel
@@ -773,8 +790,27 @@ public void downloadAll(){
 	}
 	
 	
+	
+	
 
-  public int getWidth() {
+  public ArrayList<Category> getcategoryAll() {
+		return m_categoryAll;
+	}
+
+	public void setcategoryAll(ArrayList<Category> m_categoryAll) {
+		this.m_categoryAll = m_categoryAll;
+	}
+
+	public ArrayList<Keyword> getkeywordAll() {
+		return m_keywordAll;
+	}
+
+	public void setkeywordAll(ArrayList<Keyword> m_keywordAll) {
+		this.m_keywordAll = m_keywordAll;
+	}
+	
+
+public int getWidth() {
 		return m_nWidth;
 	}
 

@@ -1,4 +1,5 @@
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
@@ -13,6 +14,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import bean.Album;
+import bean.Category;
 import bean.City;
 import bean.Country;
 import bean.Keyword;
@@ -51,6 +53,7 @@ public class JPanelNewPicture extends JPanelLogin {
 	private Picture m_pictureNew = new Picture();
 	private IMLoadFile load = null;
 	private JDialogTable m_dialogKeyword;
+	private JDialogTable m_dialogCategory;
 	
 
 	
@@ -58,7 +61,7 @@ public class JPanelNewPicture extends JPanelLogin {
 		super(frame);
 		m_szTitle = IMMessage.getString("MAIN_MENU_UPLOAD");
 		m_szButtonConfirmTitle = "UPLOADDIAG_SEND";
-		m_nHeight = 460;
+		m_nHeight = 420;
 		m_userDisplayed = user;
 	}
 	
@@ -68,7 +71,7 @@ public class JPanelNewPicture extends JPanelLogin {
 		
 		
 		
-		m_jLabelName = IMFrame.createJLabel(m_jLabelName, new Rectangle(m_iLabelStartX, m_iLabelStartY+=(m_iFieldHeight+m_iDeltaY), m_iLabelWidth , m_iFieldHeight), 
+		m_jLabelName = IMFrame.createJLabel(m_jLabelName, new Rectangle(m_iLabelStartX, m_iLabelStartY, m_iLabelWidth , m_iFieldHeight), 
 				"UPLOADDIAG_NAME", 'U', m_jLoginField);
 		
 		m_jLabelImage = IMFrame.createJLabel(m_jLabelImage, new Rectangle(m_iLabelStartX, m_iLabelStartY+=(m_iFieldHeight+m_iDeltaY), m_iLabelWidth , m_iFieldHeight), 
@@ -94,7 +97,7 @@ public class JPanelNewPicture extends JPanelLogin {
 		
 
 		m_jNameField.setBounds(
-		        new Rectangle(m_iFieldStartX, m_iFieldStartY+=(m_iFieldHeight+m_iDeltaY), m_iFieldWidth , m_iFieldHeight));
+		        new Rectangle(m_iFieldStartX, m_iFieldStartY, m_iFieldWidth , m_iFieldHeight));
 		m_jNameField.setToolTipText(IMMessage.getString("LOGINDIAG_USERNAME_FIELD_DESC"));
 
 
@@ -185,19 +188,16 @@ public class JPanelNewPicture extends JPanelLogin {
 		contentPanel.add(m_jButtonLogin, null);
 		
 		
+		ArrayList<Keyword> keywords = m_jFrameOwner.getkeywordAll();
+		ArrayList<Category> categories = m_jFrameOwner.getcategoryAll();
 		
-		//ArrayList<Keyword> keywords = q.getKeywords();
-		ArrayList<Keyword> keywords = new ArrayList<Keyword>();
-		keywords.add(new Keyword(1, "vmi"));
-		keywords.add(new Keyword(1, "vmidsfs"));
-		keywords.add(new Keyword(1, "naabab"));
-		
-		m_dialogKeyword = new JDialogTable(m_jFrameOwner, new IMTableModel(keywords, this));		
+		m_dialogKeyword = new JDialogTable(m_jFrameOwner, new IMTableModel(keywords, this), new Keyword());
+		m_dialogCategory = new JDialogTable(m_jFrameOwner, new IMTableModel(categories, this), new Category());
 
 	} 
 	
 	protected void showCategoryDialog() {
-		// TODO Auto-generated method stub
+		m_dialogCategory.setVisible(true);
 		
 	}
 
@@ -289,13 +289,35 @@ public class JPanelNewPicture extends JPanelLogin {
 	}
 
 
+
+	
 	@Override
 	public void confirm(){
+		ArrayList<Keyword> selectedKeywords = new ArrayList<Keyword>();
+		Iterator<Keyword> iteratorK = m_jFrameOwner.getkeywordAll().iterator();
+		while (iteratorK.hasNext()){
+			Keyword k = iteratorK.next();
+			if (k.isSelected()){
+				selectedKeywords.add(k);
+			}
+		}
+		
+		ArrayList<Category> selectedCategories = new ArrayList<Category>();
+		Iterator<Category> iteratorC = m_jFrameOwner.getcategoryAll().iterator();
+		while (iteratorC.hasNext()){
+			Category c = iteratorC.next();
+			if (c.isSelected()){
+				selectedCategories.add(c);
+			}
+		}
+		
 		if (
 				m_jNameField.getText().equals("") ||
 				load != null && load.getReturnVal() != JFileChooser.APPROVE_OPTION ||
 				m_jComboBoxAlbum.getSelectedIndex() == 0 ||
-				m_jComboCity.getSelectedIndex()==0
+				m_jComboCity.getSelectedIndex()==0  ||
+				selectedCategories.size()==0 ||
+				selectedKeywords.size()==0
 				 ){
 				  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
 			  } else {
@@ -309,6 +331,9 @@ public class JPanelNewPicture extends JPanelLogin {
 				  
 				  if ((m_pictureNew!=null) && (m_pictureNew.getPictureId()!=0)){
 					  load.startUpload();
+					  q.insertCategoryToPicture(m_pictureNew, selectedCategories);
+					  q.insertKeywordToPicture(m_pictureNew, selectedKeywords);
+					  
 					  m_jFrameOwner.showProfilePanel(m_userDisplayed);
 				  } else {
 					  new IMMessage(IMConstants.ERROR, "UPLOAD_ERROR", new Exception());

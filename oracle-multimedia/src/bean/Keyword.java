@@ -11,6 +11,13 @@ public class Keyword {
 		this.m_szName = m_szName;
 		this.m_bSelected = false;
 	}
+	
+	public Keyword(String m_szName) {
+		super();
+		this.m_nKeywordId = 0;
+		this.m_szName = m_szName;
+		this.m_bSelected = false;
+	}
 
 	public Keyword() {
 		super();

@@ -10,10 +10,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import bean.Album;
+import bean.Category;
+import bean.Keyword;
 
 
 import java.awt.BorderLayout;
@@ -24,6 +27,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
@@ -42,22 +46,28 @@ public class JDialogTable extends JDialog implements IMConstants
   JTable m_jTableData = new JTable();
   
   JTextField m_jFieldSearch = new JTextField(); 
-  JTextField m_jFieldNew = new JTextField();
-  JButton m_jButton = new JButton();
   
   private String m_szTitle;
-  private int m_nWidth = 300;
-  private int m_nHeight = 300;
+  private int m_nWidth = 400;
+  private int m_nHeight = 400;
   private TableModel m_model;
   private JPanel contentPanel;
   private int m_nFieldHeight = 30;
+  private Object m_object;
 
-  public JDialogTable(IMFrame jFrameOwner, TableModel model)
+  public JDialogTable(IMFrame jFrameOwner, TableModel model, Object object)
   {
     super(jFrameOwner, true);
     m_jFrameOwner = jFrameOwner;
-    m_szTitle = "MAIN_MENU_ALBUM_NEW";
     m_model = model;
+    m_object = object;
+    
+    if (m_object instanceof Category){
+    	m_szTitle = "SELECT_AND_INSERT_CATEGORY";	
+    } else if (m_object instanceof Keyword){
+    	m_szTitle = "SELECT_AND_INSERT_KEYWORD";
+    }
+    
 
     try
     {
@@ -69,9 +79,6 @@ public class JDialogTable extends JDialog implements IMConstants
       
       add(contentPanel, BorderLayout.CENTER);
       add(m_jFieldSearch, BorderLayout.NORTH);
-      JPanel southPane = JPanel();
-      southPane.
-	  add(southPane, BorderLayout.SOUTH);
       
       setVisible(false);
     }
@@ -101,8 +108,8 @@ public class JDialogTable extends JDialog implements IMConstants
 	  m_jTableData.setRowSelectionAllowed(false);
 	  
 	  JScrollPane scroll = new JScrollPane(m_jTableData);
-	  scroll.setSize(new Dimension(m_nWidth, m_nHeight));
-	  scroll.setPreferredSize(new Dimension(m_nWidth, m_nHeight));
+	  scroll.setSize(new Dimension(m_nWidth, m_nHeight-m_nFieldHeight));
+	  scroll.setPreferredSize(new Dimension(m_nWidth, m_nHeight-m_nFieldHeight));
 	  
 	  contentPanel = new JPanel();
 	  contentPanel.setLayout(null);
@@ -110,16 +117,16 @@ public class JDialogTable extends JDialog implements IMConstants
 	  contentPanel.add(scroll, null);
 	  
 	  m_jFieldSearch.setSize(new Dimension(m_nWidth, m_nFieldHeight));
-	  m_jFieldSearch.setText(IMMessage.getString("MAIN_MENU_SEARCH"));
+	  m_jFieldSearch.setPreferredSize(new Dimension(m_nWidth, m_nFieldHeight));
+	  m_jFieldSearch.setText(IMMessage.getString("SEARCH_AND_INSERT"));
 	  
 	  m_jFieldSearch.addFocusListener(new FocusListener() {
 		
 		@Override
 		public void focusLost(FocusEvent arg0) {
 			if (m_jFieldSearch.getText().equals("")){
-				m_jFieldSearch.setText(IMMessage.getString("MAIN_MENU_SEARCH"));
+				m_jFieldSearch.setText(IMMessage.getString("SEARCH_AND_INSERT"));
 			}
-			
 		}
 		
 		@Override
@@ -128,39 +135,64 @@ public class JDialogTable extends JDialog implements IMConstants
 			
 		}
 	});
+	  
+	  m_jFieldSearch.addKeyListener(new KeyListener() {
+		
+		@Override
+		public void keyTyped(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void keyReleased(KeyEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void keyPressed(KeyEvent arg0) {
+			if (arg0.getKeyCode()==KeyEvent.VK_ENTER){
+				IMQuery q = new IMQuery();
+				
+				if (m_object instanceof Keyword)
+				{
+					Keyword k = new Keyword(m_jFieldSearch.getText());
+					k = q.insertKeyword(k);
+					if ((k!=null) && (k.getKeywordId())!=0){
+						new IMMessage(IMMessage.WARNING, "INSERT_SUCCESS");
+						m_jFieldSearch.setText(null);
+						ArrayList<Keyword> array = m_jFrameOwner.getkeywordAll();
+						array.add(k);
+
+					}
+				} 
+				else if (m_object instanceof Category)
+				{
+					Category c = new Category(m_jFieldSearch.getText());
+					c = q.insertCategory(c);
+					if ((c!=null) && (c.getCategoryId()!=0)){
+						new IMMessage(IMMessage.WARNING, "INSERT_SUCCESS");
+						m_jFieldSearch.setText(null);
+						ArrayList<Category> array = m_jFrameOwner.getcategoryAll();
+						array.add(c);
+					}
+				}
+					
+				refresh();
+				
+			}
+			
+		}
+	});
 
   }
 
-  /**
-   * 
-   */
-  void confirm()
-  {
-	/*  if (
-		m_jAlbumNameField.getText().equals("") 
-		 ){
-		  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
-	  } else {
-		  IMQuery q = new IMQuery();
-		  Album a = new Album(0, m_jFrameOwner.getUserActive().getUserId(), m_jAlbumNameField.getText(), m_jCheckBoxPublic.isSelected());
-		  a = q.createAlbum(a);
-		  
-		  if (a!=null){
-			  new IMMessage(IMConstants.WARNING, "CREATE_SUCCESS");
-			  this.setVisible(false);
-			  this.dispose();
-		  }
-      }*/
+  protected void refresh() {
+	  m_jTableData.revalidate();
+	  SwingUtilities.updateComponentTreeUI(this);
   }
 
-  /**
-   * 
-   */
-  void cancel()
-  {
-    this.setVisible(false);
-    this.dispose();
-  }
 
   /**
    * Initializes the dialog display.

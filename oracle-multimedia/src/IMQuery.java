@@ -6,8 +6,10 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import bean.Album;
+import bean.Category;
 import bean.City;
 import bean.Country;
 import bean.Keyword;
@@ -67,6 +69,18 @@ class IMQuery implements IMConstants
   private static final String INSERT_PICTURE_GET_PICTURE_ID = "select pictures_inc.currval from dual";
   
   private static final String SELECT_PICTURES_FROM_ALBUM = "select * from pictures where album_id = ?";
+  
+  private static final String ALL_KEYWORDS = "select * from keywords";
+  private static final String ALL_CATEGORIES = "select * from categories";
+  
+  private static final String INSERT_KEYWORD = "insert into keywords (name) VALUES (?)";
+  private static final String INSERT_KEYWORD_GET_ID = "select keywords_inc.currval from dual";
+  private static final String INSERT_CATEGORY = "insert into categories (name) VALUES (?)";
+  private static final String INSERT_CATEGORY_GET_ID = "select categories_inc.currval from dual";
+  
+  private static final String INSERT_PICTURE_TO_CATEGORY = "insert into picture_to_category (picture_id, category_id) VALUES (?,?)";
+  private static final String INSERT_PICTURE_TO_KEYWORD = "insert into picture_to_keyword (picture_id, keyword_id) VALUES (?,?)";
+  
   
   /**
    * Get the OracleConnection object (create connection)
@@ -404,6 +418,165 @@ class IMQuery implements IMConstants
 		}
 	  
 	  return array;	  
+  }
+  
+  public ArrayList<Keyword> selectAllKeywords(){
+	    connect();
+	    ArrayList<Keyword> array = new ArrayList<Keyword>();
+	    
+	    try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(ALL_KEYWORDS);
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Keyword k = new Keyword(rs.getInt("keyword_id"), rs.getString("name"));
+				array.add(k);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		}
+	  
+	  return array;	  
+  }
+  
+  
+  public ArrayList<Category> selectAllCategories(){
+	    connect();
+	    ArrayList<Category> array = new ArrayList<Category>();
+	    
+	    try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(ALL_CATEGORIES);
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Category c = new Category(rs.getInt("category_id"), rs.getString("name"));
+				array.add(c);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		}
+	  
+	  return array;	  
+  }
+  
+  public Keyword insertKeyword(Keyword k){
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_KEYWORD);
+		int index = 1;
+		stmt.setString(index++, k.getName());
+		
+		
+		OracleResultSet rs = (OracleResultSet) stmt.executeQuery();
+		
+		if (rs!=null){
+			IMUtil.cleanup(rs, stmt);
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_KEYWORD_GET_ID);
+			rs =  (OracleResultSet) stmt.executeQuery();
+			if (rs.next()){
+				k.setKeywordId(rs.getInt(1));
+			} else {
+				return null;
+			}
+			
+		} else {
+			return null;
+		}
+		
+		IMUtil.cleanup(rs, stmt);
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+	} 
+	  
+	  return k;
+  }
+  
+  public void insertKeywordToPicture(Picture p, ArrayList<Keyword> array){
+	  connect();
+	  
+	  Iterator<Keyword> it = array.iterator();
+	  
+	  while (it.hasNext()){
+		  Keyword keyword = it.next();
+	  
+	  
+		  try {
+			OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_PICTURE_TO_KEYWORD);
+			int index = 1;
+			stmt.setInt(index++, p.getPictureId());
+			stmt.setInt(index++, keyword.getKeywordId());
+						
+			stmt.executeQuery();
+
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		}
+		  
+	  }
+
+  }
+  
+  public void insertCategoryToPicture(Picture p, ArrayList<Category> array){
+	  connect();
+	  
+	  Iterator<Category> it = array.iterator();
+	  
+	  while (it.hasNext()){
+		  Category category = it.next();
+	  
+	  
+		  try {
+			OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_PICTURE_TO_CATEGORY);
+			int index = 1;
+			stmt.setInt(index++, p.getPictureId());
+			stmt.setInt(index++, category.getCategoryId());
+						
+			stmt.executeQuery();
+
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		}
+		  
+	  }
+
+  }
+  
+  public Category insertCategory(Category c){
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_CATEGORY);
+		int index = 1;
+		stmt.setString(index++, c.getName());
+		
+		
+		OracleResultSet rs = (OracleResultSet) stmt.executeQuery();
+		
+		if (rs!=null){
+			IMUtil.cleanup(rs, stmt);
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_CATEGORY_GET_ID);
+			rs =  (OracleResultSet) stmt.executeQuery();
+			if (rs.next()){
+				c.setCategoryId(rs.getInt(1));
+			} else {
+				return null;
+			}
+			
+		} else {
+			return null;
+		}
+		
+		IMUtil.cleanup(rs, stmt);
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+	} 
+	  
+	  return c;
   }
   
   public boolean initOrdImage(Object o, boolean thumb){

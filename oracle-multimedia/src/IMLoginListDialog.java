@@ -289,7 +289,7 @@ public class IMLoginListDialog extends JDialog implements IMConstants
           );
 
       
-      IMMain.setAutoCommit(true);
+      IMMain.setAutoCommit(false);
       m_jFrameOwner.enableDisplay();
 
       this.setVisible(false);

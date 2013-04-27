@@ -71,7 +71,15 @@ public class IMTableModel extends AbstractTableModel{
 		if (columnIndex==i++){
 			
 		} else if (columnIndex==i++){
-			data.get(rowIndex).setSelected(!data.get(rowIndex).isSelected());
+			if (data.get(rowIndex) instanceof Keyword){
+				 Keyword k = ((Keyword)data.get(rowIndex));
+				 k.setSelected(!k.isSelected());
+			}
+			else if (data.get(rowIndex) instanceof Category)
+			{
+				 Category c = ((Category)data.get(rowIndex));
+				 c.setSelected(!c.isSelected());
+			}
 		} else {
 			
 		}
