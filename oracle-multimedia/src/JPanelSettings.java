@@ -1,13 +1,8 @@
 import java.awt.Rectangle;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-
-
 import bean.City;
 import bean.Country;
 import bean.Region;

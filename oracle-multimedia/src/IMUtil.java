@@ -11,16 +11,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 
-import oracle.jdbc.OracleConnection;
-import oracle.jdbc.OraclePreparedStatement;
-import oracle.jdbc.OracleResultSet;
-
 import oracle.ord.im.OrdImage;
-import oracle.ord.im.OrdAudio;
-import oracle.ord.im.OrdVideo;
-import oracle.ord.im.OrdDoc;
 
-import java.io.FileOutputStream;
 
 /** 
  * The IMUtil class includes common utilities.
@@ -51,71 +43,6 @@ class IMUtil implements IMConstants
     }
   }
 
-  /**
-   * This method is a wrapper for OrdAudio.setProperties.
-   * It is used to separate the exceptions
-   * caused by unrecognizable formats.
-   * @param aud the input OrdAudio object
-   * @return true if OrdAudio.setProperties finishes successfully;
-   *         false otherwise
-   */
-  static boolean setProperties(OrdAudio aud)
-  {
-    byte[] ctx[] = new byte[1][64];
-    try
-    {
-      aud.setProperties(ctx);
-      return true;
-    }
-    catch (SQLException e)
-    {
-      return false;
-    }
-  }
-
-  /**
-   * This method is a wrapper for OrdVideo.setProperties.
-   * It is used to separate the exceptions
-   * caused by unrecognizable formats.
-   * @param vid the input OrdVideo object
-   * @return true if OrdVideo.setProperties finishes successfully;
-   *         false otherwise
-   */
-  static boolean setProperties(OrdVideo vid)
-  {
-    byte[] ctx[] = new byte[1][64];
-    try
-    {
-      vid.setProperties(ctx);
-      return true;
-    }
-    catch (SQLException e)
-    {
-      return false;
-    }
-  }
-
-  /**
-   * This method is a wrapper for OrdDoc.setProperties.
-   * It is used to separate the exceptions
-   * caused by unrecognizable formats.
-   * @param doc the input OrdDoc object
-   * @return true if OrdDoc.setProperties finishes successfully;
-   *         false otherwise
-   */
-  static boolean setProperties(OrdDoc doc)
-  {
-    byte[] ctx[] = new byte[1][64];
-    try
-    {
-      doc.setProperties(ctx, true);
-      return true;
-    }
-    catch (SQLException e)
-    {
-      return false;
-    }
-  }
 
 
   /** 

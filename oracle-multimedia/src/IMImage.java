@@ -10,10 +10,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JDialog;
 import javax.swing.ImageIcon;
-import javax.swing.JTable;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.Box;
 
 import bean.IMAttrTableModel;
@@ -33,7 +30,6 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Rectangle;
 
 import oracle.ord.im.OrdImage;
@@ -46,6 +42,7 @@ import oracle.sql.BFILE;
 /**
  * The IMImagePanel class displays the product photo and its attributes.
  */
+@SuppressWarnings("serial")
 class IMImage extends IMMediaPanel implements IMConstants
 {
   OrdImage m_img = null;

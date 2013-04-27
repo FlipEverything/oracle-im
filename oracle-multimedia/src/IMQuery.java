@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -50,6 +49,7 @@ class IMQuery implements IMConstants
   private static final String ALL_CITIES = "SELECT * FROM CITIES ORDER BY name";
   
   private static final String CREATE_ALBUM = "INSERT INTO ALBUMS (user_id, name, is_public) VALUES (?,?,?)";
+  private static final String EDIT_ALBUM = "update albums set name = ?, is_public = ? where album_id = ?";
   private static final String GET_ALBUMS_BY_USER = "SELECT * FROM ALBUMS WHERE USER_ID = ?";
   private static final String GET_PUBLIC_ALBUMS_BY_USER = "SELECT * FROM ALBUMS WHERE USER_ID = ? and is_public = 1";
   
@@ -81,6 +81,7 @@ class IMQuery implements IMConstants
   
   private static final String ALL_KEYWORDS = "select * from keywords";
   private static final String ALL_CATEGORIES = "select * from categories";
+  private static final String ALL_USERS = "select * from users";
   
   private static final String INSERT_KEYWORD = "insert into keywords (name) VALUES (?)";
   private static final String INSERT_KEYWORD_GET_ID = "select keywords_inc.currval from dual";
@@ -450,6 +451,26 @@ class IMQuery implements IMConstants
 	  return a;
   }
   
+  public Album editAlbum(Album a){
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(EDIT_ALBUM);
+		int index = 1;
+		stmt.setString(index++, a.getName());
+		stmt.setInt(index++, a.isPublic()? 1 : 0 );
+		stmt.setInt(index++, a.getAlbumId());
+		
+		stmt.executeUpdate();
+		
+		IMUtil.cleanup(rs, stmt);
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		return null;
+	} 
+	  
+	  return a;
+  }
+  
   /**
    * 
    * @param user
@@ -587,6 +608,38 @@ class IMQuery implements IMConstants
 	  
 	  return array;	  
   }
+  
+  public ArrayList<User> selectAllUsers() {
+	    connect();
+	    ArrayList<User> array = new ArrayList<User>();
+	    
+	    try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(ALL_USERS);
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				User user = new User();
+				user.setCityId(rs.getInt("city_id"));
+				user.setUsername(rs.getString("username"));
+				user.setEmail(rs.getString("email"));
+				user.setFirstName(rs.getString("first_name"));
+				user.setLastname(rs.getString("last_name"));
+				user.setRegistered(rs.getDate("registered"));
+				user.setPictureSum(rs.getInt("picture_sum"));
+				user.setProfilePicture((OrdImage)rs.getORAData("profile_picture", OrdImage.getORADataFactory()));
+				user.setProfilePictureThumb((OrdImage)rs.getORAData("profile_picture_thumb", OrdImage.getORADataFactory()));
+				user.setUserId(rs.getInt("user_id"));
+				
+				array.add(user);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		}
+	  
+	  return array;	  
+	}
   
   
   public ArrayList<Category> selectAllCategories(){
@@ -881,6 +934,7 @@ class IMQuery implements IMConstants
 	return true;
 	  
   }
+
 
   
 }

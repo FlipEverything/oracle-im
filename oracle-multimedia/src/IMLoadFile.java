@@ -6,8 +6,6 @@ import java.io.FileNotFoundException;
 
 import java.awt.Component;
 
-import javax.swing.JFileChooser;
-
 import bean.IMFileChooser;
 import bean.Picture;
 import bean.User;

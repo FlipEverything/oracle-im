@@ -1,12 +1,10 @@
 
 
-import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
-import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import bean.Album;
@@ -15,11 +13,8 @@ import bean.Album;
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.KeyEvent;
 import java.util.concurrent.Callable;
 
 /**
@@ -39,7 +34,7 @@ public class JDialogNewAlbum extends JDialog implements IMConstants
   JTextField m_jAlbumNameField = new JTextField();
 
   JLabel m_jLabelPasswd = new JLabel();
-  private JCheckBox m_jCheckBoxPublic = new JCheckBox();
+  protected JCheckBox m_jCheckBoxPublic = new JCheckBox();
 
   protected String m_szButtonConfirmTitle = "LOGINDIAG_CREATE_BUTTON";
 	
@@ -77,14 +72,13 @@ private JPanel contentPanel;
       setupContentPane();
       this.getContentPane().add(contentPanel, BorderLayout.CENTER);
       addListener();
-
-      setVisible(true);
     }
     catch (Exception e)
     {
       new IMMessage(IMConstants.ERROR, "APP_ERR", e);
     }
   }
+ 
 
   /**
    * Draws buttons.
@@ -111,7 +105,7 @@ private JPanel contentPanel;
   /**
    * Draws the content pane.
    */
-  private void setupContentPane() 
+  protected void setupContentPane() 
   {
 	  m_jLabelAlbumName = IMFrame.createJLabel(m_jLabelAlbumName, new Rectangle(m_iLabelStartX, m_iLabelStartY, m_iLabelWidth , m_iFieldHeight), 
 				"NEWALBUMDIAG_NAME", 'U', m_jAlbumNameField);

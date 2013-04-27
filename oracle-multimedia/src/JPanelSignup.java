@@ -4,9 +4,7 @@ import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -173,7 +171,7 @@ public class JPanelSignup extends JPanelLogin {
 			children.addItem(IMMessage.getString("SELECT"));
 				
 				if (o instanceof Country ){
-					Iterator it = all.iterator();
+					Iterator<?> it = all.iterator();
 					while (it.hasNext()){
 						Region r = (Region) it.next();
 						if (((Country) o).getCountryId()==r.getCountryId()){
@@ -181,7 +179,7 @@ public class JPanelSignup extends JPanelLogin {
 						}	
 					}
 				} else if (o instanceof Region){
-					Iterator it = all.iterator();
+					Iterator<?> it = all.iterator();
 					while (it.hasNext()){
 						City c = (City) it.next();
 						if (((Region) o).getRegionId()==c.getRegionId()){

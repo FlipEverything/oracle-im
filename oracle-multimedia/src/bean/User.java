@@ -174,13 +174,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [m_nUserId=" + m_nUserId + ", m_szFirstName="
-				+ m_szFirstName + ", m_szLastname=" + m_szLastname
-				+ ", m_szPassword=" + m_szPassword + ", m_szEmail=" + m_szEmail
-				+ ", m_dRegistered=" + m_dRegistered + ", m_nPictureSum="
-				+ m_nPictureSum + ", m_imProfilePicture=" + m_imProfilePicture
-				+ ", m_szUsername=" + m_szUsername + ", m_nCityId=" + m_nCityId
-				+ "]";
+		return m_szFirstName + " " + m_szLastname;
 	}
 	
 	

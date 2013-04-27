@@ -8,7 +8,6 @@ import java.awt.Rectangle;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.BorderLayout;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JDialog;
@@ -27,6 +26,7 @@ import oracle.ord.im.OrdImage;
  * The IMPutMetadataDialog shows a dialog to write 
  * metadata into a product photo.
  */
+@SuppressWarnings("serial")
 public class IMPutMetadataDialog extends JDialog implements IMConstants
 {
   OrdImage          m_img = null;

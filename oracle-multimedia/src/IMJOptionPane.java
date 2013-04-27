@@ -10,6 +10,7 @@ import java.awt.Component;
  * The IMJOptionPane class subclasses JOptionPane in order to add
  * AccessibleDescription to the displayed dialog
  */
+@SuppressWarnings("serial")
 public class IMJOptionPane extends JOptionPane
 {
   // Needs the following calls here because otherwise the overwritten 

@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 
-import java.awt.event.ActionEvent;
 import java.awt.Component;
 
 import javax.swing.JFileChooser;

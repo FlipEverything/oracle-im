@@ -1,5 +1,4 @@
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
@@ -7,7 +6,6 @@ import java.util.concurrent.Callable;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -265,7 +263,7 @@ public class JPanelNewPicture extends JPanelLogin {
 			children.addItem(IMMessage.getString("SELECT"));
 				
 				if (o instanceof Country ){
-					Iterator it = all.iterator();
+					Iterator<?> it = all.iterator();
 					while (it.hasNext()){
 						Region r = (Region) it.next();
 						if (((Country) o).getCountryId()==r.getCountryId()){
@@ -273,7 +271,7 @@ public class JPanelNewPicture extends JPanelLogin {
 						}	
 					}
 				} else if (o instanceof Region){
-					Iterator it = all.iterator();
+					Iterator<?> it = all.iterator();
 					while (it.hasNext()){
 						City c = (City) it.next();
 						if (((Region) o).getRegionId()==c.getRegionId()){

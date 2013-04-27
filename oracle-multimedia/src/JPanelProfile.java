@@ -6,20 +6,9 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Iterator;
-import java.util.concurrent.Callable;
-
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
 import bean.City;
 import bean.Country;
 import bean.Region;
@@ -43,7 +32,7 @@ public class JPanelProfile extends JPanel implements IMConstants{
 	
 	public JPanelProfile(IMFrame frame, User user){
 		this.m_jFrameOwner = frame;
-		this.m_szTitle = IMMessage.getString("MAIN_MENU_PROFILE")+": "+ user.getUsername() + " "+ (user.getUserId()==frame.getUserActive().getUserId() ? IMMessage.getString("OWN") : null);
+		this.m_szTitle = IMMessage.getString("MAIN_MENU_PROFILE")+": "+ user.getUsername() + " "+ (user.getUserId()==frame.getUserActive().getUserId() ? IMMessage.getString("OWN") : "");
 		this.m_userDisplayed = user;
 	}
 	
@@ -95,7 +84,8 @@ public class JPanelProfile extends JPanel implements IMConstants{
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				new JDialogPicturePopup(m_jFrameOwner, m_userDisplayed.getProfilePicture());
+				JDialogProfilePic p = new JDialogProfilePic(m_jFrameOwner, m_userDisplayed.getProfilePicture());
+				p.setVisible(true);
 			}
 		});
 		

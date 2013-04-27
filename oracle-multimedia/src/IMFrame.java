@@ -75,10 +75,7 @@ public class IMFrame extends JFrame implements IMConstants
   JMenuItem m_menuGalleryHome = new JMenuItem();
   JMenuItem m_menuGalleryUsers = new JMenuItem();
   JMenuItem m_menuGallerySearch = new JMenuItem();
-  JMenuItem m_menuGalleryNear = new JMenuItem();
   
-  JMenuItem m_menuSystemSettings = new JMenuItem();
-  JMenuItem m_menuSystemHelp = new JMenuItem();
   JMenuItem m_menuSystemAbout = new JMenuItem();
   
   JScrollPane m_jQueryResultPanel = new JScrollPane();
@@ -234,6 +231,7 @@ public class IMFrame extends JFrame implements IMConstants
       m_menuConnectionImport.setEnabled(false);
       
       setAllMenu(m_menuUser, false);
+      setAllMenu(m_menuGallery, false);
 
       
       m_jQueryResultPanel.setViewportView(null);
@@ -385,54 +383,38 @@ public class IMFrame extends JFrame implements IMConstants
 		   }
 		});
     
-    m_menuGalleryHome = createJMenuItem(m_menuGalleryHome, "MAIN_MENU_HOME", 'K', false, null, "MAIN_MENU_HOME_DESC", new Callable<Void>() {
+    m_menuGalleryHome = createJMenuItem(m_menuGalleryHome, "MAIN_MENU_HOME", 'K', false, "gallery", "MAIN_MENU_HOME_DESC", new Callable<Void>() {
 		   public Void call() {
 
 				return null;
 		   }
 		});
     
-    m_menuGalleryUsers = createJMenuItem(m_menuGalleryUsers, "MAIN_MENU_USERS", 'F', false, null, "MAIN_MENU_USERS_DESC", new Callable<Void>() {
+    m_menuGalleryUsers = createJMenuItem(m_menuGalleryUsers, "MAIN_MENU_USERS", 'F', false, "users", "MAIN_MENU_USERS_DESC", new Callable<Void>() {
 		   public Void call() {
-
+			    showUsersPanel();
 				return null;
 		   }
 		});
     
-    m_menuGalleryNear = createJMenuItem(m_menuGalleryNear, "MAIN_MENU_NEAR", 'Ö', false, null, "MAIN_MENU_NEAR_DESC", new Callable<Void>() {
+
+    
+    m_menuGallerySearch = createJMenuItem(m_menuGallerySearch, "MAIN_MENU_SEARCH", 'S', false, "search", "MAIN_MENU_SEARCH_DESC", new Callable<Void>() {
 		   public Void call() {
 
+				return null;
+		   }
+		});
+
+    
+    m_menuSystemAbout = createJMenuItem(m_menuSystemAbout, "MAIN_MENU_ABOUT", 'N', true, "about", "MAIN_MENU_ABOUT_DESC", new Callable<Void>() {
+		   public Void call() {
+			    
 				return null;
 		   }
 		});
     
-    m_menuGallerySearch = createJMenuItem(m_menuGallerySearch, "MAIN_MENU_SEARCH", 'S', false, null, "MAIN_MENU_SEARCH_DESC", new Callable<Void>() {
-		   public Void call() {
 
-				return null;
-		   }
-		});
-    
-    m_menuSystemSettings = createJMenuItem(m_menuSystemSettings, "MAIN_MENU_SETTINGS", 'S', false, null, "MAIN_MENU_SETTINGS_DESC", new Callable<Void>() {
-		   public Void call() {
-
-				return null;
-		   }
-		});
-    
-    m_menuSystemAbout = createJMenuItem(m_menuSystemAbout, "MAIN_MENU_ABOUT", 'N', false, null, "MAIN_MENU_ABOUT_DESC", new Callable<Void>() {
-		   public Void call() {
-
-				return null;
-		   }
-		});
-    
-    m_menuSystemHelp = createJMenuItem(m_menuSystemHelp, "MAIN_MENU_HELP", 'G', false, null, "MAIN_MENU_HELP_DESC", new Callable<Void>() {
-		   public Void call() {
-
-				return null;
-		   }
-		});
 
 
     m_menuConnection.setText(IMMessage.getString("MAIN_MENU_FILE"));
@@ -464,12 +446,9 @@ public class IMFrame extends JFrame implements IMConstants
     m_menuGallery.add(m_menuGalleryHome);
     m_menuGallery.add(m_menuGalleryUsers);
     m_menuGallery.add(m_menuGallerySearch);
-    m_menuGallery.add(m_menuGalleryNear);
     
     m_menuSystem.setText(IMMessage.getString("MAIN_MENU_SYSTEM"));
     m_menuSystem.setMnemonic('G');
-    m_menuSystem.add(m_menuSystemSettings);
-    m_menuSystem.add(m_menuSystemHelp);
     m_menuSystem.add(m_menuSystemAbout);
     
     m_menuBar.add(m_menuConnection);
@@ -523,6 +502,7 @@ public void downloadAll(){
 	m_userActive = null;
 	
 	setAllMenu(m_menuUser, false);
+	setAllMenu(m_menuGallery, false);
 	m_menuUserRegister.setEnabled(true);
 	m_menuUserLogin.setEnabled(true);
 	
@@ -535,8 +515,10 @@ public void downloadAll(){
    */
   public void userLogin(User user) {
 	  setAllMenu(m_menuUser, true);
+	  setAllMenu(m_menuGallery, true);
 	  m_menuUserRegister.setEnabled(false);
 	  m_menuUserLogin.setEnabled(false);
+
 	  
 	  m_userActive = user;
 	  showProfilePanel(m_userActive);
@@ -547,6 +529,12 @@ public void downloadAll(){
    */
   void showLoginPanel(){
 	  JPanelLogin panel = new JPanelLogin(this);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+  }
+  
+  void showUsersPanel(){
+	  JPanelUsers panel = new JPanelUsers(this);
 	  panel.init();
 	  m_jQueryResultPanel.setViewportView(panel);
   }
@@ -590,7 +578,8 @@ public void downloadAll(){
   }
   
   protected void showNewAlbumDialog() {
-	  new JDialogNewAlbum(this);
+	  JDialogNewAlbum newAlbumDialog = new JDialogNewAlbum(this);
+	  newAlbumDialog.setVisible(true);
   }
   
   protected void showNewPicturePanel(User user) {

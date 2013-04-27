@@ -9,6 +9,7 @@ import bean.Picture;
 import bean.User;
 
 
+@SuppressWarnings("serial")
 class PicturePopup extends JPopupMenu {
     JMenuItem m_itemEdit;
     JMenuItem m_itemDelete;

@@ -10,7 +10,6 @@ import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -50,7 +49,7 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 		this.m_jFrameOwner = frame;
 		this.m_userDisplayed = user;
 		this.m_nWidth = frame.getWidth() - 100;
-		this.m_szTitle = IMMessage.getString("MAIN_MENU_ALBUMS")+": "+ user.getUsername() + " "+ (ownAlbum() ? IMMessage.getString("OWN") : null);
+		this.m_szTitle = IMMessage.getString("MAIN_MENU_ALBUMS")+": "+ user.getUsername() + " "+ (ownAlbum() ? IMMessage.getString("OWN") : "");
 	}
 	
 	public void init(){
@@ -148,7 +147,8 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 	}
 
 	protected void edit(Album selectedItem) {
-		// TODO Auto-generated method stub
+		JDialogEditAlbum editAlbumDialog = new JDialogEditAlbum(m_jFrameOwner, selectedItem);
+		editAlbumDialog.setVisible(true);
 		
 	}
 
@@ -217,9 +217,10 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 						@Override
 						public void mouseClicked(MouseEvent e) {
 							if (SwingUtilities.isLeftMouseButton(e)){
-								new JDialogExtendedPicturePopup(m_jFrameOwner, p.getPicture());	
+								JDialogPicture popup = new JDialogPicture(m_jFrameOwner, p.getPicture());
+								popup.setVisible(true);
 							} else if (SwingUtilities.isRightMouseButton(e)){
-								if (((Album)m_jComboBoxAlbum.getSelectedItem()).getUserId()==m_userDisplayed.getUserId()){
+								if (((Album)m_jComboBoxAlbum.getSelectedItem()).getUserId()==m_jFrameOwner.getUserActive().getUserId()){
 									doPop(e);	
 								}
 								

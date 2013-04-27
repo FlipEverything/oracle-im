@@ -47,7 +47,7 @@ public class Album {
 
 	@Override
 	public String toString() {
-		return m_szName;
+		return m_szName+" ("+(isPublic()?"Publikus":"Privát")+") id:"+getAlbumId();
 	}
 	
 	
