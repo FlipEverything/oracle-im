@@ -333,6 +333,7 @@ public class JPanelNewPicture extends JPanelLogin {
 					  load.startUpload();
 					  q.insertCategoryToPicture(m_pictureNew, selectedCategories);
 					  q.insertKeywordToPicture(m_pictureNew, selectedKeywords);
+					  m_userDisplayed.setPictureSum(m_userDisplayed.getPictureSum()+1);
 					  
 					  m_jFrameOwner.showProfilePanel(m_userDisplayed);
 				  } else {

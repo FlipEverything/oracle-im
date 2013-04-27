@@ -43,7 +43,7 @@ public class JPanelProfile extends JPanel implements IMConstants{
 	
 	public JPanelProfile(IMFrame frame, User user){
 		this.m_jFrameOwner = frame;
-		this.m_szTitle = IMMessage.getString("MAIN_MENU_PROFILE")+": "+user.getUsername();
+		this.m_szTitle = IMMessage.getString("MAIN_MENU_PROFILE")+": "+ user.getUsername() + " "+ (user.getUserId()==frame.getUserActive().getUserId() ? IMMessage.getString("OWN") : null);
 		this.m_userDisplayed = user;
 	}
 	
@@ -79,6 +79,7 @@ public class JPanelProfile extends JPanel implements IMConstants{
 	  {
 		  
 		JLabel userPictureLabel = IMImage.showPicture(m_userDisplayed.getProfilePictureThumb(), new Rectangle(m_nOffset, 0, THUMB_WIDTH, m_nHeight), m_userDisplayed.getUsername());
+		
 		userPictureLabel.addMouseListener(new MouseListener() {			
 			@Override
 			public void mouseReleased(MouseEvent e) {

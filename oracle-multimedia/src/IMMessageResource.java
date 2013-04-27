@@ -168,6 +168,13 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"SELECT_AND_INSERT_CATEGORY", "Kategóriák választása és felvitele"},
     {"SELECT_AND_INSERT_KEYWORD", "Kulcsszavak választása és felvitele"},
     
+    {"EDIT", "Szerkeszt"},
+    {"DELETE", "Töröl"},
+    {"EDIT_DESC", ""},
+    {"DELETE_DESC", ""},
+    {"DELETE_SUCCESS", "Sikeres törlés!"},
+    {"OWN", "(Saját)"},
+    
     
     {"CHECK_MEDIA_NAME", ""},
     {"CHECK_MEDIA_DESC", "Click mouse or tap SPACE to check media information for product"},

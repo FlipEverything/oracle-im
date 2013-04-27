@@ -753,6 +753,10 @@ public void downloadAll(){
 	  return button;
   }
   
+  public void refresh(){
+	  SwingUtilities.updateComponentTreeUI(this);
+  }
+  
   
   
 
@@ -810,7 +814,7 @@ public void downloadAll(){
 	}
 	
 
-public int getWidth() {
+  public int getWidth() {
 		return m_nWidth;
 	}
 

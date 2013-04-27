@@ -1,5 +1,6 @@
 
 
+import javax.swing.DefaultRowSorter;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -10,9 +11,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import bean.Album;
 import bean.Category;
@@ -32,6 +38,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
@@ -44,6 +51,7 @@ public class JDialogTable extends JDialog implements IMConstants
   
   IMFrame m_jFrameOwner = null;
   JTable m_jTableData = new JTable();
+  private DefaultRowSorter<TableModel, Integer> m_rowSorterForTableData;
   
   JTextField m_jFieldSearch = new JTextField(); 
   
@@ -101,11 +109,14 @@ public class JDialogTable extends JDialog implements IMConstants
    */
   private void setupContentPane() 
   {
+	  m_rowSorterForTableData = new TableRowSorter<TableModel>(m_model);
 	  
 	  m_jTableData = new JTable(m_model);
+	  m_jTableData.setRowSorter(m_rowSorterForTableData);
 	  //m_jTableData.setFocusable(false);
 	  
 	  m_jTableData.setRowSelectionAllowed(false);
+	  
 	  
 	  JScrollPane scroll = new JScrollPane(m_jTableData);
 	  scroll.setSize(new Dimension(m_nWidth, m_nHeight-m_nFieldHeight));
@@ -131,7 +142,7 @@ public class JDialogTable extends JDialog implements IMConstants
 		
 		@Override
 		public void focusGained(FocusEvent arg0) {
-			m_jFieldSearch.setText(null);
+			m_jFieldSearch.setText("");
 			
 		}
 	});
@@ -140,13 +151,13 @@ public class JDialogTable extends JDialog implements IMConstants
 		
 		@Override
 		public void keyTyped(KeyEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			
 		}
 		
 		@Override
 		public void keyReleased(KeyEvent arg0) {
-			// TODO Auto-generated method stub
+			
 			
 		}
 		
@@ -185,8 +196,40 @@ public class JDialogTable extends JDialog implements IMConstants
 			
 		}
 	});
+	  
+	  m_jFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			filter();
+		}
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			filter();			
+		}
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			filter();	
+		}
+	});
+	  
+	 
 
   }
+  
+  
+  public void filter(){
+		String k = m_jFieldSearch.getText();
+		if (k.equals(null) || k.equals("") || k.equals(IMMessage.getString("SEARCH_AND_INSERT"))){
+			m_rowSorterForTableData.setRowFilter(null);
+		} else {
+			List<RowFilter<Object,Object>> rfs = new ArrayList<RowFilter<Object,Object>>(0);
+			rfs.add(RowFilter.regexFilter("(?i)"+m_jFieldSearch.getText(), 0));
+		
+			RowFilter<TableModel, Object> rf = RowFilter.orFilter(rfs);
+			m_rowSorterForTableData.setRowFilter(rf);
+		}
+		m_jTableData.revalidate();
+	}
 
   protected void refresh() {
 	  m_jTableData.revalidate();

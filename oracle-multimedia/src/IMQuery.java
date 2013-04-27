@@ -11,10 +11,13 @@ import java.util.Iterator;
 import bean.Album;
 import bean.Category;
 import bean.City;
+import bean.Comment;
 import bean.Country;
 import bean.Keyword;
 import bean.Picture;
+import bean.Rating;
 import bean.Region;
+import bean.Tag;
 import bean.User;
 
 import oracle.jdbc.OracleConnection;
@@ -48,6 +51,7 @@ class IMQuery implements IMConstants
   
   private static final String CREATE_ALBUM = "INSERT INTO ALBUMS (user_id, name, is_public) VALUES (?,?,?)";
   private static final String GET_ALBUMS_BY_USER = "SELECT * FROM ALBUMS WHERE USER_ID = ?";
+  private static final String GET_PUBLIC_ALBUMS_BY_USER = "SELECT * FROM ALBUMS WHERE USER_ID = ? and is_public = 1";
   
   private static final String INIT_USER_PROFILE_PIC = "update users set profile_picture = ORDSYS.ORDImage.init() where user_id = ?";
   private static final String SELECT_USER_PROFILE_PIC = "select profile_picture from users where user_id = ? for update";
@@ -69,6 +73,11 @@ class IMQuery implements IMConstants
   private static final String INSERT_PICTURE_GET_PICTURE_ID = "select pictures_inc.currval from dual";
   
   private static final String SELECT_PICTURES_FROM_ALBUM = "select * from pictures where album_id = ?";
+  private static final String SELECT_PICTURE_KEYWORDS = "select distinct keywords.keyword_id, keywords.name from keywords, picture_to_keyword  where keywords.keyword_id = picture_to_keyword.keyword_id AND picture_to_keyword.picture_id = ?";
+  private static final String SELECT_PICTURE_CATEGORIES = "select distinct categories.category_id, categories.name from categories, picture_to_category  where categories.category_id = picture_to_category.category_id AND picture_to_category.picture_id = ?";
+  private static final String SELECT_PICTURE_COMMENTS = "select * from comments where picture_id = ?";
+  private static final String SELECT_PICTURE_TAGS = "select * from tags where picture_id = ?";
+  private static final String SELECT_PICTURE_RATINGS = "select * from ratings where picture_id = ?";
   
   private static final String ALL_KEYWORDS = "select * from keywords";
   private static final String ALL_CATEGORIES = "select * from categories";
@@ -80,6 +89,11 @@ class IMQuery implements IMConstants
   
   private static final String INSERT_PICTURE_TO_CATEGORY = "insert into picture_to_category (picture_id, category_id) VALUES (?,?)";
   private static final String INSERT_PICTURE_TO_KEYWORD = "insert into picture_to_keyword (picture_id, keyword_id) VALUES (?,?)";
+  
+  private static final String DELETE_PICTURE = "delete from pictures where picture_id = ?";
+  private static final String DELETE_ALBUM = "delete from albums where album_id = ?";
+  private static final String DELETE_PICTURES_FROM_ALBUM = "delete from pictures where album_id = ?";
+  private static final String SELECT_PICTURES_COUNT_IN_ALBUM = "select count(*) from pictures where album_id = ?";
   
   
   /**
@@ -261,6 +275,126 @@ class IMQuery implements IMConstants
 	  return success;
   }
   
+  public ArrayList<Comment> selectCommentForPicture(Picture p){
+	  ArrayList<Comment> array = new ArrayList<Comment>();
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURE_COMMENTS);
+			int index = 1;
+			stmt.setInt(index++, p.getPictureId());
+			
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Comment c = new Comment(rs.getInt("comment_id"), rs.getString("comment_text"), rs.getDate("comment_time"), rs.getInt("user_id"));
+				array.add(c);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		}
+	  
+	  return array;
+  }
+  
+  public ArrayList<Category> selectCategoriesForPicture(Picture p){
+	  ArrayList<Category> array = new ArrayList<Category>();
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURE_CATEGORIES);
+			int index = 1;
+			stmt.setInt(index++, p.getPictureId());
+			
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Category c = new Category(rs.getInt("category_id"), rs.getString("name"));
+				array.add(c);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		}
+	  
+	  return array;
+  }
+  
+  public ArrayList<Keyword> selectKeywordsForPicture(Picture p){
+	  ArrayList<Keyword> array = new ArrayList<Keyword>();
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURE_KEYWORDS);
+			int index = 1;
+			stmt.setInt(index++, p.getPictureId());
+			
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Keyword k = new Keyword(rs.getInt("keyword_id"), rs.getString("name"));
+				array.add(k);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		}
+	  
+	  return array;
+  }
+  
+  public ArrayList<Tag> selectTagsForPicture(Picture p){
+	  ArrayList<Tag> array = new ArrayList<Tag>();
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURE_TAGS);
+			int index = 1;
+			stmt.setInt(index++, p.getPictureId());
+			
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Tag t = new Tag(rs.getInt("user_id"), rs.getFloat("pixel_x"), rs.getFloat("pixel_y"));
+				array.add(t);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		}
+	  
+	  return array;
+  }
+  
+  public ArrayList<Rating> selectRatingForPicture(Picture p){
+	  ArrayList<Rating> array = new ArrayList<Rating>();
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURE_RATINGS);
+			int index = 1;
+			stmt.setInt(index++, p.getPictureId());
+			
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Rating r = new Rating(rs.getInt("picture_id"), rs.getInt("user_id"), rs.getInt("value"));
+				array.add(r);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		}
+	  
+	  return array;
+  }
+  
   public ArrayList<Picture> selectPicturesFromAlbum(Album a){
 	  ArrayList<Picture> array = new ArrayList<Picture>();
 	  connect();
@@ -274,7 +408,12 @@ class IMQuery implements IMConstants
 			while (rs.next()){
 				Picture p = new Picture(rs.getInt("picture_id"), rs.getString("picture_name"), rs.getDate("upload_time"), 
 						(OrdImage)rs.getORAData("picture", OrdImage.getORADataFactory()), (OrdImage)rs.getORAData("picture_thumbnail", OrdImage.getORADataFactory()), 
-						rs.getInt("city_id"), rs.getInt("album_id"), null, null, null, null, 0);
+						rs.getInt("city_id"), rs.getInt("album_id"), null, null, null, null, null);
+				p.setCategories(new IMQuery().selectCategoriesForPicture(p));
+				p.setRating(new IMQuery().selectRatingForPicture(p));
+				p.setComments(new IMQuery().selectCommentForPicture(p));
+				p.setTags(new IMQuery().selectTagsForPicture(p));
+				p.setKeywords(new IMQuery().selectKeywordsForPicture(p));
 				array.add(p);
 			}
 			
@@ -316,12 +455,12 @@ class IMQuery implements IMConstants
    * @param user
    * @return
    */
-  public ArrayList<Album> getAlbumsByUser(User user){
+  public ArrayList<Album> getAlbums(User user, String sql){
 	  connect();
 	  ArrayList<Album> array = new ArrayList<Album>();
 	  
 	  try {
-			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(GET_ALBUMS_BY_USER);
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(sql);
 			int index = 1;
 			stmt.setInt(index++, user.getUserId());
 			
@@ -341,6 +480,14 @@ class IMQuery implements IMConstants
 
 	  
 	  return array; 
+  }
+  
+  public ArrayList<Album> getAlbumsByUser(User user){
+	  return getAlbums(user, GET_ALBUMS_BY_USER);
+  }
+  
+  public ArrayList<Album> getPublicAlbumsByUser(User user){
+	  return getAlbums(user, GET_PUBLIC_ALBUMS_BY_USER);
   }
   
   
@@ -579,6 +726,82 @@ class IMQuery implements IMConstants
 	  return c;
   }
   
+  public boolean deletePicture(Picture p){
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(DELETE_PICTURE);
+		int index = 1;
+		stmt.setInt(index++, p.getPictureId());
+		
+		stmt.executeQuery();
+	
+		IMUtil.cleanup(rs, stmt);
+		
+		
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		
+		return false;
+	} 
+	  
+	return true;
+  }
+  
+  public int deletePicture(Album a){
+	  int count = 0;
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURES_COUNT_IN_ALBUM);
+		int index = 1;
+		stmt.setInt(index++, a.getAlbumId());
+			
+		OracleResultSet rs = (OracleResultSet) stmt.executeQuery();
+		if (rs.next()){
+			count = rs.getInt(1);
+		}
+	
+		IMUtil.cleanup(rs, stmt);
+		  		  
+		stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(DELETE_PICTURES_FROM_ALBUM);
+		index = 1;
+		stmt.setInt(index++, a.getAlbumId());
+		
+		stmt.executeQuery();
+	
+		IMUtil.cleanup(rs, stmt);
+		
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		
+		return 0;
+	} 
+	  
+	return count;
+  }
+  
+  public boolean deleteAlbum(Album a){
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(DELETE_ALBUM);
+		int index = 1;
+		stmt.setInt(index++, a.getAlbumId());
+		
+		stmt.executeQuery();
+	
+		IMUtil.cleanup(rs, stmt);
+		
+		
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		
+		return false;
+	} 
+	  
+	return true;
+  }
+  
+
+  
   public boolean initOrdImage(Object o, boolean thumb){
 	connect();
 	try {
@@ -659,10 +882,5 @@ class IMQuery implements IMConstants
 	  
   }
 
-
-public ArrayList<Keyword> getKeywords() {
-	// TODO Auto-generated method stub
-	return null;
-}
   
 }
