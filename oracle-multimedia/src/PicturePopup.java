@@ -2,6 +2,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.Callable;
 
+import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
@@ -18,14 +19,16 @@ class PicturePopup extends JPopupMenu {
     
     Picture m_picture;
     User m_userDisplayed;
+	private IMFrame m_jFrameOwner;
     
-    public PicturePopup(Picture p,  User user, Callable<Void> func){
+    public PicturePopup(Picture p,  User user, IMFrame m_jFrameOwner, Callable<Void> func){
     	this.m_picture = p;
     	this.m_callableFunc = func;
     	this.m_userDisplayed = user;
+    	this.m_jFrameOwner = m_jFrameOwner;
     	
-        m_itemEdit = new JMenuItem(IMMessage.getString("EDIT"));
-        m_itemDelete = new JMenuItem(IMMessage.getString("DELETE"));
+        m_itemEdit = new JMenuItem(IMMessage.getString("EDIT"), new ImageIcon((IMFrame.class.getResource("icons/edit.png"))));
+        m_itemDelete = new JMenuItem(IMMessage.getString("DELETE"), new ImageIcon((IMFrame.class.getResource("icons/delete.png"))));
         
         m_itemEdit.addActionListener(new ActionListener() {
 			@Override
@@ -45,6 +48,7 @@ class PicturePopup extends JPopupMenu {
         add(m_itemDelete);
     }
     
+    
 	protected void delete() {
 		IMQuery q = new IMQuery();
 		boolean success = q.deletePicture(m_picture);
@@ -63,7 +67,6 @@ class PicturePopup extends JPopupMenu {
 	}
 
 	protected void edit() {
-		// TODO Auto-generated method stub
-		
+		m_jFrameOwner.showEditPicturePanel(m_userDisplayed, m_picture);
 	}
 }

@@ -1,9 +1,5 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -37,7 +33,7 @@ class IMQuery implements IMConstants
   private OraclePreparedStatement stmt = null;
   private OracleResultSet rs = null;
   
-  private static final URL DB_SCRIPT_FILE = IMFrame.class.getResource("sql/db_script.sql");
+  public static final int TOP = 5;
   
   private static final String USER_LOGIN = "SELECT * FROM USERS WHERE username = ? AND password = ?";
   private static final String USER_SIGNUP = "INSERT INTO USERS (username, password, email, first_name, last_name, registered, city_id) VALUES (?,?,?,?,?,?,?)";
@@ -71,6 +67,7 @@ class IMQuery implements IMConstants
   
   private static final String INSERT_PICTURE = "insert into pictures (picture_name, upload_time, city_id, album_id) VALUES (?,?,?,?)";
   private static final String INSERT_PICTURE_GET_PICTURE_ID = "select pictures_inc.currval from dual";
+  private static final String UPDATE_PICTURE = "update pictures set picture_name=?, city_id=?, album_id=? where picture_id=?";
   
   private static final String SELECT_PICTURES_FROM_ALBUM = "select * from pictures where album_id = ?";
   private static final String SELECT_PICTURE_KEYWORDS = "select distinct keywords.keyword_id, keywords.name from keywords, picture_to_keyword  where keywords.keyword_id = picture_to_keyword.keyword_id AND picture_to_keyword.picture_id = ?";
@@ -78,15 +75,43 @@ class IMQuery implements IMConstants
   private static final String SELECT_PICTURE_COMMENTS = "select * from comments where picture_id = ?";
   private static final String SELECT_PICTURE_TAGS = "select * from tags where picture_id = ?";
   private static final String SELECT_PICTURE_RATINGS = "select * from ratings where picture_id = ?";
+  private static final String SELECT_USER_RATINGS = "select * from ratings where user_id = ?";
+  
+  private static final String SELECT_TOP_RATED_PICTURES = "select * from "+
+		  	"(select (sum(ratings.value)/count(ratings.value)) as rating_value, pictures.picture_id as group_picture_id "+
+		  	"from pictures, ratings where ratings.picture_id = pictures.picture_id "+ 
+		  	"group by pictures.picture_id order by rating_value DESC), pictures, albums where albums.album_id = pictures.album_id AND " +
+		  	"albums.is_public = 1 AND pictures.picture_id = group_picture_id AND rownum <= "+TOP;
+  
+  private static final String SELECT_TOP_RATE_COUNT_PICTURES = "select * from "+
+		  	"(select count(ratings.value) as rating_value, pictures.picture_id as group_picture_id "+
+		  	"from pictures, ratings where ratings.picture_id = pictures.picture_id "+ 
+		  	"group by pictures.picture_id order by rating_value DESC), pictures, albums where albums.album_id = pictures.album_id AND " +
+		  	"albums.is_public = 1 AND pictures.picture_id = group_picture_id AND rownum <= "+TOP;
+  
+  private static final String SELECT_TOP_COMMENT_COUNT_PICTURES = "select * from "+
+		  	"(select count(comments.comment_id) as rating_value, pictures.picture_id as group_picture_id "+
+		  	"from pictures, comments where comments.picture_id = pictures.picture_id "+ 
+		  	"group by pictures.picture_id order by rating_value DESC), pictures, albums where albums.album_id = pictures.album_id AND " +
+		  	"albums.is_public = 1 AND pictures.picture_id = group_picture_id AND rownum <= "+TOP;
+  
+  private static final String SELECT_NEW_PICTURES = "select * from "+
+		  	"pictures, albums where albums.album_id = pictures.album_id AND " +
+		  	"albums.is_public = 1 AND rownum <= "+TOP+" ORDER BY pictures.picture_id DESC";
   
   private static final String ALL_KEYWORDS = "select * from keywords";
   private static final String ALL_CATEGORIES = "select * from categories";
   private static final String ALL_USERS = "select * from users";
   
+  private static final String INSERT_RATING = "insert into ratings (picture_id, user_id, value) VALUES (?,?,?)";
+  
   private static final String INSERT_KEYWORD = "insert into keywords (name) VALUES (?)";
   private static final String INSERT_KEYWORD_GET_ID = "select keywords_inc.currval from dual";
   private static final String INSERT_CATEGORY = "insert into categories (name) VALUES (?)";
   private static final String INSERT_CATEGORY_GET_ID = "select categories_inc.currval from dual";
+  
+  private static final String INSERT_COMMENT = "insert into comments (comment_text, comment_time, user_id, picture_id) VALUES (?,?,?,?)";
+  private static final String INSERT_COMMENT_GET_ID = "select comments_inc.currval from dual";
   
   private static final String INSERT_PICTURE_TO_CATEGORY = "insert into picture_to_category (picture_id, category_id) VALUES (?,?)";
   private static final String INSERT_PICTURE_TO_KEYWORD = "insert into picture_to_keyword (picture_id, keyword_id) VALUES (?,?)";
@@ -96,7 +121,15 @@ class IMQuery implements IMConstants
   private static final String DELETE_PICTURES_FROM_ALBUM = "delete from pictures where album_id = ?";
   private static final String SELECT_PICTURES_COUNT_IN_ALBUM = "select count(*) from pictures where album_id = ?";
   
+  private static final String SELECT_USER_COMMENTS = "select * from comments where user_id = ?";
   
+  private static final String DELETE_PICTURE_KEYWORDS = "delete from picture_to_keyword where picture_id = ?";
+  private static final String DELETE_PICTURE_CATEGORIES = "delete from picture_to_category where picture_id = ?";
+  
+  /*DELETE ORDIMAGE // NO NEED
+   * String sQuery = new String(
+          "update pm.online_media set product_photo = ORDSYS.ORDImage.init(), " + 
+          "product_thumbnail = ORDSYS.ORDImage.init() where product_id = ?");*/
   /**
    * Get the OracleConnection object (create connection)
    */
@@ -107,28 +140,6 @@ class IMQuery implements IMConstants
   }
   
 
-  public boolean executeDBScripts() {
-	  connect();
-
-		boolean isScriptExecuted = false;
-		try {
-			
-			BufferedReader in = new BufferedReader(new FileReader(DB_SCRIPT_FILE.toURI().toString().replace("file:/", "")));
-			String str;
-			StringBuffer sb = new StringBuffer();
-				while ((str = in.readLine()) != null) {
-						sb.append(str + "\n");
-				}
-				in.close();
-				System.out.println(sb.toString());
-				Statement stmt = m_dbConn.createStatement();
-				stmt.executeUpdate(sb.toString());
-				isScriptExecuted = true;
-		} catch (Exception e) {
-			new IMMessage(IMConstants.ERROR, "APP_ERR", e);
-		} 
-	return isScriptExecuted;
-	}
 
   /**
    * Check the login parameters, and if the user exist return the user object. If not return null
@@ -245,6 +256,30 @@ class IMQuery implements IMConstants
 	  return pic;
   }
   
+  
+	public Picture updatePicture(Picture pic) {
+		connect();
+		  try {
+			OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(UPDATE_PICTURE);
+			int index = 1;
+			stmt.setString(index++, pic.getPictureName());
+			stmt.setInt(index++, pic.getCityId());
+			stmt.setInt(index++, pic.getAlbumId());
+			stmt.setInt(index++, pic.getPictureId());
+			
+			stmt.executeQuery();
+			
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		} 
+		  
+	  return pic;
+	}
+  
+  
   /**
    * Insert a user to the database
    * @param user The user data collected from the signup panel
@@ -287,7 +322,7 @@ class IMQuery implements IMConstants
 			rs = (OracleResultSet)stmt.executeQuery();
 			
 			while (rs.next()){
-				Comment c = new Comment(rs.getInt("comment_id"), rs.getString("comment_text"), rs.getDate("comment_time"), rs.getInt("user_id"));
+				Comment c = new Comment(rs.getInt("comment_id"), rs.getString("comment_text"), rs.getDate("comment_time"), rs.getInt("user_id"), rs.getInt("picture_id"));
 				array.add(c);
 			}
 			
@@ -373,12 +408,20 @@ class IMQuery implements IMConstants
   }
   
   public ArrayList<Rating> selectRatingForPicture(Picture p){
+	  return selectRating(SELECT_PICTURE_RATINGS, p.getPictureId());
+  }
+  
+  public ArrayList<Rating> selectRatingForUsers(User u){
+	  return selectRating(SELECT_USER_RATINGS, u.getUserId());
+  }
+  
+  protected ArrayList<Rating> selectRating(final String sql, int id){
 	  ArrayList<Rating> array = new ArrayList<Rating>();
 	  connect();
 	  try {
-			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURE_RATINGS);
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(sql);
 			int index = 1;
-			stmt.setInt(index++, p.getPictureId());
+			stmt.setInt(index++, id);
 			
 			rs = (OracleResultSet)stmt.executeQuery();
 			
@@ -397,12 +440,34 @@ class IMQuery implements IMConstants
   }
   
   public ArrayList<Picture> selectPicturesFromAlbum(Album a){
+	  return selectPictures(SELECT_PICTURES_FROM_ALBUM, a.getAlbumId());	  
+  }
+  
+  public ArrayList<Picture> selectPicturesTopValue(){
+	  return selectPictures(SELECT_TOP_RATED_PICTURES, 0);	
+  }
+  
+  public ArrayList<Picture> selectPicturesTopRateCount(){
+	  return selectPictures(SELECT_TOP_RATE_COUNT_PICTURES, 0);	
+  }
+  
+  public ArrayList<Picture> selectPicturesTopCommentCount(){
+	  return selectPictures(SELECT_TOP_COMMENT_COUNT_PICTURES, 0);	
+  }
+  
+  public ArrayList<Picture> selectPicturesNew(){
+	  return selectPictures(SELECT_NEW_PICTURES, 0);	
+  }
+  
+  public ArrayList<Picture> selectPictures(String sql, int id){
 	  ArrayList<Picture> array = new ArrayList<Picture>();
 	  connect();
 	  try {
-			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURES_FROM_ALBUM);
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(sql);
 			int index = 1;
-			stmt.setInt(index++, a.getAlbumId());
+			if (id!=0){
+				stmt.setInt(index++, id);
+			}
 			
 			rs = (OracleResultSet)stmt.executeQuery();
 			
@@ -695,6 +760,28 @@ class IMQuery implements IMConstants
 	  return k;
   }
   
+  public boolean insertRating(Rating r) {
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_RATING);
+		int index = 1;
+		stmt.setInt(index++, r.getPictureId());
+		stmt.setInt(index++, r.getUserId());
+		stmt.setInt(index++, r.getValue());
+		
+		stmt.executeQuery();
+
+		IMUtil.cleanup(rs, stmt);
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		return false;
+	} 
+	  
+	  return true;
+		
+  }
+  
+  
   public void insertKeywordToPicture(Picture p, ArrayList<Keyword> array){
 	  connect();
 	  
@@ -853,6 +940,106 @@ class IMQuery implements IMConstants
 	return true;
   }
   
+  public Comment createComment(Comment c){
+	  connect();
+	  try {
+		OraclePreparedStatement stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_COMMENT);
+		int index = 1;
+		stmt.setString(index++, c.getCommentText());
+		stmt.setDate(index++, c.getCommentTime());
+		stmt.setInt(index++, c.getUserId());
+		stmt.setInt(index++, c.getPictureId());
+		
+		
+		OracleResultSet rs = (OracleResultSet) stmt.executeQuery();
+		
+		if (rs!=null){
+			IMUtil.cleanup(rs, stmt);
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(INSERT_COMMENT_GET_ID);
+			rs =  (OracleResultSet) stmt.executeQuery();
+			if (rs.next()){
+				c.setCommentId(rs.getInt(1));
+			} else {
+				return null;
+			}
+			
+		} else {
+			return null;
+		}
+		
+		IMUtil.cleanup(rs, stmt);
+	} catch (SQLException e) {
+		new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+		return null;
+	} 
+	  
+	  return c;
+  }
+  
+  public ArrayList<Comment> selectCommentForUser(User u){
+	  ArrayList<Comment> array = new ArrayList<Comment>();
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_USER_COMMENTS);
+			int index = 1;
+			stmt.setInt(index++, u.getUserId());
+			
+			rs = (OracleResultSet)stmt.executeQuery();
+			
+			while (rs.next()){
+				Comment c = new Comment(rs.getInt("comment_id"), rs.getString("comment_text"), rs.getDate("comment_time"), rs.getInt("user_id"), rs.getInt("picture_id"));
+				array.add(c);
+			}
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return null;
+		}
+	  
+	  return array;
+  }
+  
+  public boolean removeAllCategoryToPicture(Picture m_picture) {
+	  connect();
+	  try {
+			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(DELETE_PICTURE_CATEGORIES);
+			int index = 1;
+			stmt.setInt(index++, m_picture.getPictureId());
+			
+			stmt.executeQuery();
+			
+			IMUtil.cleanup(rs, stmt);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+			return false;
+		}
+	  
+	  return true;
+	}
+
+
+	public boolean removeAllKeywordToPicture(Picture m_picture) {
+		connect();
+		  try {
+				stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(DELETE_PICTURE_KEYWORDS);
+				int index = 1;
+				stmt.setInt(index++, m_picture.getPictureId());
+				
+				stmt.executeQuery();
+				
+				IMUtil.cleanup(rs, stmt);
+			} catch (SQLException e) {
+				new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+				return false;
+			}
+		  
+		  return true;
+		
+	}
+
+
+
 
   
   public boolean initOrdImage(Object o, boolean thumb){
@@ -934,6 +1121,10 @@ class IMQuery implements IMConstants
 	return true;
 	  
   }
+
+
+
+
 
 
   

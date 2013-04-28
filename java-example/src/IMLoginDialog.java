@@ -231,7 +231,7 @@ public class IMLoginDialog extends JDialog implements IMConstants
       String connectString;
       DriverManager.registerDriver(new oracle.jdbc.OracleDriver());
       connectString = 
-        "jdbc:oracle:oci:@(description=(address=(host=" +
+        "jdbc:oracle:thin:@(description=(address=(host=" +
         m_jHostField.getText() + ")(protocol=tcp)(port=" +
         m_jPortField.getText() + "))(connect_data=(sid=" +
         m_jSIDField.getText() + ")))";

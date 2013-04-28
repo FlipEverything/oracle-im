@@ -34,24 +34,26 @@ public class JPanelNewPicture extends JPanelLogin {
 	protected JLabel m_jLabelCountry = new JLabel();
 	protected JLabel m_jLabelRegion = new JLabel();
 	protected JLabel m_jLabelCity = new JLabel();
-	private User m_userDisplayed;
+	protected User m_userDisplayed;
 	
-	private JLabel m_jLabelAlbum = new JLabel();
-	private JComboBox m_jComboBoxAlbum = new JComboBox();
+	protected JLabel m_jLabelAlbum = new JLabel();
+	protected JComboBox m_jComboBoxAlbum = new JComboBox();
 	
-	private JLabel m_jLabelImage = new JLabel();
-	private JButton m_jButtonImage = new JButton();
+	protected JLabel m_jLabelImage = new JLabel();
+	protected JButton m_jButtonImage = new JButton();
 	
-	private JLabel m_jLabelKeywords = new JLabel();
-	private JButton m_jButtonKeywords = new JButton();
+	protected JLabel m_jLabelKeywords = new JLabel();
+	protected JButton m_jButtonKeywords = new JButton();
 	
-	private JLabel m_jLabelCategories = new JLabel();
-	private JButton m_jButtonCategories = new JButton();
+	protected JLabel m_jLabelCategories = new JLabel();
+	protected JButton m_jButtonCategories = new JButton();
 	
-	private Picture m_pictureNew = new Picture();
-	private IMLoadFile load = null;
-	private JDialogTable m_dialogKeyword;
-	private JDialogTable m_dialogCategory;
+	protected Picture m_pictureNew = new Picture();
+	protected IMLoadFile load = null;
+	protected JDialogTable m_dialogKeyword;
+	protected JDialogTable m_dialogCategory;
+	protected ArrayList<Keyword> m_keywords;
+	protected ArrayList<Category> m_categories;
 	
 
 	
@@ -186,11 +188,11 @@ public class JPanelNewPicture extends JPanelLogin {
 		contentPanel.add(m_jButtonLogin, null);
 		
 		
-		ArrayList<Keyword> keywords = m_jFrameOwner.getkeywordAll();
-		ArrayList<Category> categories = m_jFrameOwner.getcategoryAll();
+		m_keywords = m_jFrameOwner.getkeywordAll();
+		m_categories = m_jFrameOwner.getcategoryAll();
 		
-		m_dialogKeyword = new JDialogTable(m_jFrameOwner, new IMTableModel(keywords, this), new Keyword());
-		m_dialogCategory = new JDialogTable(m_jFrameOwner, new IMTableModel(categories, this), new Category());
+		m_dialogKeyword = new JDialogTable(m_jFrameOwner, new IMTableModel(m_keywords), new Keyword());
+		m_dialogCategory = new JDialogTable(m_jFrameOwner, new IMTableModel(m_categories), new Category());
 
 	} 
 	
@@ -317,7 +319,7 @@ public class JPanelNewPicture extends JPanelLogin {
 				selectedCategories.size()==0 ||
 				selectedKeywords.size()==0
 				 ){
-				  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
+				  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD");
 			  } else {
 				  m_pictureNew.setPictureName(m_jNameField.getText());
 				  m_pictureNew.setAlbumId(((Album)m_jComboBoxAlbum.getSelectedItem()).getAlbumId());
@@ -335,7 +337,7 @@ public class JPanelNewPicture extends JPanelLogin {
 					  
 					  m_jFrameOwner.showProfilePanel(m_userDisplayed);
 				  } else {
-					  new IMMessage(IMConstants.ERROR, "UPLOAD_ERROR", new Exception());
+					  new IMMessage(IMConstants.ERROR, "UPLOAD_ERROR");
 				  }
 
 		      }

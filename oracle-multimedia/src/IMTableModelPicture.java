@@ -1,37 +1,30 @@
-
-
 import java.util.ArrayList;
-
 import javax.swing.table.AbstractTableModel;
-
-import bean.Category;
-import bean.Keyword;
-
+import bean.Picture;
 
 
 @SuppressWarnings("serial")
-public class IMTableModel extends AbstractTableModel{
+public class IMTableModelPicture extends AbstractTableModel{
 	
 	private int m_nColumnCount;
 
-	private ArrayList<?> data;
+
+	private ArrayList<Picture> data;
+	private IMFrame m_jframeOwner;
 	
 	public static final String[] columnNames = 	 {
-		IMMessage.getString("LOGINDIAG_DESCRIPTION"),
-		IMMessage.getString("CHOSEN")
+		IMMessage.getString("ID"),
+		IMMessage.getString("UPLOADDIAG_NAME"),
+		IMMessage.getString("RATING"),
+		IMMessage.getString("MAIN_MENU_PROFILE")
 		};
 	
 	
-	public IMTableModel() {
+	public IMTableModelPicture(ArrayList<Picture> data, IMFrame m_jframeOwner) {
 		super();
-
-		this.m_nColumnCount = 0;
-	}
-	
-	public IMTableModel(ArrayList<?> data) {
-		super();
+		this.m_nColumnCount = 4;
 		this.data = data;
-		this.m_nColumnCount = 2;
+		this.m_jframeOwner = m_jframeOwner;
 	}
 
 	@Override
@@ -48,16 +41,14 @@ public class IMTableModel extends AbstractTableModel{
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		int i = 0;
 		if (columnIndex==i++){
-			if (data.get(rowIndex) instanceof Keyword)
-				return ((Keyword)data.get(rowIndex)).getName();
-			else if (data.get(rowIndex) instanceof Category)
-				return ((Category)data.get(rowIndex)).getName();
+			return "#"+data.get(rowIndex).getPictureId();
 		} else if (columnIndex==i++){
-			if (data.get(rowIndex) instanceof Keyword)
-				return ((Keyword)data.get(rowIndex)).isSelected();
-			else if (data.get(rowIndex) instanceof Category)
-				return ((Category)data.get(rowIndex)).isSelected();
-		} 
+			return data.get(rowIndex).getPictureName();
+		} else if (columnIndex==i++){
+			return data.get(rowIndex).getRatingValue();
+		} else if (columnIndex==i++){
+			return false;
+		}
 	return null;
 	}
 	
@@ -65,21 +56,17 @@ public class IMTableModel extends AbstractTableModel{
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex)  {
 		int i = 0;
 		if (columnIndex==i++){
-			
+			 //noop
 		} else if (columnIndex==i++){
-			if (data.get(rowIndex) instanceof Keyword){
-				 Keyword k = ((Keyword)data.get(rowIndex));
-				 k.setSelected(!k.isSelected());
-			}
-			else if (data.get(rowIndex) instanceof Category)
-			{
-				 Category c = ((Category)data.get(rowIndex));
-				 c.setSelected(!c.isSelected());
-			}
+			//noop
+		} else if (columnIndex==i++){
+			//noop
+		} else if (columnIndex==i++){
+			IMImage d = new IMImage(m_jframeOwner, data.get(rowIndex));
+			d.setVisible(true);
 		} else {
-			
+			//noop
 		}
-		
 	}
 	
 	@Override
@@ -88,16 +75,25 @@ public class IMTableModel extends AbstractTableModel{
 		if (columnIndex==i++){
 			 return super.getColumnClass(columnIndex);
 		} else if (columnIndex==i++){
+			return super.getColumnClass(columnIndex);
+		} else if (columnIndex==i++){
+					return super.getColumnClass(columnIndex);
+		} else if (columnIndex==i++){
 			return Boolean.class;
 		} else {
 			 return super.getColumnClass(columnIndex);
 		}
 	}
 	
+	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex){
 		int i = 0;
 		if (columnIndex==i++){
+			 return false;
+		} else if (columnIndex==i++){
+			return false;
+		} else if (columnIndex==i++){
 			return false;
 		} else if (columnIndex==i++){
 			return true;

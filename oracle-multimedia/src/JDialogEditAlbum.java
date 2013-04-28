@@ -24,7 +24,7 @@ public class JDialogEditAlbum extends JDialogNewAlbum {
 		  if (
 			m_jAlbumNameField.getText().equals("") 
 			 ){
-			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
+			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD");
 		  } else {
 			  m_albumEdited.setName(m_jAlbumNameField.getText());
 			  m_albumEdited.setPublic(m_jCheckBoxPublic.isSelected());

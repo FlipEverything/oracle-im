@@ -140,7 +140,7 @@ public class JPanelLogin extends JPanel implements IMConstants{
 			m_jLoginField.getText().equals("") ||
 			m_jPasswordField.getPassword().equals("")
 			 ){
-			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
+			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD");
 		  } else {
 			  User user = new User(new String(m_jPasswordField.getPassword()), m_jLoginField.getText());
 			  
@@ -151,7 +151,7 @@ public class JPanelLogin extends JPanel implements IMConstants{
 				  new IMMessage(IMConstants.WARNING, "LOGIN_SUCCESS");
 				  m_jFrameOwner.userLogin(user);
 			  } else {
-				  new IMMessage(IMConstants.ERROR, "NO_SUCH_USER", new Exception());
+				  new IMMessage(IMConstants.ERROR, "NO_SUCH_USER");
 			  }
 			  
 	      }

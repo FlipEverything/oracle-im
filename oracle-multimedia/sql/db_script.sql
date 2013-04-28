@@ -46,7 +46,6 @@ EXCEPTION
 END;
 /
 
-
 --------------------------------------------------------
 --  DDL for Sequence USERS_INC
 --------------------------------------------------------
@@ -548,10 +547,10 @@ END;
 --------------------------------------------------------
 
   ALTER TABLE "COMMENTS" ADD CONSTRAINT "COMMENTS_USER_ID_FK" FOREIGN KEY ("USER_ID")
-	  REFERENCES "USERS" ("USER_ID") ENABLE; 
+	  REFERENCES "USERS" ("USER_ID") ON DELETE SET NULL ENABLE; 
 	  
   ALTER TABLE "COMMENTS" ADD CONSTRAINT "COMMENTS_PICTURE_ID_FK" FOREIGN KEY ("PICTURE_ID")
-	  REFERENCES "PICTURES" ("PICTURE_ID") ENABLE;
+	  REFERENCES "PICTURES" ("PICTURE_ID") ON DELETE CASCADE ENABLE;
  
 --------------------------------------------------------
 --  Ref Constraints for Table CITIES
@@ -582,10 +581,10 @@ END;
 --------------------------------------------------------
 
   ALTER TABLE "RATINGS" ADD CONSTRAINT "RATINGS_PICTURE_ID_FK" FOREIGN KEY ("PICTURE_ID")
-	  REFERENCES "PICTURES" ("PICTURE_ID") ENABLE;
+	  REFERENCES "PICTURES" ("PICTURE_ID") ON DELETE CASCADE ENABLE;
  
   ALTER TABLE "RATINGS" ADD CONSTRAINT "RATINGS_USER_ID_FK" FOREIGN KEY ("USER_ID")
-	  REFERENCES "USERS" ("USER_ID") ENABLE; 
+	  REFERENCES "USERS" ("USER_ID") ON DELETE SET NULL ENABLE; 
  
 --------------------------------------------------------
 --  Ref Constraints for Table PICTURE_TO_CATEGORY 
@@ -853,3 +852,62 @@ BEGIN
 END KEP_ERTEK;
 /
 */
+
+---------------------------------------------------
+--   DATA FOR TABLE COUNTRIES
+--   FILTER = none used
+---------------------------------------------------
+REM INSERTING into COUNTRIES
+Insert into COUNTRIES (COUNTRY_ID,NAME) values (1,'Magyarország');
+
+
+---------------------------------------------------
+--   DATA FOR TABLE REGIONS
+--   FILTER = none used
+---------------------------------------------------
+REM INSERTING into REGIONS
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (1,'Bács-Kiskun megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (2,'Baranya megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (3,'Békés megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (4,'Borsod-Abaúj-Zemplén',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (5,'Csongrád megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (6,'Fejér megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (7,'Győr-Moson-Sopron megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (8,'Hajdú-Bihar megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (9,'Heves megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (10,'Jász-Nagykun-Szolnok megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (11,'Komárom-Esztergom megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (12,'Nógrád megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (13,'Pest megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (14,'Somogy megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (15,'Szabolcs-Szatmár-Bereg megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (16,'Tolna megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (17,'Vas megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (18,'Veszprém megye',1);
+Insert into REGIONS (REGION_ID,NAME,COUNTRY_ID) values (19,'Zala megye',1);
+
+---------------------------------------------------
+--   DATA FOR TABLE CITIES
+--   FILTER = none used
+---------------------------------------------------
+REM INSERTING into CITIES
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (1,'Kecskemét',1);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (2,'Pécs',2);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (3,'Békéscsaba',3);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (4,'Miskolc',4);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (5,'Szeged',5);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (6,'Székesfehérvár',6);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (7,'Győr',7);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (8,'Debrecen',8);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (9,'Eger',9);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (10,'Szolnok',10);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (11,'Tatabánya',11);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (12,'Salgótarján',12);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (13,'Budapest',13);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (14,'Kaposvár',14);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (15,'Nyíregyháza',15);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (16,'Szekszárd',16);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (17,'Szombathely',17);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (18,'Veszprém',18);
+Insert into CITIES (CITY_ID,NAME,REGION_ID) values (19,'Zalaegerszeg',19);
+

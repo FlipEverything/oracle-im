@@ -239,7 +239,7 @@ public class IMLoginDialog extends JDialog implements IMConstants
 		m_jLoginField.getText().equals("") ||
 		m_jPasswordField.getPassword().equals("")
 		 ){
-		  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
+		  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD");
 	  } else {
 		  try
 		  {

@@ -217,7 +217,7 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 						@Override
 						public void mouseClicked(MouseEvent e) {
 							if (SwingUtilities.isLeftMouseButton(e)){
-								JDialogPicture popup = new JDialogPicture(m_jFrameOwner, p.getPicture());
+								IMImage popup = new IMImage(m_jFrameOwner, p);
 								popup.setVisible(true);
 							} else if (SwingUtilities.isRightMouseButton(e)){
 								if (((Album)m_jComboBoxAlbum.getSelectedItem()).getUserId()==m_jFrameOwner.getUserActive().getUserId()){
@@ -229,7 +229,7 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 						}
 						private void doPop(MouseEvent e){
 							
-							PicturePopup menu = new PicturePopup( ((PictureLabel)e.getSource()).getPicture(), m_userDisplayed, new Callable<Void>() {
+							PicturePopup menu = new PicturePopup( ((PictureLabel)e.getSource()).getPicture(), m_userDisplayed, m_jFrameOwner, new Callable<Void>() {
 								   public Void call() {
 									    IMQuery q = new IMQuery();
 									    display(q.selectPicturesFromAlbum((Album)m_jComboBoxAlbum.getSelectedItem()));

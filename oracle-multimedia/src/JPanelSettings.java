@@ -1,11 +1,8 @@
 import java.awt.Rectangle;
-import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 import javax.swing.JButton;
 import bean.City;
-import bean.Country;
-import bean.Region;
 import bean.User;
 
 
@@ -60,39 +57,7 @@ public class JPanelSettings extends JPanelSignup implements IMConstants{
 		m_jEmailField.setText(m_userDisplayed.getEmail());
 		m_jPasswordField.setText(new String());
 		
-		City c = null;
-		Iterator<City> it = (m_jFrameOwner.getcityAll()).iterator();
-		while (it.hasNext()){
-			c = it.next();
-			if (m_userDisplayed.getCityId()==c.getCityId()){
-				m_jComboCity.setSelectedItem(c);
-				break;
-			}
-		}
-		
-		Region r = null;
-		Iterator<Region> it1 = (m_jFrameOwner.getregionAll()).iterator();
-		while (it.hasNext()){
-			r = it1.next();
-			if (c.getRegionId()==r.getRegionId()){
-				m_jComboRegion.setSelectedItem(r);
-				break;
-			}
-		}
-		
-		Country cou = null;
-		Iterator<Country> it2 = (m_jFrameOwner.getcountryAll()).iterator();
-		while (it.hasNext()){
-			cou = it2.next();
-			if (r.getCountryId()==cou.getCountryId()){
-				m_jComboCountry.setSelectedItem(cou);
-				break;
-			}
-		}
-		
-		m_jComboCity.setEnabled(true);
-		m_jComboCountry.setEnabled(false);
-		m_jComboRegion.setEnabled(false);
+		m_jFrameOwner.setPlaceCombos(m_jComboCountry, m_jComboRegion, m_jComboCity, m_userDisplayed);
 	}
 	
 	
@@ -113,7 +78,7 @@ public class JPanelSettings extends JPanelSignup implements IMConstants{
 				m_jFirstnameField.getText().equals("") || 
 				m_jComboCity.getSelectedIndex()==0
 			 ){
-			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
+			  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD");
 		  } else {
 			  m_userDisplayed.setCityId( ((City)m_jComboCity.getSelectedItem()).getCityId()  );
 			  m_userDisplayed.setEmail(m_jEmailField.getText());
@@ -130,7 +95,7 @@ public class JPanelSettings extends JPanelSignup implements IMConstants{
 			  if (success){
 				  new IMMessage(IMConstants.WARNING, "MODIFY_SUCCESS");
 			  } else {
-				  new IMMessage(IMConstants.ERROR, "APP_ERR", new Exception());
+				  new IMMessage(IMConstants.ERROR, "APP_ERR");
 			  }
 			  
 	      }

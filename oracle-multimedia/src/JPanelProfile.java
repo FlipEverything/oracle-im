@@ -6,11 +6,14 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import bean.City;
+import bean.Comment;
 import bean.Country;
+import bean.Rating;
 import bean.Region;
 import bean.User;
 
@@ -84,56 +87,64 @@ public class JPanelProfile extends JPanel implements IMConstants{
 			}
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				JDialogProfilePic p = new JDialogProfilePic(m_jFrameOwner, m_userDisplayed.getProfilePicture());
-				p.setVisible(true);
+				if (m_userDisplayed.getProfilePicture()!=null){
+					JDialogProfilePic p = new JDialogProfilePic(m_jFrameOwner, m_userDisplayed.getProfilePicture());
+					p.setVisible(true);
+				}
 			}
 		});
 		
 		JLabel userDataLabel = new JLabel();
-	    userDataLabel.setBounds(new Rectangle(THUMB_WIDTH+m_nOffset*2,0,m_nWidth-THUMB_WIDTH-m_nOffset*2, m_nHeight));
-		
 	    
-	    City c = null;
-		Iterator<City> it = (m_jFrameOwner.getcityAll()).iterator();
-		while (it.hasNext()){
-			c = it.next();
-			if (m_userDisplayed.getCityId()==c.getCityId()){
-				break;
-			}
-		}
-		
-		Region r = null;
-		Iterator<Region> it1 = (m_jFrameOwner.getregionAll()).iterator();
-		while (it.hasNext()){
-			r = it1.next();
-			if (c.getRegionId()==r.getRegionId()){
-				break;
-			}
-		}
-		
-		Country cou = null;
-		Iterator<Country> it2 = (m_jFrameOwner.getcountryAll()).iterator();
-		while (it.hasNext()){
-			cou = it2.next();
-			if (r.getCountryId()==cou.getCountryId()){
-				break;
-			}
-		}
-	    
+	    City c = m_jFrameOwner.selectCurrentCity(m_userDisplayed.getCityId());
+	    Region r = m_jFrameOwner.selectCurrentRegion(c.getRegionId());
+	    Country cou = m_jFrameOwner.selectCurrentCountry(r.getCountryId());
+
 		userDataLabel.setText(
 				"<html>" +
 					"<h1>"+m_userDisplayed.getLastname()+" "+m_userDisplayed.getFirstName()+" profilja</h1>" +
 					"<h2>id: #"+m_userDisplayed.getUserId()+", Felhasználónév: "+m_userDisplayed.getUsername()+"</h2>" +
-					"<p>"+cou.getName()+", "+r.getName()+", "+c.getName()+"</p>"+
+					"<p>"+cou+", "+r+", "+c+"</p>"+
 					"<p>E-mail cím: " +m_userDisplayed.getEmail() + "</p>" +
 					"<p>Regisztráció ideje: "+m_userDisplayed.getRegistered()+"</p>" +
 					"<p>Feltöltött képek száma: "+m_userDisplayed.getPictureSum()+"</p>" +
 					"<br/><br/>"+
-					"<p><strong>Kommentek:</strong><br/>-</p>"+
-					"<br/><br/>"+
-					"<p><strong>Értékelések:</strong><br/>-</p>"+
-				"</html>"
+					"<p><strong>Kommentek:</strong><br/>"
 		);
+		
+		IMQuery q = new IMQuery();
+		ArrayList<Comment> commentArray = q.selectCommentForUser(m_userDisplayed);
+		Iterator<Comment> it11 = commentArray.iterator();
+		
+		if (commentArray.size()==0){
+			userDataLabel.setText(userDataLabel.getText()+IMMessage.getString("NO_COMMENT")+"<br/>");
+		}
+		while (it11.hasNext()){
+			Comment com = it11.next();
+			userDataLabel.setText(userDataLabel.getText()+com+"<br/>");
+		}
+		
+		userDataLabel.setText(userDataLabel.getText()
+				+"<br/><br/><p><strong>Értékelések:</strong><br/>");
+		
+		ArrayList<Rating> ratingArray = q.selectRatingForUsers(m_userDisplayed);
+		Iterator<Rating> it111 = ratingArray.iterator();
+		
+		if (ratingArray.size()==0){
+			userDataLabel.setText(userDataLabel.getText()+IMMessage.getString("NO_RATING")+"<br/>");
+		}
+		while (it111.hasNext()){
+			Rating rat = it111.next();
+			userDataLabel.setText(userDataLabel.getText()+rat+"<br/>");
+		}
+		
+		userDataLabel.setText(userDataLabel.getText()+"</p>"+
+					"<br/><br/>"+
+				"</html>");
+		
+		
+		userDataLabel.setBounds(new Rectangle(THUMB_WIDTH+m_nOffset*2,0,m_nWidth-THUMB_WIDTH-m_nOffset*2, (int) userDataLabel.getPreferredSize().getHeight()));
+	    userDataLabel.validate();
 	    
 	    contentPanel = new JPanel();
 	    contentPanel.setLayout(null);

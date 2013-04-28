@@ -35,8 +35,7 @@ public class Rating {
 	
 	@Override
 	public String toString() {
-		return "Rating [m_nPictureId=" + m_nPictureId + ", m_nUserId="
-				+ m_nUserId + ", m_nValue=" + m_nValue + "]";
+		return "(picture#" + m_nPictureId + ") "+m_nValue;
 	}
 	
 	

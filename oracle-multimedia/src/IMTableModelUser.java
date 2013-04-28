@@ -2,18 +2,14 @@
 
 import java.util.ArrayList;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
 
-import bean.Category;
-import bean.Keyword;
 import bean.User;
 
 
 
 @SuppressWarnings("serial")
-public class IMUserTableModel extends AbstractTableModel{
+public class IMTableModelUser extends AbstractTableModel{
 	
 	private int m_nColumnCount;
 
@@ -22,6 +18,7 @@ public class IMUserTableModel extends AbstractTableModel{
 	private IMFrame m_jframeOwner;
 	
 	public static final String[] columnNames = 	 {
+		IMMessage.getString("ID"),
 		IMMessage.getString("MAIN_MENU_USER"),
 		IMMessage.getString("LOGINDIAG_USERNAME"),
 		IMMessage.getString("MAIN_MENU_ALBUMS"),
@@ -29,9 +26,9 @@ public class IMUserTableModel extends AbstractTableModel{
 		};
 	
 	
-	public IMUserTableModel(ArrayList<User> data, IMFrame m_jframeOwner) {
+	public IMTableModelUser(ArrayList<User> data, IMFrame m_jframeOwner) {
 		super();
-		this.m_nColumnCount = 4;
+		this.m_nColumnCount = 5;
 		this.data = data;
 		this.m_jframeOwner = m_jframeOwner;
 	}
@@ -50,6 +47,8 @@ public class IMUserTableModel extends AbstractTableModel{
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		int i = 0;
 		if (columnIndex==i++){
+			return "#"+data.get(rowIndex).getUserId();
+		} else if (columnIndex==i++){
 			return data.get(rowIndex);
 		} else if (columnIndex==i++){
 			return data.get(rowIndex).getUsername();
@@ -69,6 +68,8 @@ public class IMUserTableModel extends AbstractTableModel{
 		} else if (columnIndex==i++){
 			//noop
 		} else if (columnIndex==i++){
+			//noop
+		} else if (columnIndex==i++){
 			m_jframeOwner.showAlbumPanel(data.get(rowIndex));
 		} else if (columnIndex==i++){
 			m_jframeOwner.showProfilePanel(data.get(rowIndex));
@@ -82,6 +83,8 @@ public class IMUserTableModel extends AbstractTableModel{
 		int i = 0;
 		if (columnIndex==i++){
 			 return super.getColumnClass(columnIndex);
+		} else if (columnIndex==i++){
+			return super.getColumnClass(columnIndex);
 		} else if (columnIndex==i++){
 			return super.getColumnClass(columnIndex);
 		} else if (columnIndex==i++){
@@ -99,6 +102,8 @@ public class IMUserTableModel extends AbstractTableModel{
 		int i = 0;
 		if (columnIndex==i++){
 			 return false;
+		} else if (columnIndex==i++){
+			return false;
 		} else if (columnIndex==i++){
 			return false;
 		} else if (columnIndex==i++){

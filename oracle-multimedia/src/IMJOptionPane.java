@@ -46,7 +46,7 @@ public class IMJOptionPane extends JOptionPane
     dialog.getAccessibleContext().setAccessibleDescription((String)message);
 
     pane.selectInitialValue();
-    dialog.show();
+    dialog.setVisible(true);
 
     Object selectedValue = pane.getValue();
 

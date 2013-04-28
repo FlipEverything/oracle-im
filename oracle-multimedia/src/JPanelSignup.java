@@ -205,7 +205,7 @@ public class JPanelSignup extends JPanelLogin {
 				m_jFirstnameField.getText().equals("") || 
 				m_jComboCity.getSelectedIndex()==0
 				 ){
-				  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD", new Exception());
+				  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD");
 			  } else {
 				  User user = new User(0, m_jFirstnameField.getText(), m_jLastnameField.getText(), new String(m_jPasswordField.getPassword()), 
 						  m_jEmailField.getText(), null, 0, null, null, m_jLoginField.getText(), ((City)m_jComboCity.getSelectedItem()).getCityId());
@@ -217,7 +217,7 @@ public class JPanelSignup extends JPanelLogin {
 					  new IMMessage(IMConstants.WARNING, "SIGNUP_SUCCESS");
 					  m_jFrameOwner.showLoginPanel();
 				  } else {
-					  new IMMessage(IMConstants.ERROR, "SIGNUP_ERROR", new Exception());
+					  new IMMessage(IMConstants.ERROR, "SIGNUP_ERROR");
 				  }
 				  
 		      }

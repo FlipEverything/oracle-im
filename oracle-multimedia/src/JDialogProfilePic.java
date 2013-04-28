@@ -24,12 +24,14 @@ public class JDialogProfilePic extends JDialog implements IMConstants
   protected int m_nWidth;
   protected int m_nHeight;
 
-  private JScrollPane contentPanel;
-  private IMFrame m_jFrameOwner;
-  private OrdImage m_img;
-  private ImageIcon picture;
-  
-  boolean needSet = false;
+  protected JScrollPane contentPanel;
+  protected IMFrame m_jFrameOwner;
+  protected OrdImage m_img;
+  protected ImageIcon picture;
+
+  protected int m_nOffset = 150;
+  protected int m_nMouseScrollSpeed = 16;
+
 
   public JDialogProfilePic(IMFrame jFrameOwner, OrdImage image)
   {
@@ -39,40 +41,14 @@ public class JDialogProfilePic extends JDialog implements IMConstants
     m_img = image;
 
     try
-    {
-    	picture = null;
-		try {
-			byte[] thumbnail = IMImage.getDataInByteArray(m_img);
-			picture = new ImageIcon(thumbnail);
-			m_nWidth = m_img.getWidth();
-			m_nHeight = m_img.getHeight();
-		} catch (SQLException e) {
-			new IMMessage(IMConstants.ERROR, "SQL_ERR", e);
-		} catch (IOException e) {
-			new IMMessage(IMConstants.ERROR, "APP_ERR", e);
-		}
-		
+    {	
+      setupContentPane();
       setupDisplay();
       setupButton();
-      setupContentPane();
       
-      
-      if (m_nWidth>m_jFrameOwner.getScreenWidth()){
-    	  m_nWidth = (int) (m_jFrameOwner.getScreenWidth() - 50);
-    	  needSet = true;
-      } 
-      
-      if (m_nHeight>m_jFrameOwner.getScreenHeight()){
-    	  m_nHeight = (int) (m_jFrameOwner.getScreenHeight() - 50);
-    	  m_nWidth += 40;
-    	  needSet = true;
-       } 
-      if (needSet){
-    	  this.setSize(new Dimension(m_nWidth, m_nHeight));
-    	  this.setPreferredSize(new Dimension(m_nWidth, m_nHeight));
-      }
-      
+
       this.getContentPane().add(contentPanel, BorderLayout.CENTER);
+
 
     }
     catch (NullPointerException e1)
@@ -88,7 +64,7 @@ public class JDialogProfilePic extends JDialog implements IMConstants
   /**
    * Draws buttons.
    */
-  private void setupButton()
+  protected void setupButton()
   {
 
   }
@@ -98,11 +74,26 @@ public class JDialogProfilePic extends JDialog implements IMConstants
    */
   protected void setupContentPane() 
   {
+		try {
+			byte[] thumbnail = IMImage.getDataInByteArray(m_img);
+			picture = new ImageIcon(thumbnail);
+			m_nWidth = (int) (m_jFrameOwner.getScreenWidth() - m_nOffset);
+			m_nHeight = (int) (m_jFrameOwner.getScreenHeight() - m_nOffset);
+		} catch (SQLException e) {
+			new IMMessage(IMConstants.ERROR, "SQL_ERR", e);
+		} catch (IOException e) {
+			new IMMessage(IMConstants.ERROR, "APP_ERR", e);
+		}
+		
+		
+		
 		JLabel l = new JLabel(picture);
-		l.setPreferredSize(new Dimension(m_nWidth, m_nHeight));
-		l.setSize(new Dimension(m_nWidth, m_nHeight));
+		
 		
 	    contentPanel = new JScrollPane(l);
+	    contentPanel.setPreferredSize(new Dimension(m_nWidth, m_nHeight));
+	    contentPanel.setSize(new Dimension(m_nWidth, m_nHeight));
+	    contentPanel.getVerticalScrollBar().setUnitIncrement(m_nMouseScrollSpeed );
 	    contentPanel.addMouseListener(new MouseListener() {
 	    	@Override
 			public void mouseReleased(MouseEvent e) {
@@ -122,6 +113,8 @@ public class JDialogProfilePic extends JDialog implements IMConstants
 				setVisible(false);
 			}
 		});
+	    
+
   }
 
 

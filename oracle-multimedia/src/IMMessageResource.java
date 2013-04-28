@@ -149,14 +149,21 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"CREATE_TABLES", "Futtatja az adatbázist létrehozó fájlt?"},
     {"SUCCESS_CREATE_TABLES", "Sikeres futtatás"},
     
+    {"TOP_VALUE", "Legmagasabb érték"},
+    {"TOP_RATE_COUNT", "Legtöbbet értékelt"},
+    {"TOP_NEW", "Legújabbak"},
+    {"TOP_COMMENT", "Legtöbbet hozzászólt"},
+    
+    {"TOP_PICTURES", "TOP képek (csak publikus albumból)"},
+    
     {"COUNTRY", "Ország"},
     {"REGION", "Megye"},
     {"CITY", "Város"},
     {"CATEGORIES", "Kategóriák"},
     {"KEYWORDS", "Kulcsszavak"},
+    {"RATING", "Érték:"},
     {"SELECT", "Válasszon!"},
     {"MODIFY_SUCCESS", "Sikeres módosítás!"},
-    {"SAVE", "Mentés"},
     {"CREATE_SUCCESS", "Sikeres létrehozás!"},
     {"UPLOAD_PROFILE_PIC", "Új profilkép"},
     {"PICTURE_ORIGINAL", "Kép megtekintése eredeti méretben"},
@@ -168,12 +175,31 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"SELECT_AND_INSERT_CATEGORY", "Kategóriák választása és felvitele"},
     {"SELECT_AND_INSERT_KEYWORD", "Kulcsszavak választása és felvitele"},
     
+    {"EDIT_PICTURE", "Kép szerkesztése"},
     {"EDIT", "Szerkeszt"},
     {"DELETE", "Töröl"},
     {"EDIT_DESC", ""},
     {"DELETE_DESC", ""},
     {"DELETE_SUCCESS", "Sikeres törlés!"},
     {"OWN", "(Saját)"},
+    
+    {"CANNOT_CHOOSE", "Nem választhat másik képet"},
+    
+    {"SAVE", "Mentés"},
+    {"MANIPULATE", "Feldolgozás"},
+    {"ZOOMIN", "Nagyítás"},
+    {"ZOOMOUT", "Kicsinyítés"},
+    {"RATE", "Értékel"},
+    {"COMMENT", "Kommentírás"},
+    {"COMMENT_TEXT", "Hozzászólás: "},
+    {"COMMENTS", "Kommentek:"},
+    {"NO_COMMENT", "Még nem érkezett hozzászólás"},
+    {"NO_RATING_VALUE", "Nincs"},
+    
+    {"NO_RATING", "Még nem értékelt egy képet se."},
+    {"NOT_SUPPORTED", "Nem támogatott formátum!"},
+    
+    {"ID", "ID"},
     
     
     {"CHECK_MEDIA_NAME", ""},

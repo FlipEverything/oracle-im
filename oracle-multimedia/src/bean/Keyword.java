@@ -52,7 +52,7 @@ public class Keyword {
 
 	@Override
 	public String toString() {
-		return "Keyword [m_szName=" + m_szName + "]";
+		return m_szName;
 	}
 	
 	

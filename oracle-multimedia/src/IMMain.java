@@ -8,11 +8,9 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.sql.SQLException;
-
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 
-import bean.User;
+
 
 import oracle.jdbc.OracleConnection;
 
@@ -24,6 +22,7 @@ public class IMMain implements IMConstants
 {
   private static OracleConnection s_dbConn = null;
   private static ServerSocket SERVER_SOCKET;
+  private IMFrame frame;
   
   /**
    * Constructs the main demo frame.
@@ -34,7 +33,7 @@ public class IMMain implements IMConstants
     {
       
 
-      IMFrame frame = new IMFrame();
+      setFrame(new IMFrame());
     } catch (Exception e)
     {
       new IMMessage(IMConstants.ERROR, "APP_ERR", e);
@@ -94,7 +93,7 @@ public class IMMain implements IMConstants
   {
     if (s_dbConn == null)
     {
-      IMMessage msg = new IMMessage(IMConstants.ERROR, "NOT_CONNECTED");
+      new IMMessage(IMConstants.ERROR, "NOT_CONNECTED");
       return null;
     }
     else
@@ -144,7 +143,7 @@ public class IMMain implements IMConstants
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	   	  System.setProperty("apple.laf.useScreenMenuBar", "true");
 	      System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
-		SERVER_SOCKET = new ServerSocket(1339);
+		setSERVER_SOCKET(new ServerSocket(1339));
 	} catch (IOException e1) {
 	  	  new IMMessage(IMConstants.ERROR, "ALREADY_RUNNING", e1);
 	  	  System.exit(0);
@@ -153,4 +152,20 @@ public class IMMain implements IMConstants
 	}
     new IMMain();
   }
+
+public IMFrame getFrame() {
+	return frame;
+}
+
+public void setFrame(IMFrame frame) {
+	this.frame = frame;
+}
+
+public static ServerSocket getSERVER_SOCKET() {
+	return SERVER_SOCKET;
+}
+
+public static void setSERVER_SOCKET(ServerSocket sERVER_SOCKET) {
+	SERVER_SOCKET = sERVER_SOCKET;
+}
 }

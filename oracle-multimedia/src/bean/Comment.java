@@ -7,14 +7,16 @@ public class Comment {
 	private String m_szCommentText;
 	private Date m_dateCommentTime;
 	private int m_nUserId;
+	private int m_nPictureId;
 	
 	public Comment(int m_nCommentId, String m_szCommentText,
-			Date m_dateCommentTime, int m_nUserId) {
+			Date m_dateCommentTime, int m_nUserId, int m_nPictureId) {
 		super();
 		this.m_nCommentId = m_nCommentId;
 		this.m_szCommentText = m_szCommentText;
 		this.m_dateCommentTime = m_dateCommentTime;
 		this.m_nUserId = m_nUserId;
+		this.m_nPictureId = m_nPictureId;
 	}
 	public Comment() {
 		super();
@@ -45,10 +47,16 @@ public class Comment {
 		this.m_nUserId = m_nUserId;
 	}
 
+	
+	public int getPictureId() {
+		return m_nPictureId;
+	}
+	public void setPictureId(int m_nPictureId) {
+		this.m_nPictureId = m_nPictureId;
+	}
 	@Override
 	public String toString() {
-		return "Comment [m_szCommentText=" + m_szCommentText
-				+ ", m_dateCommentTime=" + m_dateCommentTime + "]";
+		return  "[" + m_dateCommentTime + "] " + m_szCommentText + " (user#"+ m_nUserId +") (picture#"+m_nPictureId+")";
 	}
 	
 	

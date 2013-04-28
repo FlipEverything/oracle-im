@@ -1,6 +1,7 @@
 package bean;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 
 import oracle.ord.im.OrdImage;
@@ -155,6 +156,19 @@ public class Picture {
 				+ ", m_arrayKeywords=" + m_arrayKeywords + ", m_arrayComments="
 				+ m_arrayComments + ", m_arrayTags=" + m_arrayTags
 				+ ", m_nRating=" + m_arrayRating + "]";
+	}
+	
+	public double getRatingValue(){
+		double value = 0.0;
+		
+		Iterator<Rating> it = getRating().iterator();
+		while (it.hasNext()){
+			value += ((Rating)it.next()).getValue();
+		}
+		
+		value /= getRating().size();
+		
+		return value;
 	}
 	
 	

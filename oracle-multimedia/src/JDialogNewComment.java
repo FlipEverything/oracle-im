@@ -1,13 +1,13 @@
 
 
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
-import bean.Album;
+import bean.Comment;
+import bean.Picture;
 
 
 import java.awt.BorderLayout;
@@ -15,6 +15,7 @@ import java.awt.Rectangle;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Date;
 import java.util.concurrent.Callable;
 
 /**
@@ -22,7 +23,7 @@ import java.util.concurrent.Callable;
  * to the database.
  */
 @SuppressWarnings("serial")
-public class JDialogNewAlbum extends JDialog implements IMConstants
+public class JDialogNewComment extends JDialog implements IMConstants
 {
   
   IMFrame m_jFrameOwner = null;
@@ -33,14 +34,12 @@ public class JDialogNewAlbum extends JDialog implements IMConstants
   JLabel m_jLabelAlbumName = new JLabel();
   JTextField m_jAlbumNameField = new JTextField();
 
-  JLabel m_jLabelPasswd = new JLabel();
-  protected JCheckBox m_jCheckBoxPublic = new JCheckBox();
 
   protected String m_szButtonConfirmTitle = "LOGINDIAG_CREATE_BUTTON";
 	
   protected String m_szTitle;	
   protected int m_nWidth = 400;
-  protected int m_nHeight = 180;
+  protected int m_nHeight = 150;
 	
   protected int m_iFieldHeight = 30;
   protected int m_iDeltaY = 10;
@@ -57,13 +56,16 @@ public class JDialogNewAlbum extends JDialog implements IMConstants
 
 private JPanel contentPanel;
 
+private Picture m_picture;
 
 
-  public JDialogNewAlbum(IMFrame jFrameOwner)
+
+  public JDialogNewComment(IMFrame jFrameOwner, Picture p)
   {
     super(jFrameOwner, true);
     m_jFrameOwner = jFrameOwner;
-    m_szTitle = "MAIN_MENU_ALBUM_NEW";
+    m_szTitle = "COMMENT";
+    m_picture = p;
 
     try
     {
@@ -107,29 +109,18 @@ private JPanel contentPanel;
    */
   protected void setupContentPane() 
   {
-	  m_jLabelAlbumName = IMFrame.createJLabel(m_jLabelAlbumName, new Rectangle(m_iLabelStartX, m_iLabelStartY, m_iLabelWidth , m_iFieldHeight), 
-				"NEWALBUMDIAG_NAME", 'U', m_jAlbumNameField);
+	    m_jLabelAlbumName = IMFrame.createJLabel(m_jLabelAlbumName, new Rectangle(m_iLabelStartX, m_iLabelStartY, m_iLabelWidth , m_iFieldHeight), 
+				"COMMENT_TEXT", 'U', m_jAlbumNameField);
 		
-		m_jLabelPasswd = IMFrame.createJLabel(m_jLabelPasswd, new Rectangle(m_iLabelStartX, m_iLabelStartY+=(m_iFieldHeight+m_iDeltaY), m_iLabelWidth, m_iFieldHeight), 
-				"NEWALBUMDIAG_IS_PUBLIC", 'P', m_jCheckBoxPublic);
-
 	    m_jAlbumNameField.setBounds(
 		        new Rectangle(m_iFieldStartX, m_iFieldStartY, m_iFieldWidth , m_iFieldHeight));
 	    m_jAlbumNameField.setToolTipText(IMMessage.getString("LOGINDIAG_USERNAME_FIELD_DESC"));
 
-
-	    m_jCheckBoxPublic.setBounds(
-		        new Rectangle(m_iFieldStartX, m_iFieldStartY+=(m_iFieldHeight+m_iDeltaY), m_iFieldWidth, m_iFieldHeight));
-	    m_jCheckBoxPublic.setToolTipText(IMMessage.getString("LOGINDIAG_PASSWD_FIELD_DESC"));
-
-	    
-	    
+    
 	    contentPanel = new JPanel();
 	    contentPanel.setLayout(null);
 
 	    contentPanel.add(m_jAlbumNameField, null);
-	    contentPanel.add(m_jCheckBoxPublic, null);
-	    contentPanel.add(m_jLabelPasswd, null);
 	    contentPanel.add(m_jLabelAlbumName, null);
 
 	    contentPanel.add(m_jButtonCancel, null);
@@ -148,14 +139,14 @@ private JPanel contentPanel;
 		  new IMMessage(IMConstants.ERROR, "EMPTY_FIELD");
 	  } else {
 		  IMQuery q = new IMQuery();
-		  Album a = new Album(0, m_jFrameOwner.getUserActive().getUserId(), m_jAlbumNameField.getText(), m_jCheckBoxPublic.isSelected());
-		  a = q.createAlbum(a);
+		  Comment c = new Comment(0, m_jAlbumNameField.getText(), (Date) new Date(System.currentTimeMillis()), m_jFrameOwner.getUserActive().getUserId(), m_picture.getPictureId());
+		  c = q.createComment(c);
 		  
-		  if (a!=null){
+		  if (c!=null){
 			  new IMMessage(IMConstants.WARNING, "CREATE_SUCCESS");
-			  m_jFrameOwner.showAlbumPanel(m_jFrameOwner.getUserActive());
 			  this.setVisible(false);
 			  this.dispose();
+			  m_picture.getComments().add(c);
 		  }
       }
   }

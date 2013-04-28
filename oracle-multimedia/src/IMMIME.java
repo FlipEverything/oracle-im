@@ -15,8 +15,8 @@ class IMMIME implements IMConstants
   static String s_sMIMEFileName = null;
 
   // The hash tables hold the mappings.
-  private static Hashtable m_hashTable;
-  private static Hashtable m_hashTableExt;
+  private static Hashtable<String, String> m_hashTable;
+  private static Hashtable<String, String> m_hashTableExt;
 
   /**
    * Constructs a hashtable to store the mime types
@@ -31,8 +31,8 @@ class IMMIME implements IMConstants
 
     try
     {
-      m_hashTable = new Hashtable();
-      m_hashTableExt = new Hashtable();
+      m_hashTable = new Hashtable<String, String>();
+      m_hashTableExt = new Hashtable<String, String>();
 
       BufferedReader in = 
         new BufferedReader(new InputStreamReader(

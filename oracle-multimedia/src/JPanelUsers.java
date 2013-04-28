@@ -41,7 +41,7 @@ public class JPanelUsers extends JPanel implements IMConstants{
 	private DefaultRowSorter<TableModel, Integer> m_rowSorterForTableData;
 	  
 	JTextField m_jFieldSearch = new JTextField(); 
-	IMUserTableModel m_model;
+	IMTableModelUser m_model;
 	  
 
 	public JPanelUsers(IMFrame frame){
@@ -86,10 +86,10 @@ public class JPanelUsers extends JPanel implements IMConstants{
 		  IMQuery q = new IMQuery();
 		  ArrayList<User> array = q.selectAllUsers();
 		  
-		  m_model = new IMUserTableModel(array, m_jFrameOwner); 
+		  m_model = new IMTableModelUser(array, m_jFrameOwner); 
 		  m_rowSorterForTableData = new TableRowSorter<TableModel>(m_model);
 		  
-		  m_jTableData = new JTable(m_model);
+		  m_jTableData = new IMTable(m_model);
 		  m_jTableData.setRowSorter(m_rowSorterForTableData);
 		  //m_jTableData.setFocusable(false);
 		  
@@ -153,6 +153,7 @@ public class JPanelUsers extends JPanel implements IMConstants{
 				List<RowFilter<Object,Object>> rfs = new ArrayList<RowFilter<Object,Object>>(0);
 				rfs.add(RowFilter.regexFilter("(?i)"+m_jFieldSearch.getText(), 0));
 				rfs.add(RowFilter.regexFilter("(?i)"+m_jFieldSearch.getText(), 1));
+				rfs.add(RowFilter.regexFilter("(?i)"+m_jFieldSearch.getText(), 2));
 			
 				RowFilter<TableModel, Object> rf = RowFilter.orFilter(rfs);
 				m_rowSorterForTableData.setRowFilter(rf);

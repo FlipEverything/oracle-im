@@ -21,6 +21,7 @@ import bean.Category;
 import bean.City;
 import bean.Country;
 import bean.Keyword;
+import bean.Picture;
 import bean.Region;
 import bean.User;
 
@@ -59,8 +60,6 @@ public class IMFrame extends JFrame implements IMConstants
 
   JMenuItem m_menuConnectionOpen = new JMenuItem();
   JMenuItem m_menuConnectionClose = new JMenuItem();
-  JMenuItem m_menuConnectionImport = new JMenuItem();
-  JMenuItem m_menuConnectionExport = new JMenuItem();
   JMenuItem m_menuConnectionExit = new JMenuItem();
   
   JMenuItem m_menuUserLogin = new JMenuItem();
@@ -206,8 +205,6 @@ public class IMFrame extends JFrame implements IMConstants
 
     m_menuConnectionOpen.setEnabled(false);
     m_menuConnectionExit.setEnabled(true);
-    m_menuConnectionExport.setEnabled(true);
-    m_menuConnectionImport.setEnabled(true);
     
     setAllMenu(m_menuUser, false);
     m_menuUserLogin.setEnabled(true);
@@ -227,8 +224,6 @@ public class IMFrame extends JFrame implements IMConstants
       m_menuConnectionOpen.setEnabled(true);
       m_menuConnectionClose.setEnabled(false);
       m_menuConnectionExit.setEnabled(true);
-      m_menuConnectionExport.setEnabled(false);
-      m_menuConnectionImport.setEnabled(false);
       
       setAllMenu(m_menuUser, false);
       setAllMenu(m_menuGallery, false);
@@ -302,19 +297,6 @@ public class IMFrame extends JFrame implements IMConstants
   		   }
   		});
     
-    m_menuConnectionImport = createJMenuItem(m_menuConnectionImport, "MAIN_MENU_IMPORT", 'I', false, "import", "MAIN_MENU_IMPORT_DESC", new Callable<Void>() {
-  	   public Void call() {
- 			    
- 				return null;
- 		   }
- 		});
-    
-    m_menuConnectionExport = createJMenuItem(m_menuConnectionExport, "MAIN_MENU_EXPORT", 'E', false, "export", "MAIN_MENU_EXPORT_DESC", new Callable<Void>() {
- 	   public Void call() {
-			    
-				return null;
-		   }
-		});
     
     m_menuConnectionExit = createJMenuItem(m_menuConnectionExit, "MAIN_MENU_EXIT", 'x', true, null, "MAIN_MENU_EXIT_DESC", new Callable<Void>() {
     	   public Void call() {
@@ -385,7 +367,7 @@ public class IMFrame extends JFrame implements IMConstants
     
     m_menuGalleryHome = createJMenuItem(m_menuGalleryHome, "MAIN_MENU_HOME", 'K', false, "gallery", "MAIN_MENU_HOME_DESC", new Callable<Void>() {
 		   public Void call() {
-
+			    showGalleryPanel();
 				return null;
 		   }
 		});
@@ -421,9 +403,6 @@ public class IMFrame extends JFrame implements IMConstants
     m_menuConnection.setMnemonic('K');
     m_menuConnection.add(m_menuConnectionOpen);
     m_menuConnection.add(m_menuConnectionClose);
-    m_menuConnection.addSeparator();
-    m_menuConnection.add(m_menuConnectionImport);
-    m_menuConnection.add(m_menuConnectionExport);
     m_menuConnection.addSeparator();
     m_menuConnection.add(m_menuConnectionExit);
     
@@ -548,6 +527,12 @@ public void downloadAll(){
 	  m_jQueryResultPanel.setViewportView(panel);
   }
   
+  void showGalleryPanel(){
+	  JPanelGallery panel = new JPanelGallery(this);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+  }
+  
   /**
    * Show the profile panel
    * @param user Object of the user will be displayed
@@ -587,6 +572,13 @@ public void downloadAll(){
 	  panel.init();
 	  m_jQueryResultPanel.setViewportView(panel);
   }
+  
+  protected void showEditPicturePanel(User m_userDisplayed, Picture m_picture) {
+	  JPanelEditPicture panel = new JPanelEditPicture(this, m_userDisplayed, m_picture);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+		
+	}
   
   /**
    * Set all menuitem in a specific menu to state (false or true)
@@ -746,6 +738,44 @@ public void downloadAll(){
 	  SwingUtilities.updateComponentTreeUI(this);
   }
   
+  public City selectCurrentCity(int cityId){
+	City c = null;
+	Iterator<City> it = (getcityAll()).iterator();
+	while (it.hasNext()){
+		c = it.next();
+		if (cityId==c.getCityId()){
+			break;
+		}
+	}  
+	
+	return c;
+  }
+  
+	
+  public Region selectCurrentRegion(int regionId){
+	Region r = null;
+	Iterator<Region> it1 = (getregionAll()).iterator();
+	while (it1.hasNext()){
+		r = it1.next();
+		if (regionId==r.getRegionId()){
+			break;
+		}
+	}
+	return r;
+  }
+  
+  public Country selectCurrentCountry(int countryId){
+	Country cou = null;
+	Iterator<Country> it2 = (getcountryAll()).iterator();
+	while (it2.hasNext()){
+		cou = it2.next();
+		if (countryId==cou.getCountryId()){
+			break;
+		}
+	}
+	return cou;
+  }
+  
   
   
 
@@ -845,4 +875,64 @@ public void downloadAll(){
     disconnectActionPerformed();
     System.exit(0);
   }
+
+  public void setPlaceCombos(JComboBox m_jComboCountry, JComboBox m_jComboRegion,
+		JComboBox m_jComboCity, User m_userDisplayed) {
+		setPlaceCombos(m_jComboCountry, m_jComboRegion, m_jComboCity, m_userDisplayed.getCityId());
+	
+  }
+  
+  public void setPlaceCombos(JComboBox m_jComboCountry, JComboBox m_jComboRegion,
+			JComboBox m_jComboCity, Picture m_picture) {
+	  setPlaceCombos(m_jComboCountry, m_jComboRegion, m_jComboCity, m_picture.getCityId());	
+		
+  }
+
+  protected void setPlaceCombos(JComboBox m_jComboCountry, JComboBox m_jComboRegion,
+			JComboBox m_jComboCity, int cityId){
+	  int regionId = 0;
+		City c = null;
+		Iterator<City> it = (getcityAll()).iterator();
+		while (it.hasNext()){
+			c = it.next();
+			if (cityId==c.getCityId()){
+				m_jComboCity.setSelectedItem(c);
+				regionId = c.getRegionId();
+				break;
+			}
+		}
+		
+		it = (getcityAll()).iterator();
+		while (it.hasNext()){
+			City city = it.next();
+			if (city.getRegionId()!=regionId){
+				m_jComboCity.removeItem(city);
+			}
+		}
+	
+		Region r = null;
+		Iterator<Region> it1 = (getregionAll()).iterator();
+		while (it1.hasNext()){
+			r = it1.next();
+			if (c.getRegionId()==r.getRegionId()){
+				m_jComboRegion.setSelectedItem(r);
+				break;
+			}
+		}
+		
+		Country cou = null;
+		Iterator<Country> it2 = (getcountryAll()).iterator();
+		while (it2.hasNext()){
+			cou = it2.next();
+			if (r.getCountryId()==cou.getCountryId()){
+				m_jComboCountry.setSelectedItem(cou);
+				break;
+			}
+		}
+		
+		m_jComboCity.setEnabled(true);
+		m_jComboCountry.setEnabled(false);
+		m_jComboRegion.setEnabled(false);
+  }
+
 }
