@@ -142,6 +142,11 @@ public class IMMessageResource extends java.util.ListResourceBundle
     {"UPLOADDIAG_CHOOSE_KEYWORDS", "Válasszon kulcsszavakat"},
     
     {"CHOSEN", "Választott"},
+    {"SEARCH_RESULTS", "Keresés eredménye"},
+    {"WIDTH", "Szélesség min max"},
+    {"HEIGHT", "Magasság min max"},
+    {"FOUND", " találatot eredményezett."},
+    {"SEARCH_RESULT", "A keresés "},
     
     {"NEWALBUMDIAG_NAME", "Album neve:"},
     {"NEWALBUMDIAG_IS_PUBLIC", "Publikus-e?"},

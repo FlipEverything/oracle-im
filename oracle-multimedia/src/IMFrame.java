@@ -16,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.TitledBorder;
 
 import bean.Category;
 import bean.City;
@@ -30,6 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Container;
@@ -383,7 +385,7 @@ public class IMFrame extends JFrame implements IMConstants
     
     m_menuGallerySearch = createJMenuItem(m_menuGallerySearch, "MAIN_MENU_SEARCH", 'S', false, "search", "MAIN_MENU_SEARCH_DESC", new Callable<Void>() {
 		   public Void call() {
-
+			     showSearchPanel(m_userActive);
 				return null;
 		   }
 		});
@@ -543,6 +545,12 @@ public void downloadAll(){
 	  m_jQueryResultPanel.setViewportView(panel);
   }
   
+  public void showSearchPanel(User user){
+	  JPanelSearch panel = new JPanelSearch(this, user);
+	  panel.init();
+	  m_jQueryResultPanel.setViewportView(panel);
+  }
+  
   /**
    * Show the album panel
    * @param user Object of the user will be displayed
@@ -652,6 +660,26 @@ public void downloadAll(){
 	  }
 	  box.setSelectedIndex(selected);
 	  return box;
+  }
+  
+  
+  public IMTable createPictureResultTable(ArrayList<Picture> array, String text, int width, int height, int x, int y, JPanel contentPanel){
+	  IMTableModelPicture m_model = new IMTableModelPicture(array, this); 
+	  IMTable m_jTableData = new IMTable(m_model);		
+	  m_jTableData.setRowSelectionAllowed(false);
+	  
+	  JScrollPane scroll = new JScrollPane(m_jTableData);
+	  scroll.setSize(new Dimension(width, height));
+	  scroll.setPreferredSize(new Dimension(width, height));
+	  scroll.setBounds(new Rectangle(x, y, width, height));
+	  
+	  TitledBorder title;
+	  title = BorderFactory.createTitledBorder(IMMessage.getString(text));
+	  scroll.setBorder(title);
+	  
+	  contentPanel.add(scroll, null);
+	  
+	  return m_jTableData;
   }
   
   /**
@@ -934,5 +962,10 @@ public void downloadAll(){
 		m_jComboCountry.setEnabled(false);
 		m_jComboRegion.setEnabled(false);
   }
+
+	public void scrollTo(int x, int y) {
+		m_jQueryResultPanel.getViewport().setViewPosition(new Point(x, y));
+		
+	}
 
 }

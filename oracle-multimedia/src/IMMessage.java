@@ -92,6 +92,10 @@ public class IMMessage implements IMConstants
           System.err.println("Should not be here");
         }
         break;
+      case IMConstants.WARNING:
+          IMJOptionPane.showMessageDialog(
+              null, msgs.getString(sMsg1) + parameter + msgs.getString(sMsg2), WARNING_TITLE, JOptionPane.WARNING_MESSAGE);
+          break;
       default:
         break;
     }

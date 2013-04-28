@@ -18,7 +18,6 @@ public class Picture {
 	private ArrayList<Category> m_arrayCategories;
 	private ArrayList<Keyword> m_arrayKeywords;
 	private ArrayList<Comment> m_arrayComments;
-	private ArrayList<Tag> m_arrayTags;
 	private ArrayList<Rating> m_arrayRating;
 	
 	public Picture(int m_nPictureId, String m_szPictureName,
@@ -27,7 +26,7 @@ public class Picture {
 			int m_nCityId, int m_nAlbumId,
 			ArrayList<Category> m_arrayCategories,
 			ArrayList<Keyword> m_arrayKeywords,
-			ArrayList<Comment> m_arrayComments, ArrayList<Tag> m_arrayTags,
+			ArrayList<Comment> m_arrayComments, 
 			ArrayList<Rating> m_arrayRating) {
 		super();
 		this.m_nPictureId = m_nPictureId;
@@ -40,7 +39,6 @@ public class Picture {
 		this.m_arrayCategories = m_arrayCategories;
 		this.m_arrayKeywords = m_arrayKeywords;
 		this.m_arrayComments = m_arrayComments;
-		this.m_arrayTags = m_arrayTags;
 		this.m_arrayRating = m_arrayRating;
 	}
 
@@ -129,13 +127,6 @@ public class Picture {
 		this.m_arrayComments = m_arrayComments;
 	}
 
-	public ArrayList<Tag> getTags() {
-		return m_arrayTags;
-	}
-
-	public void setTags(ArrayList<Tag> m_arrayTags) {
-		this.m_arrayTags = m_arrayTags;
-	}
 
 	public ArrayList<Rating> getRating() {
 		return m_arrayRating;
@@ -154,7 +145,7 @@ public class Picture {
 				+ ", m_nCityId=" + m_nCityId + ", m_nAlbumId=" + m_nAlbumId
 				+ ", m_arrayCategories=" + m_arrayCategories
 				+ ", m_arrayKeywords=" + m_arrayKeywords + ", m_arrayComments="
-				+ m_arrayComments + ", m_arrayTags=" + m_arrayTags
+				+ m_arrayComments
 				+ ", m_nRating=" + m_arrayRating + "]";
 	}
 	

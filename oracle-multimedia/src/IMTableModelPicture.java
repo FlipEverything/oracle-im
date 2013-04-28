@@ -106,5 +106,15 @@ public class IMTableModelPicture extends AbstractTableModel{
 	public String getColumnName(int col) {
         return columnNames[col];
     }
+
+	public ArrayList<Picture> getData() {
+		return data;
+	}
+
+	public void setData(ArrayList<Picture> data) {
+		this.data = data;
+	}
+	
+	
 	
 }

@@ -1,11 +1,9 @@
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.util.ArrayList;
-import javax.swing.BorderFactory;
+
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.TitledBorder;
+
 import bean.Picture;
 
 
@@ -68,36 +66,23 @@ public class JPanelGallery extends JPanel implements IMConstants{
 		  ArrayList<Picture> array = null;
 		  
 		  array = q.selectPicturesTopValue();
-		  createTable(array, "TOP_VALUE");
+		  m_jFrameOwner.createPictureResultTable(array, "TOP_VALUE", m_nWidth, IMQuery.TOP*m_nLineHeight, m_nX, m_nY, contentPanel);
+		  m_nY+=IMQuery.TOP*m_nLineHeight;
 		  
 		  array = q.selectPicturesTopCommentCount();
-		  createTable(array, "TOP_COMMENT");
+		  m_jFrameOwner.createPictureResultTable(array, "TOP_COMMENT", m_nWidth, IMQuery.TOP*m_nLineHeight, m_nX, m_nY, contentPanel);
+		  m_nY+=IMQuery.TOP*m_nLineHeight;
 		  
 		  array = q.selectPicturesNew();
-		  createTable(array, "TOP_NEW");
+		  m_jFrameOwner.createPictureResultTable(array, "TOP_NEW", m_nWidth, IMQuery.TOP*m_nLineHeight, m_nX, m_nY, contentPanel);
+
+
 		  
 		  /*array = q.selectPicturesTopRateCount();
 		  createTable(array, "TOP_RATE_COUNT");*/
 	  }
 	  
-	  private void createTable(ArrayList<Picture> array, String text){
-		  IMTableModelPicture m_model = new IMTableModelPicture(array, m_jFrameOwner); 
-		  IMTable m_jTableData = new IMTable(m_model);		
-		  m_jTableData.setRowSelectionAllowed(false);
-		  
-		  JScrollPane scroll = new JScrollPane(m_jTableData);
-		  scroll.setSize(new Dimension(m_nWidth, IMQuery.TOP*m_nLineHeight));
-		  scroll.setPreferredSize(new Dimension(m_nWidth, IMQuery.TOP*m_nLineHeight));
-		  scroll.setBounds(new Rectangle(m_nX, m_nY, m_nWidth, IMQuery.TOP*m_nLineHeight));
-		  
-		  m_nY +=IMQuery.TOP*m_nLineHeight;
-		  
-		  TitledBorder title;
-		  title = BorderFactory.createTitledBorder(IMMessage.getString(text));
-		  scroll.setBorder(title);
-		  
-		  contentPanel.add(scroll, null);
-	  }
+
 	  
 
 

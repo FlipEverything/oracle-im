@@ -56,7 +56,7 @@ public class JPanelLogin extends JPanel implements IMConstants{
 		this.m_szTitle = IMMessage.getString("MAIN_MENU_LOGIN");
 	}
 	
-	public void init(){
+	protected void init(){
 		try
 	    {
 	      setupDisplay();
@@ -169,7 +169,7 @@ public class JPanelLogin extends JPanel implements IMConstants{
 	  /**
 	   * Initializes the dialog display.
 	   */
-	  private void setupDisplay()
+	  protected void setupDisplay()
 	  {
 		m_jFrameOwner.setLabel(m_szTitle);
 	    this.setSize(new Dimension(m_nWidth, m_nHeight));

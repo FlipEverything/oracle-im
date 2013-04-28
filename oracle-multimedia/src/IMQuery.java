@@ -12,7 +12,6 @@ import bean.Keyword;
 import bean.Picture;
 import bean.Rating;
 import bean.Region;
-import bean.Tag;
 import bean.User;
 
 import oracle.jdbc.OracleConnection;
@@ -73,7 +72,6 @@ class IMQuery implements IMConstants
   private static final String SELECT_PICTURE_KEYWORDS = "select distinct keywords.keyword_id, keywords.name from keywords, picture_to_keyword  where keywords.keyword_id = picture_to_keyword.keyword_id AND picture_to_keyword.picture_id = ?";
   private static final String SELECT_PICTURE_CATEGORIES = "select distinct categories.category_id, categories.name from categories, picture_to_category  where categories.category_id = picture_to_category.category_id AND picture_to_category.picture_id = ?";
   private static final String SELECT_PICTURE_COMMENTS = "select * from comments where picture_id = ?";
-  private static final String SELECT_PICTURE_TAGS = "select * from tags where picture_id = ?";
   private static final String SELECT_PICTURE_RATINGS = "select * from ratings where picture_id = ?";
   private static final String SELECT_USER_RATINGS = "select * from ratings where user_id = ?";
   
@@ -383,29 +381,6 @@ class IMQuery implements IMConstants
 	  return array;
   }
   
-  public ArrayList<Tag> selectTagsForPicture(Picture p){
-	  ArrayList<Tag> array = new ArrayList<Tag>();
-	  connect();
-	  try {
-			stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(SELECT_PICTURE_TAGS);
-			int index = 1;
-			stmt.setInt(index++, p.getPictureId());
-			
-			rs = (OracleResultSet)stmt.executeQuery();
-			
-			while (rs.next()){
-				Tag t = new Tag(rs.getInt("user_id"), rs.getFloat("pixel_x"), rs.getFloat("pixel_y"));
-				array.add(t);
-			}
-			
-			IMUtil.cleanup(rs, stmt);
-		} catch (SQLException e) {
-			new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
-			return null;
-		}
-	  
-	  return array;
-  }
   
   public ArrayList<Rating> selectRatingForPicture(Picture p){
 	  return selectRating(SELECT_PICTURE_RATINGS, p.getPictureId());
@@ -474,11 +449,10 @@ class IMQuery implements IMConstants
 			while (rs.next()){
 				Picture p = new Picture(rs.getInt("picture_id"), rs.getString("picture_name"), rs.getDate("upload_time"), 
 						(OrdImage)rs.getORAData("picture", OrdImage.getORADataFactory()), (OrdImage)rs.getORAData("picture_thumbnail", OrdImage.getORADataFactory()), 
-						rs.getInt("city_id"), rs.getInt("album_id"), null, null, null, null, null);
+						rs.getInt("city_id"), rs.getInt("album_id"), null, null, null, null);
 				p.setCategories(new IMQuery().selectCategoriesForPicture(p));
 				p.setRating(new IMQuery().selectRatingForPicture(p));
 				p.setComments(new IMQuery().selectCommentForPicture(p));
-				p.setTags(new IMQuery().selectTagsForPicture(p));
 				p.setKeywords(new IMQuery().selectKeywordsForPicture(p));
 				array.add(p);
 			}
@@ -1037,6 +1011,108 @@ class IMQuery implements IMConstants
 		  return true;
 		
 	}
+	
+	
+	public ArrayList<Picture> search(String name, int minHeight, int maxHeight,
+			int minWidth, int maxWidth, int countryId, int regionId, int cityId,
+			ArrayList<Category> selectedCategories,
+			ArrayList<Keyword> selectedKeywords) {
+	
+		  ArrayList<Picture> array = new ArrayList<Picture>();
+		  connect();
+		  try {
+			    String sql = "SELECT * FROM pictures, albums ";
+				String where = "";
+				if (!name.equals("") && !name.equals(null)){
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.picture_name LIKE ?";
+				}
+				if (cityId!=0){
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.city_id = ?";
+				} else if (regionId!=0){
+					sql += ", regions, cities ";
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.city_id = cities.city_id AND regions.region_id = cities.region_id AND regions.region_id = ?";
+				} else if (countryId!=0){
+					sql += ", countries, regions, cities ";
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.city_id = cities.city_id AND regions.region_id = cities.region_id AND " +
+							"regions.country_id = countries.country_id AND countries.country_id = ?";
+				}
+				
+				if (selectedCategories.size()>0){
+					sql += ", picture_to_category ";
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.picture_id = picture_to_category.picture_id ";
+					for (int i=0; i<selectedCategories.size(); i++){
+						where = ((where.equals("")) ? "WHERE " : where + " AND") + " picture_to_category.category_id = ? ";
+					}	
+				}
+				
+				if (selectedKeywords.size()>0){
+					sql += ", picture_to_keyword ";
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.picture_id = picture_to_keyword.picture_id ";
+					for (int i=0; i<selectedKeywords.size(); i++){
+						where = ((where.equals("")) ? "WHERE " : where + " AND") + " picture_to_keyword.keyword_id = ? ";
+					}	
+				}
+				
+				where = ((where.equals("")) ? "WHERE " : where + " AND") +" pictures.album_id = albums.album_id AND albums.is_public = 1 ";
+				sql += where;
+				
+				System.out.println(sql);
+				stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(sql);
+				
+				int index = 1;
+				
+				if (!name.equals("") && !name.equals(null)){
+					stmt.setString(index++, "%"+name+"%");
+				}
+				if (cityId!=0){
+					stmt.setInt(index++, cityId);
+				} else if (regionId!=0){
+					stmt.setInt(index++, regionId);
+				} else if (countryId!=0){
+					stmt.setInt(index++, countryId);
+				}
+				
+				
+				Iterator<Category> itCategory = selectedCategories.iterator();
+					while (itCategory.hasNext()){
+						Category c = itCategory.next();
+						stmt.setInt(index++, c.getCategoryId());
+					}	
+				
+				Iterator<Keyword> itKeyword = selectedKeywords.iterator();
+					while (itKeyword.hasNext()){
+						Keyword k = itKeyword.next();
+						stmt.setInt(index++, k.getKeywordId());
+					}	
+				
+				
+				rs = (OracleResultSet) stmt.executeQuery();
+				while (rs.next()){
+					Picture p = new Picture(rs.getInt("picture_id"), rs.getString("picture_name"), rs.getDate("upload_time"), 
+							(OrdImage)rs.getORAData("picture", OrdImage.getORADataFactory()), (OrdImage)rs.getORAData("picture_thumbnail", OrdImage.getORADataFactory()), 
+							rs.getInt("city_id"), rs.getInt("album_id"), null, null, null, null);
+					p.setCategories(new IMQuery().selectCategoriesForPicture(p));
+					p.setRating(new IMQuery().selectRatingForPicture(p));
+					p.setComments(new IMQuery().selectCommentForPicture(p));
+					p.setKeywords(new IMQuery().selectKeywordsForPicture(p));
+					if (
+							(p.getPicture().getHeight()>=minHeight) &&
+							(p.getPicture().getHeight()<=maxHeight) &&
+							(p.getPicture().getWidth()>=minWidth) &&
+							(p.getPicture().getWidth()<=maxWidth)
+					){
+								array.add(p);
+					}
+				}
+				
+				IMUtil.cleanup(rs, stmt);
+			} catch (SQLException e) {
+				new IMMessage(IMConstants.ERROR, "SQL_FAIL", e);
+				return null;
+			}
+		  
+		  return array;
+	}
 
 
 
@@ -1122,10 +1198,4 @@ class IMQuery implements IMConstants
 	  
   }
 
-
-
-
-
-
-  
 }
