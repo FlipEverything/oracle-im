@@ -6,6 +6,6 @@
 	<classpathentry kind="lib" path="lib/xmlparserv2.jar"/>
 	<classpathentry kind="lib" path="lib/xdb.jar"/>
 	<classpathentry kind="lib" path="lib/hsqldb.jar"/>
-	<classpathentry kind="lib" path="D:/dev/git/oracle-im/oracle-multimedia/lib/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
