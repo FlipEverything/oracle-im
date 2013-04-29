@@ -244,6 +244,9 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 			  }
 			  contentPanel.setSize(new Dimension(m_nWidth, m_iFieldHeight*2+(array.size()/(m_nWidth/(THUMB_WIDTH+m_iOffset)))*(THUMB_HEIGHT+m_iOffset)));
 			  contentPanel.setPreferredSize(new Dimension(m_nWidth, m_iFieldHeight*2+(array.size()/(m_nWidth/(THUMB_WIDTH+m_iOffset)))*(THUMB_HEIGHT+m_iOffset)));
+			  
+			 this.setSize(new Dimension(m_nWidth, m_iFieldHeight*2+(array.size()/(m_nWidth/(THUMB_WIDTH+m_iOffset)))*(THUMB_HEIGHT+m_iOffset)));
+			 this.setPreferredSize(new Dimension(m_nWidth, m_iFieldHeight*2+(array.size()/(m_nWidth/(THUMB_WIDTH+m_iOffset)))*(THUMB_HEIGHT+m_iOffset)));
 
 		  }
 		  
@@ -252,7 +255,7 @@ public class JPanelAlbums extends JPanel implements IMConstants{
 	  
 	 public void refresh(){
 		 contentPanel.revalidate();
-		 SwingUtilities.updateComponentTreeUI(JPanelAlbums.this);
+		 SwingUtilities.updateComponentTreeUI(m_jFrameOwner);
 	 }
 
 	/**

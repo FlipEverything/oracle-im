@@ -335,7 +335,9 @@ public class JPanelNewPicture extends JPanelLogin {
 					  q.insertKeywordToPicture(m_pictureNew, selectedKeywords);
 					  m_userDisplayed.setPictureSum(m_userDisplayed.getPictureSum()+1);
 					  
-					  m_jFrameOwner.showProfilePanel(m_userDisplayed);
+					  //m_jFrameOwner.showProfilePanel(m_userDisplayed);
+					  m_pictureNew = new Picture();
+					  
 				  } else {
 					  new IMMessage(IMConstants.ERROR, "UPLOAD_ERROR");
 				  }
