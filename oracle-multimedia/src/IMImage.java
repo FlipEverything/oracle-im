@@ -123,7 +123,6 @@ public class IMImage extends JDialogProfilePic implements IMConstants
 	    	arrayNumbers.add(count);
 	    }
 	    
-	    m_nButtonY += m_nButtonHeight;
 
 	    int i = 0;
 	    IMFrame.createComboBox(m_jComboRating, true, 0, 

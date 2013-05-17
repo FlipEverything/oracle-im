@@ -77,7 +77,8 @@ public class IMFrame extends JFrame implements IMConstants
   JMenuItem m_menuGalleryUsers = new JMenuItem();
   JMenuItem m_menuGallerySearch = new JMenuItem();
   
-  JMenuItem m_menuSystemAbout = new JMenuItem();
+  JMenuItem m_menuSystemApplication = new JMenuItem();
+  JMenuItem m_menuSystemBlank = new JMenuItem();
   
   JScrollPane m_jQueryResultPanel = new JScrollPane();
   JTable m_jResultSetTable = null;
@@ -391,9 +392,17 @@ public class IMFrame extends JFrame implements IMConstants
 		});
 
     
-    m_menuSystemAbout = createJMenuItem(m_menuSystemAbout, "MAIN_MENU_ABOUT", 'N', true, "about", "MAIN_MENU_ABOUT_DESC", new Callable<Void>() {
+    m_menuSystemApplication = createJMenuItem(m_menuSystemApplication, "MAIN_MENU_ABOUT", 'N', true, "about", "MAIN_MENU_ABOUT_DESC", new Callable<Void>() {
 		   public Void call() {
 			    
+				return null;
+		   }
+		});
+    
+    m_menuSystemBlank = createJMenuItem(m_menuSystemBlank, "MAIN_MENU_BLANK", 'N', true, null, "MAIN_MENU_ABOUT_DESC", new Callable<Void>() {
+		   public Void call() {
+			   m_jQueryResultPanel.setViewportView(null);
+			   m_labelTable.setText("");
 				return null;
 		   }
 		});
@@ -430,7 +439,8 @@ public class IMFrame extends JFrame implements IMConstants
     
     m_menuSystem.setText(IMMessage.getString("MAIN_MENU_SYSTEM"));
     m_menuSystem.setMnemonic('G');
-    m_menuSystem.add(m_menuSystemAbout);
+    m_menuSystem.add(m_menuSystemApplication);
+    m_menuSystem.add(m_menuSystemBlank);
     
     m_menuBar.add(m_menuConnection);
     m_menuBar.add(m_menuUser);

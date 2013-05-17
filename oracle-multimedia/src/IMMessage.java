@@ -59,7 +59,8 @@ public class IMMessage implements IMConstants
         break;
     }
 
-    if (IMConstants.ENABLE_STACK_TRACE)
+    //if (IMConstants.ENABLE_STACK_TRACE)
+    if (IMMain.isDEBUG())
     {
       if (e != null)
       {

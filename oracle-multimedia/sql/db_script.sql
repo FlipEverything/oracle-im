@@ -16,6 +16,7 @@ BEGIN
 	EXECUTE IMMEDIATE 'DROP TABLE CITIES';
 	EXECUTE IMMEDIATE 'DROP TABLE REGIONS';
 	EXECUTE IMMEDIATE 'DROP TABLE COUNTRIES';
+	EXECUTE IMMEDIATE 'DROP TABLE APP_LOG';
 EXCEPTION
    WHEN OTHERS THEN
       IF SQLCODE != -942 THEN
@@ -37,6 +38,7 @@ BEGIN
 	 EXECUTE IMMEDIATE 'DROP SEQUENCE  COUNTRIES_INC';
 	 EXECUTE IMMEDIATE 'DROP SEQUENCE  CATEGORIES_INC';
 	 EXECUTE IMMEDIATE 'DROP SEQUENCE  KEYWORDS_INC';
+	 EXECUTE IMMEDIATE 'DROP SEQUENCE  APP_LOG_INC';
 EXCEPTION
    WHEN OTHERS THEN
       IF SQLCODE != -2289 THEN
@@ -90,7 +92,11 @@ END;
 --------------------------------------------------------
    CREATE SEQUENCE  "KEYWORDS_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
    
-   
+--------------------------------------------------------
+--  DDL for Sequence APP_LOG_INC
+--------------------------------------------------------
+   CREATE SEQUENCE  "APP_LOG_INC"  MINVALUE 0 MAXVALUE 9999999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+      
    
 --------------------------------------------------------
 --  DDL for Table USERS
@@ -166,7 +172,7 @@ END;
   CREATE TABLE "CITIES" 
    (	
     "CITY_ID" NUMBER, 
-	"NAME" VARCHAR2(30 BYTE),
+	"NAME" VARCHAR2(50 BYTE),
 	"REGION_ID" NUMBER
    ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
@@ -179,7 +185,7 @@ END;
   CREATE TABLE "REGIONS" 
    (	
     "REGION_ID" NUMBER, 
-	"NAME" VARCHAR2(30 BYTE),
+	"NAME" VARCHAR2(60 BYTE),
 	"COUNTRY_ID" NUMBER
    ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
@@ -192,7 +198,7 @@ END;
   CREATE TABLE "COUNTRIES" 
    (	
     "COUNTRY_ID" NUMBER, 
-	"NAME" VARCHAR2(30 BYTE)
+	"NAME" VARCHAR2(60 BYTE)
    ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
@@ -259,45 +265,20 @@ END;
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
    
 --------------------------------------------------------
--- CREATE LOG TABLES ??????
+--  DDL for Table APP_LOG
 --------------------------------------------------------
 
-/* ***************************
-    KELL LOGOLNI?
-   ***************************
-
-  CREATE TABLE "LOG_KEPEK" 
+  CREATE TABLE "APP_LOG" 
    (	
-    "FELTOLTO" NUMBER, 
-	"KEP" NUMBER, 
-	"DATUM" DATE, 
-	"MUVELET" NUMBER
+    "LOG_ID" NUMBER, 
+	"TABLE_NAME" VARCHAR2(50 BYTE),
+	"DATA_ID" NUMBER, 
+	"USER_ID" NUMBER,
+	"LOG_DATE" DATE, 
+	"DESCRIPTION" VARCHAR2(200 BYTE)
    ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
   STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
-
-
-  CREATE TABLE "LOG_LOGIN" 
-   (	
-    "FELH" NUMBER, 
-	"DATUM" DATE, 
-	"LOGIN" NUMBER
-   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
-
-
-  CREATE TABLE "LOG_MEGJEGYZES" 
-   (	
-    "MEGJ_ID" NUMBER, 
-	"USER_ID" NUMBER, 
-	"DATUM" DATE
-   ) PCTFREE 10 PCTUSED 40 INITRANS 1 MAXTRANS 255 NOCOMPRESS LOGGING
-  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
-  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT);
-
-*/
-
 
 
 --------------------------------------------------------
@@ -391,8 +372,16 @@ END;
   PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
   ENABLE;
   
-  
+--------------------------------------------------------
+--  Constraints for Table APP_LOG
+--------------------------------------------------------
 
+  ALTER TABLE "APP_LOG" ADD CONSTRAINT "LOG_ID_PK" PRIMARY KEY ("LOG_ID")
+  USING INDEX PCTFREE 10 INITRANS 2 MAXTRANS 255 COMPUTE STATISTICS 
+  STORAGE(INITIAL 65536 NEXT 1048576 MINEXTENTS 1 MAXEXTENTS 2147483645
+  PCTINCREASE 0 FREELISTS 1 FREELIST GROUPS 1 BUFFER_POOL DEFAULT)
+  ENABLE;
+  
 --------------------------------------------------------
 --  DDL for Index USERS
 --------------------------------------------------------
@@ -693,7 +682,19 @@ END;
   /
   ALTER TRIGGER "AUTOINC_KEYWORDS" ENABLE;  
  
+--------------------------------------------------------
+--  DDL for Trigger AUTOINC_APP_LOG
+--------------------------------------------------------
 
+  CREATE OR REPLACE TRIGGER "AUTOINC_APP_LOG" 
+	BEFORE INSERT ON APP_LOG
+	FOR EACH ROW
+		BEGIN
+			SELECT APP_LOG_INC.NEXTVAL into :NEW.LOG_ID from DUAL;
+		END;
+  /
+  ALTER TRIGGER "AUTOINC_APP_LOG" ENABLE;  
+ 
 --------------------------------------------------------
 --  DDL for Trigger INC_USER_PICTURE_SUM
 --------------------------------------------------------
@@ -724,101 +725,94 @@ END;
   /
   ALTER TRIGGER "DEC_USER_PICTURE_SUM" ENABLE;
 
- 
-
-
-/*
------------------------------------------------------------ 
-           KELL E LOGOLNI????
-		   *--------*
 
 --------------------------------------------------------
---  DDL for Trigger KEPEKLOG
+--  DDL for Trigger APP_LOG_PICTURE
 --------------------------------------------------------
 
-  CREATE OR REPLACE TRIGGER "KEPEKLOG" 
-AFTER INSERT OR DELETE ON KEPEK
-FOR EACH ROW
-DECLARE
- muvelet NUMBER; -- 1: ha beszúr, 2: töröl
- f_id NUMBER;  -- feltolto azonosítója
- k_id NUMBER;  -- kép azonosítója
-BEGIN
- IF INSERTING THEN
-   muvelet := 1;
-   k_id := :NEW.KID;
-   f_id := :NEW.FELTOLTO_ID;
- ELSIF DELETING THEN
-   muvelet := 2;
-   k_id := :OLD.KID;
-   f_id := :OLD.FELTOLTO_ID;
- END IF;
- INSERT INTO log_kepek VALUES(f_id, k_id, SYSDATE, muvelet);
-END;
-/
-ALTER TRIGGER "KEPEKLOG" ENABLE;
-
-
---------------------------------------------------------
---  DDL for Trigger LOGIN
---------------------------------------------------------
-
-  CREATE OR REPLACE TRIGGER "LOGIN" 
-AFTER LOGON ON DATABASE
-DECLARE
- f_id NUMBER; -- user id
-BEGIN
- SELECT fid INTO f_id FROM felh WHERE upper("USERNAME") = USER;
- INSERT INTO log_login VALUES (f_id, SYSDATE, 1);
-END;
-/
-ALTER TRIGGER "LOGIN" ENABLE;
---------------------------------------------------------
---  DDL for Trigger LOGOUT
---------------------------------------------------------
-
-  CREATE OR REPLACE TRIGGER "LOGOUT" 
-BEFORE LOGOFF ON DATABASE
-DECLARE
- f_id NUMBER;  -- user id
-BEGIN
- SELECT FID INTO f_id FROM felh WHERE upper("USERNAME") = USER;
- INSERT INTO log_login VALUES (f_id, SYSDATE, 0);
-END;
-/
-ALTER TRIGGER "LOGOUT" ENABLE;
---------------------------------------------------------
---  DDL for Trigger MEGJEGYZESLOG
---------------------------------------------------------
-
-  CREATE OR REPLACE TRIGGER "MEGJEGYZESLOG" 
-AFTER INSERT ON MEGJEGYZES
-FOR EACH ROW
-DECLARE
- f_id NUMBER; -- user id
-BEGIN
- INSERT INTO log_megjegyzes VALUES(:NEW.MEGJEGYZES_ID, :NEW.KIIRTA, SYSDATE);
-END;
-/
-ALTER TRIGGER "MEGJEGYZESLOG" ENABLE;
+    CREATE OR REPLACE TRIGGER "APP_LOG_PICTURE" 
+    AFTER INSERT OR DELETE OR UPDATE ON PICTURES
+    FOR EACH ROW
+		DECLARE
+		descr app_log.description%TYPE;
+		tablename app_log.table_name%TYPE;
+		username users.username%TYPE;
+		userid users.user_id%TYPE;
+		pictureid pictures.picture_id%TYPE;
+		albumid albums.album_id%TYPE;
+	BEGIN
+		tablename := 'pictures';
+		IF INSERTING THEN
+			pictureid := :NEW.picture_id;
+		    albumid := :NEW.album_id;
+		ELSIF UPDATING THEN
+			pictureid := :NEW.picture_id;
+		    albumid := :NEW.album_id;
+		ELSIF DELETING THEN
+			pictureid := :OLD.picture_id;
+		    albumid := :OLD.album_id;
+		END IF;
+		
+		SELECT users.username, users.user_id INTO username, userid FROM users, albums WHERE albums.album_id = albumid AND albums.user_id = users.user_id;
+    
+		IF INSERTING THEN
+			descr := concat(concat(username, ' uploaded a new picture to album id:' ), albumid);
+		ELSIF UPDATING THEN
+			descr := concat(concat(username, ' edited a picture in album id:' ), albumid);
+		ELSIF DELETING THEN
+			descr := concat(concat(username, ' removed a picture from album id:' ), albumid);
+		END IF;
+    
+		INSERT INTO app_log (table_name, data_id, log_date, user_id, description) VALUES (tablename, pictureid, SYSDATE, userid, descr);
+	END;
+  /
+  ALTER TRIGGER "APP_LOG_PICTURE" ENABLE;
 
 --------------------------------------------------------
---  DDL for Function KEP_ERTEK
+--  DDL for Trigger APP_LOG_ALBUM
 --------------------------------------------------------
 
-  CREATE OR REPLACE FUNCTION "KEP_ERTEK" 
-(
- KEP_ID IN NUMBER  
-) RETURN VARCHAR2 AS
-tmp_ertek NUMBER;
-BEGIN
- select avg(ertek) INTO tmp_ertek FROM ertekeles where K_ID=KEP_ID;
- if tmp_ertek IS NULL then tmp_ertek := 0;
- end if;
- RETURN tmp_ertek;
-END KEP_ERTEK;
-/
-*/
+    CREATE OR REPLACE TRIGGER "APP_LOG_ALBUM" 
+    AFTER INSERT OR DELETE OR UPDATE ON ALBUMS
+    FOR EACH ROW
+		DECLARE
+		descr app_log.description%TYPE;
+		tablename app_log.table_name%TYPE;
+		username users.username%TYPE;
+		userid users.user_id%TYPE;
+		albumid albums.album_id%TYPE;
+		albumname albums.name%TYPE;
+	BEGIN
+		tablename := 'albums';
+		IF INSERTING THEN
+		    albumid := :NEW.album_id;
+			userid := :NEW.user_id;
+			albumname := :NEW.name;
+		ELSIF UPDATING THEN
+			albumid := :NEW.album_id;
+			userid := :NEW.user_id;
+			albumname := :NEW.name;
+		ELSIF DELETING THEN
+		    albumid := :OLD.album_id;
+			userid := :OLD.user_id;
+			albumname := :OLD.name;
+		END IF;
+		
+		SELECT users.username INTO username FROM users WHERE users.user_id = userid;
+    
+		IF INSERTING THEN
+			descr := concat(concat(username, ' created a new album named:' ), albumname);
+		ELSIF UPDATING THEN
+			descr := concat(concat(username, ' edited an album named:' ), albumname);
+		ELSIF DELETING THEN
+			descr := concat(concat(username, ' removed an album named:' ), albumname);
+		END IF;
+    
+		INSERT INTO app_log (table_name, data_id, log_date, user_id, description) VALUES (tablename, albumid, SYSDATE, userid, descr);
+	END;
+  /
+  ALTER TRIGGER "APP_LOG_ALBUM" ENABLE;
+
 
 ---------------------------------------------------
 --   DATA FOR TABLE COUNTRIES

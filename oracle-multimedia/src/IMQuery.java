@@ -1038,38 +1038,56 @@ class IMQuery implements IMConstants
 				}
 				
 				if (selectedCategories.size()>0){
-					sql += ", picture_to_category ";
-					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.picture_id = picture_to_category.picture_id ";
+					String sub = " (pictures.picture_id IN (SELECT DISTINCT picture_id FROM picture_to_category WHERE ";
 					for (int i=0; i<selectedCategories.size(); i++){
-						where = ((where.equals("")) ? "WHERE " : where + " AND") + " picture_to_category.category_id = ? ";
+						sub += " category_id = ? OR ";
 					}	
+					sub = sub.substring(0, sub.length()-3);
+					sub +=")) ";
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + sub;
 				}
 				
 				if (selectedKeywords.size()>0){
-					sql += ", picture_to_keyword ";
-					where = ((where.equals("")) ? "WHERE " : where + " AND") + " pictures.picture_id = picture_to_keyword.picture_id ";
+					String sub = " (pictures.picture_id IN (SELECT DISTINCT picture_id FROM picture_to_keyword WHERE ";
 					for (int i=0; i<selectedKeywords.size(); i++){
-						where = ((where.equals("")) ? "WHERE " : where + " AND") + " picture_to_keyword.keyword_id = ? ";
+						sub += " keyword_id = ? OR ";
 					}	
+					sub = sub.substring(0, sub.length()-3);
+					sub +=")) ";
+					where = ((where.equals("")) ? "WHERE " : where + " AND") + sub;
 				}
 				
 				where = ((where.equals("")) ? "WHERE " : where + " AND") +" pictures.album_id = albums.album_id AND albums.is_public = 1 ";
 				sql += where;
 				
-				System.out.println(sql);
+				if (IMMain.isDEBUG()){
+					System.out.println(sql);
+				}
 				stmt = (OraclePreparedStatement) m_dbConn.prepareStatement(sql);
 				
 				int index = 1;
 				
 				if (!name.equals("") && !name.equals(null)){
 					stmt.setString(index++, "%"+name+"%");
+					if (IMMain.isDEBUG()){
+						System.out.println("bind name: "+name);
+					}
 				}
 				if (cityId!=0){
 					stmt.setInt(index++, cityId);
+					if (IMMain.isDEBUG()){
+						System.out.println("bind city: "+cityId);
+					}
 				} else if (regionId!=0){
 					stmt.setInt(index++, regionId);
+					if (IMMain.isDEBUG()){
+						System.out.println("bind region: "+regionId);
+					}
 				} else if (countryId!=0){
 					stmt.setInt(index++, countryId);
+					if (IMMain.isDEBUG()){
+						System.out.println("bind country: "+countryId);
+					}
 				}
 				
 				
@@ -1077,12 +1095,18 @@ class IMQuery implements IMConstants
 					while (itCategory.hasNext()){
 						Category c = itCategory.next();
 						stmt.setInt(index++, c.getCategoryId());
+						if (IMMain.isDEBUG()){
+							System.out.println("bind category: "+c.getCategoryId());
+						}
 					}	
 				
 				Iterator<Keyword> itKeyword = selectedKeywords.iterator();
 					while (itKeyword.hasNext()){
 						Keyword k = itKeyword.next();
 						stmt.setInt(index++, k.getKeywordId());
+						if (IMMain.isDEBUG()){
+							System.out.println("bind keyword: "+k.getKeywordId());
+						}
 					}	
 				
 				

@@ -21,6 +21,7 @@ import oracle.jdbc.OracleConnection;
 public class IMMain implements IMConstants
 {
   private static OracleConnection s_dbConn = null;
+  private static boolean DEBUG = false;
   private static ServerSocket SERVER_SOCKET;
   private IMFrame frame;
   
@@ -139,6 +140,11 @@ public class IMMain implements IMConstants
 
   public static void main(String[] args)
   {
+	if (args.length>0){
+		if (args[0].equals("-debug")){
+			DEBUG = true;
+		}
+	}
 	try {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 	   	  System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -153,19 +159,26 @@ public class IMMain implements IMConstants
     new IMMain();
   }
 
-public IMFrame getFrame() {
-	return frame;
-}
+	public IMFrame getFrame() {
+		return frame;
+	}
+	
+	public void setFrame(IMFrame frame) {
+		this.frame = frame;
+	}
+	
+	public static ServerSocket getSERVER_SOCKET() {
+		return SERVER_SOCKET;
+	}
+	
+	public static void setSERVER_SOCKET(ServerSocket sERVER_SOCKET) {
+		SERVER_SOCKET = sERVER_SOCKET;
+	}
+	
+	public static boolean isDEBUG() {
+		return DEBUG;
+	}
 
-public void setFrame(IMFrame frame) {
-	this.frame = frame;
-}
 
-public static ServerSocket getSERVER_SOCKET() {
-	return SERVER_SOCKET;
-}
 
-public static void setSERVER_SOCKET(ServerSocket sERVER_SOCKET) {
-	SERVER_SOCKET = sERVER_SOCKET;
-}
 }
