@@ -29,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Displays the login dialog and creates the connection
- * to the database.
+ * A kulcsszavak és a kategóriák részére új JDialog. Egy keresés & felvitel mezőt tartalmaz és egy JTable-t, amelynek
+ * TableModell-jét paraméterül kapja.
  */
 @SuppressWarnings("serial")
 public class JDialogTable extends JDialog implements IMConstants

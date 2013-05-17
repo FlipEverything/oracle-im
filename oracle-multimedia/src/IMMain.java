@@ -2,6 +2,10 @@
 
 /**
  * Oracle Multimedia example
+ * Kiegészítve és továbbfejlesztve Dobó László által
+ * 
+ * A kommenteket vegyesen, angolul és magyarul írtam
+ * Van olyan komment, ami Oracle által készített, nem én írtam
  */
 
 

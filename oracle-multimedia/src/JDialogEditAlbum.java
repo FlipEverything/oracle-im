@@ -1,6 +1,11 @@
 import bean.Album;
 
-
+/**
+ * JDialog album szerkesztésre, az üres JDialogNewAlbumból származik, felüldefiniálja 
+ * a szükséges metódusokat és megjeleníti az adatokkal feltöltött ablakot
+ * @author Dobó László
+ *
+ */
 @SuppressWarnings("serial")
 public class JDialogEditAlbum extends JDialogNewAlbum {
 

@@ -19,6 +19,10 @@ import bean.Picture;
 import bean.User;
 
 
+/**
+ * Albumok
+ *
+ */
 @SuppressWarnings("serial")
 public class JPanelAlbums extends JPanel implements IMConstants{
 	protected IMFrame m_jFrameOwner = null;

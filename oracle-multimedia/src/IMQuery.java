@@ -22,8 +22,10 @@ import oracle.ord.im.OrdImage;
 
 
 /**
- * The IMExampleQuery class retrieves the oe.product_information table,
- * and creates the display of the table.
+ * Minden Oracle adatbázislekérdezés ezen az objektumon megy keresztül.
+ * A metódusok objektumokat várnak, melyeket feldolgoznak és PreparedStatementtel elküldenek a szervernek.
+ * 
+ * A válasz alapján vagy objektumot vagy egy id-t vagy hiba esetén null-t adnak vissza. 
  */
 class IMQuery implements IMConstants
 {
@@ -33,7 +35,9 @@ class IMQuery implements IMConstants
   private OracleResultSet rs = null;
   
   public static final int TOP = 5;
-  
+  /**
+   * A lekérések a fájl elején vannak, gyorsabban átlátható
+   */
   private static final String USER_LOGIN = "SELECT * FROM USERS WHERE username = ? AND password = ?";
   private static final String USER_SIGNUP = "INSERT INTO USERS (username, password, email, first_name, last_name, registered, city_id) VALUES (?,?,?,?,?,?,?)";
   private static final String USER_SIGNUP_GET_USER_ID = "SELECT USERS_INC.CURRVAL FROM DUAL";

@@ -47,6 +47,9 @@ import java.util.concurrent.Callable;
 
 /**
  * The IMExampleFrame class displays the main frame.
+ * Ez a Főablak, a menük itt vannak beállítva, valamint az adatbázisból letöltött közös adatok itt vannak tárolva
+ * 
+ * NO TO SELF: ArrayList helyett Set, Map használata
  */
 @SuppressWarnings("serial")
 public class IMFrame extends JFrame implements IMConstants

@@ -18,8 +18,9 @@ import java.awt.event.WindowEvent;
 import java.util.concurrent.Callable;
 
 /**
- * Displays the login dialog and creates the connection
- * to the database.
+ * Fel lehet vinni az új albumot
+ * @author Dobó László
+ *
  */
 @SuppressWarnings("serial")
 public class JDialogNewAlbum extends JDialog implements IMConstants

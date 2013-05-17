@@ -26,8 +26,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
- * Displays the login dialog and creates the connection
- * to the database.
+ * Megjeleníti a felvett szerverek listáját és van négy gombja, amivel
+ * kapcsolódhatunk, törölhetünk, újat felvihetünk valamint bezárhatjuk
  */
 @SuppressWarnings("serial")
 public class IMLoginListDialog extends JDialog implements IMConstants

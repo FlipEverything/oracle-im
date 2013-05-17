@@ -14,8 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 /**
- * Displays the login dialog and creates the connection
- * to the database.
+ * Megjeleníti a felhasználó profilképét nagyban, új ablakban
  */
 @SuppressWarnings("serial")
 public class JDialogProfilePic extends JDialog implements IMConstants

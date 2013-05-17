@@ -8,7 +8,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-
+/**
+ * A lokális, HSQLDB adatbázisért felel, ebben tároljuk a DatabaseCreditental objektumokat
+ * vagyis az Oracle adatbázishoz kapcsolódáshoz az adatokat
+ * 
+ * Ha nincs adatbázis vagy tábla, akkkor létrehozza
+ * 
+ * @author Dobó László
+ *
+ */
 public class AppDataStore {
 	private static final String SELECT = "SELECT * FROM creditentals;";
 	private static final String CREATE = "CREATE TABLE IF NOT EXISTS creditentals (" +

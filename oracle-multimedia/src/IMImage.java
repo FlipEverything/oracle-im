@@ -40,8 +40,9 @@ import java.util.concurrent.Callable;
 
 
 /**
- * Displays the login dialog and creates the connection
- * to the database.
+ * A kép adatlap ablakot hozza létre
+ * A bal oldali panelban szerepel a nagy kép, a jobb oldali panelban pedig a képadatok és a módosításhoz szükséges elemek
+ * 
  */
 @SuppressWarnings("serial")
 public class IMImage extends JDialogProfilePic implements IMConstants
@@ -152,6 +153,10 @@ public class IMImage extends JDialogProfilePic implements IMConstants
 	
   }
 
+  /**
+   * Újrarajzolja a felületet, így frissütjük a GUI-t
+   * @param label
+   */
   public void refreshLabel(JLabel label){
 	    label.setText("");
 	  

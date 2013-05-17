@@ -7,7 +7,11 @@ import javax.swing.table.AbstractTableModel;
 import bean.User;
 
 
-
+/**
+ * TableModel felhasználó (User bean) tárolására
+ * @author Dobó László
+ *
+ */
 @SuppressWarnings("serial")
 public class IMTableModelUser extends AbstractTableModel{
 	

@@ -19,8 +19,7 @@ import java.sql.Date;
 import java.util.concurrent.Callable;
 
 /**
- * Displays the login dialog and creates the connection
- * to the database.
+ * Fel lehet vinni új hozzászólást
  */
 @SuppressWarnings("serial")
 public class JDialogNewComment extends JDialog implements IMConstants

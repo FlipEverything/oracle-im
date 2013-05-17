@@ -21,6 +21,8 @@ import java.awt.event.KeyEvent;
 /**
  * Displays the login dialog and creates the connection
  * to the database.
+ * Új funkció: ez az ablak kéri be a kapcsolódási adatokat, amit letárolunk
+ * és az IMLoginListDialog segítségével kapcsolódunk, hogy ne kelljen mindig beíri az adatokat
  */
 @SuppressWarnings("serial")
 public class IMLoginDialog extends JDialog implements IMConstants

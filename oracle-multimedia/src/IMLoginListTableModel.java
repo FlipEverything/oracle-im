@@ -5,7 +5,12 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 
-
+/**
+ * IMLoginListDialog használja, ez alapján jön létre a szervereket megjelenítő táblázat
+ * A creditental objektumban alapján iratja ki a mezőket
+ * @author Laci
+ *
+ */
 @SuppressWarnings("serial")
 public class IMLoginListTableModel extends AbstractTableModel{
 	

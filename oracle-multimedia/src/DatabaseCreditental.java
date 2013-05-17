@@ -1,5 +1,9 @@
 
-
+/**
+ * Az adatbázishoz kapcsolódáshoz tárolja a szükséges adatokat
+ * @author Dobó László
+ *
+ */
 public class DatabaseCreditental {
 		
 	private int m_nId;
