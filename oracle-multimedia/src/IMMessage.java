@@ -37,7 +37,7 @@ public class IMMessage implements IMConstants
     {
       case IMConstants.ERROR:
         IMJOptionPane.showMessageDialog(
-            null, msgs.getString(sMsg)+( ((e!=null) && (e.getMessage()!=null)) ?  (((IMConstants.ENABLE_STACK_GUI) && (!e.getMessage().equals("-1"))) ?": "+e.getMessage()+" ("+e.getClass():"")+")" : "" ), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
+            null, msgs.getString(sMsg)+( ((e!=null) && (e.getMessage()!=null)) ?  (((IMConstants.ENABLE_STACK_GUI) && (!e.getMessage().equals("-1"))) ?": "+e.getMessage()+" ("+e.getClass()+")":"") : "" ), ERROR_TITLE, JOptionPane.ERROR_MESSAGE);
         break;
       case IMConstants.WARNING:
         IMJOptionPane.showMessageDialog(
