@@ -394,7 +394,7 @@ public class IMFrame extends JFrame implements IMConstants
     
     m_menuSystemApplication = createJMenuItem(m_menuSystemApplication, "MAIN_MENU_ABOUT", 'N', true, "about", "MAIN_MENU_ABOUT_DESC", new Callable<Void>() {
 		   public Void call() {
-			    
+			    new IMMessage(IMMessage.WARNING, "ABOUT_ME");
 				return null;
 		   }
 		});

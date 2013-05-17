@@ -162,6 +162,8 @@ public class IMMessageResource extends java.util.ListResourceBundle
     
     {"TOP_PICTURES", "TOP képek (csak publikus albumból)"},
     
+    {"ABOUT_ME", "Készítette: Dobó László\n2013\nSzegedi Tudományegyetem\nInformatikai Tanszékcsoport\nSzakdolgozat: Multimédiás adatok kezelése az Oracle rendszerben\n\nKiindulási alap: Oracle Exaple Java Application"},
+    
     {"COUNTRY", "Ország"},
     {"REGION", "Megye"},
     {"CITY", "Város"},
